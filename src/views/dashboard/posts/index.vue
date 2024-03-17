@@ -1,7 +1,7 @@
 <template>
   <div v-if="state == 'default'">
     <div class="flex justify-between pb-10">
-      <h1 class="p-3 font-bold text-xl">Quản lý tài khoản người dùng</h1>
+      <h1 class="p-3 font-bold text-xl">Quản lý bài viết</h1>
       <div>
         <Button :config="{ label: 'Tạo', click: () => create() }">Tạo</Button>
       </div>
@@ -28,7 +28,7 @@
   </div>
   <div v-if="state == 'create'">
     <div class="flex justify-between pb-10">
-      <h1 class="p-3 font-bold text-xl">Tạo tài khoản người dùng</h1>
+      <h1 class="p-3 font-bold text-xl">Tạo tài bài viết</h1>
       <div>
         <Button :config="{ label: 'Trờ lại', click: () => back() }">Trở lại</Button>
       </div>

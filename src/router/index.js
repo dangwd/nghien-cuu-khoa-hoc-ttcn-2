@@ -30,6 +30,10 @@ const router = createRouter({
           name: 'Document',
           path: '/document-manage',
           component: () => import('../views/dashboard/document/index.vue')
+        }, {
+          name: 'Post',
+          path: '/post-manage',
+          component: () => import('../views/dashboard/posts/index.vue')
         }
       ]
     },

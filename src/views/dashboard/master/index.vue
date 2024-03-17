@@ -7,7 +7,8 @@
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="horizontal" class="h-16 ml-20 w-full">
         <a-menu-item key="1"><router-link to="/user-account">Quản lý tài khoản</router-link></a-menu-item>
         <a-menu-item key="2"><router-link to="/document-manage">Quản lý tài liệu</router-link></a-menu-item>
-        <a-menu-item key="3">Quản lý bài viết</a-menu-item>
+        <a-menu-item key="3"><router-link to="/post-manage">Quản lý bài viết</router-link></a-menu-item>
+
       </a-menu>
       <a-space>
         <a-avatar style="background-color: #87d068">
@@ -30,5 +31,5 @@
 
 <script setup>
 import { ref } from 'vue';
-const selectedKeys = ref(['1']);
+const selectedKeys = ref(['']);
 </script>

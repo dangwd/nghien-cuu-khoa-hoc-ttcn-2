@@ -12,11 +12,8 @@
         <h1 class="text-center text-gray-400">Bạn đang nghĩ gì...</h1>
       </div>
       <div class="card-actions justify-end">
-        <ModalComp labelBtn="Đăng bài" :modalIdProps="'new-post-modal'" :size="'2xl'"
+        <ModalComp labelBtn="Tạo mới" :modalIdProps="'new-post-modal'" :size="'2xl'"
           :modalTitleClass="'font-bold text-lg'">
-          <template #btn>
-            <h1 class="items center m-0">Đăng bài</h1>
-          </template>
 
           <template #header>
             <h1 class="text-left">Đăng bài</h1>
@@ -27,7 +24,7 @@
               <div class="label">
                 <span class="label-text">Tiêu đề bài viết</span>
               </div>
-              <input type="text" class="input input-bordered w-full" />
+              <input type="text" class="input input-bordered border-gray-300 w-full rounded-lg" />
             </label>
             <label class="form-control w-full">
               <div class="label">
