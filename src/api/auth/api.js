@@ -21,11 +21,13 @@ api.interceptors.request.use(
 export default api;
 
 
-//Đăng nhập
-// export const login = (username, password) => api.post('api/login', {
-//   username, password
-// })
+//Dang nhap
+export const login = (username, password) => api.post('api/login', {
+  username, password
+})
 //Đăng ký tài khoản
-export const signup = (username, password, fullName) => api.post('api/regis', {
+export const signup = (username, password, fullName) => api.post('/regis', {
   username, password, fullName
 })
+//All user
+export const getAllUser = () => api.get('/admin/all-user')

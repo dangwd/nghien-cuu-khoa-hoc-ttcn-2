@@ -3,8 +3,7 @@
     <div class="card-body">
       <div class="avatar">
         <div class="w-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img
-            src="https://scontent.fhan17-1.fna.fbcdn.net/v/t1.6435-9/107627988_627898204486691_2843452311114633517_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=be3454&_nc_ohc=GDPiQ5IR610AX_fGLP8&_nc_ht=scontent.fhan17-1.fna&cb_e2o_trans=q&oh=00_AfA6d8GVMAWmShj1QhY86_20CW62yhL3FqggXKVk6ltplg&oe=65F17F28" />
+          <img src="https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745" />
         </div>
 
       </div>

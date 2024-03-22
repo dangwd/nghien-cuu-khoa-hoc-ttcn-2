@@ -8,6 +8,7 @@
         <a-menu-item key="1"><router-link to="/user-account">Quản lý tài khoản</router-link></a-menu-item>
         <a-menu-item key="2"><router-link to="/document-manage">Quản lý tài liệu</router-link></a-menu-item>
         <a-menu-item key="3"><router-link to="/post-manage">Quản lý bài viết</router-link></a-menu-item>
+        <a-menu-item key="4"><router-link to="/">Trang người dùng</router-link></a-menu-item>
 
       </a-menu>
       <a-space>

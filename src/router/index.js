@@ -91,7 +91,13 @@ router.beforeEach((to, from, next) => {
     if (store.state.token === null) {
       next({ name: 'Login' });
     } else {
-      next();
+      const vuexData = JSON.parse(localStorage.getItem('vuex'));
+      const userRole = vuexData.user.role;
+      if (to.meta.role && userRole !== to.meta.role) {
+        next({ name: 'masterView' });
+      } else {
+        next();
+      }
     }
   } else {
     next();
