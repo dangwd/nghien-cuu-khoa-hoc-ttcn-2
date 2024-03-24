@@ -27,7 +27,7 @@
       <div class="dropdown dropdown-end">
         <label tabindex="0" class="btn btn-ghost btn-circle avatar">
           <div class="w-10 rounded-full">
-            <img src="https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745" />
+            <img :src="avatar" />
           </div>
         </label>
         <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
@@ -60,6 +60,11 @@ const fullName = computed(() => {
   const vuexData = JSON.parse(localStorage.getItem('vuex'));
 
   return vuexData.user.fullName;
+});
+const avatar = computed(() => {
+  const vuexData = JSON.parse(localStorage.getItem('vuex'));
+
+  return vuexData.user.avatar;
 });
 const logout = () => {
   localStorage.removeItem('vuex');

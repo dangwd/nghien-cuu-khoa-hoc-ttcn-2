@@ -43,32 +43,49 @@
   </section>
 </template>
 
-<script setup>
+
+<script>
 import { useStore } from 'vuex';
-import { ref } from 'vue';
 import router from '@/router';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
-const store = useStore();
 
-const credentials = ref({
-  username: '',
-  password: ''
-});
-const login = async () => {
-  try {
-    await store.dispatch('login', credentials.value);
-    router.push({ name: 'Homepage' });
-    notify()
-  } catch (err) {
-    console.error(err)
-  }
-}
-const notify = () => {
-  toast("Chào mừng bạn quay trở lại!", {
-    autoClose: 3000,
-  });
-}
+export default {
+  setup() {
+    const store = useStore();
+
+    return {
+      store,
+      router,
+      toast,
+    };
+  },
+  data() {
+    return {
+      credentials: {
+        username: '',
+        password: ''
+      },
+    };
+  },
+  methods: {
+    async login() {
+      try {
+        await this.store.dispatch('login', this.credentials);
+        this.router.push({ name: 'Homepage' });
+        this.notify();
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    notify() {
+      this.toast("Chào mừng bạn quay trở lại!", {
+        autoClose: 100000,
+      });
+    },
+  },
+};
 </script>
+
 
 <style scope></style>

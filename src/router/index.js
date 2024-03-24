@@ -4,6 +4,12 @@ import store from '@/store';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior() {
+    return {
+      top: 0,
+      behavior: "smooth"
+    }
+  },
   routes: [
     {
       path: '/login',
@@ -30,11 +36,17 @@ const router = createRouter({
           name: 'Document',
           path: '/document-manage',
           component: () => import('../views/dashboard/document/index.vue')
-        }, {
+        },
+        {
           name: 'Post',
           path: '/post-manage',
           component: () => import('../views/dashboard/posts/index.vue')
-        }
+        },
+        {
+          name: 'Category',
+          path: '/category',
+          component: () => import('../views/dashboard/category/index.vue')
+        },
       ]
     },
     {
@@ -94,7 +106,7 @@ router.beforeEach((to, from, next) => {
       const vuexData = JSON.parse(localStorage.getItem('vuex'));
       const userRole = vuexData.user.role;
       if (to.meta.role && userRole !== to.meta.role) {
-        next({ name: 'masterView' });
+        next({ name: 'Homepage' });
       } else {
         next();
       }

@@ -31,3 +31,14 @@ export const signup = (username, password, fullName) => api.post('/regis', {
 })
 //All user
 export const getAllUser = () => api.get('/admin/all-user')
+
+
+//All Category
+export const getAllCategory = () => api.get('/category/public/find-all-list')
+//Create Category
+export const createCategory = (name, image, categoryType) => api.post('/category/admin/saveOrUpdate', {
+  name, image, categoryType
+})
+export const editCategory = (id, name, image, categoryType) => api.post('/category/admin/saveOrUpdate', {
+  id, name, image, categoryType
+})

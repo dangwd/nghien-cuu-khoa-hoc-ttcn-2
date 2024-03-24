@@ -20,8 +20,8 @@
           <td class="w-4 py-4 px-3">
             <div class="flex">
               <div>
-                <Button btnClass="bg-none text-blue-500 hover:underline"
-                  :config="{ label: 'Sửa', click: () => edit(row) }">Sửa</Button>
+                <Button btnIcon="icon" btnClass="bg-none text-blue-500 hover:underline"
+                  :config="{ label: 'Cấu hình', click: () => edit(row) }"></Button>
               </div>
             </div>
           </td>
@@ -47,17 +47,24 @@
       <Button :config="{ label: 'Tạo tài khoản', click: () => createAccount() }">Trở lại</Button>
 
     </div>
-
   </div>
   <div v-if="state == 'edit'">
     <div class="flex justify-between pb-10">
-      <h1 class="p-3 font-bold text-xl">Chỉnh sửa User</h1>
+      <h1 class="p-3 font-bold text-xl">Cấu hình tài khoản</h1>
       <div>
         <Button :config="{ label: 'Trờ lại', click: () => back() }">Trở lại</Button>
       </div>
     </div>
-    <div>
-      Chỉnh sửa tài khoản
+    <div class=" p-6 mx-auto bg-white border max-w-2xl border-gray-200 rounded-xl shadow grid gap-8">
+      <InputField @input-change="setName" :value="dataTable.param.username" labelField="username" typeInput="text"
+        title="Tên tài khoản"></InputField>
+      <InputField @input-change="setPassword" :value="dataTable.param.password" labelField="password"
+        typeInput="password" title="Mật khẩu"></InputField>
+      <InputField @input-change="setFullName" :value="dataTable.param.fullName" labelField="fullName" typeInput="text"
+        title="Tên người dùng"></InputField>
+      <div class="flex items-center gap-2">
+        <Button :config="{ label: 'Sửa', click: () => editAccount(dataTable.param.id) }"></Button>
+      </div>
     </div>
   </div>
 </template>
@@ -80,14 +87,22 @@ export default {
       createParam: {
         username: "",
         password: "",
+        actived: true,
+        avatar: "",
+        role: "ROLE_USER",
         fullName: "",
       },
       dataTable: {
         headers: ['ID', 'Tên người dùng', 'Tài khoản', 'Vai trò', 'Ngày tạo', 'Thao tác'],
         data: [],
         param: {
+          id: "",
           username: "",
-          email: ""
+          password: "",
+          fullName: "",
+          actived: true,
+          avatar: "",
+          role: ""
         }
       }
     }
@@ -117,7 +132,6 @@ export default {
     edit(user) {
       this.state = 'edit'
       this.dataTable.param.name = user.name
-      this.dataTable.param.email = user.email
       console.log(user)
     },
     async fetchAllUser() {
@@ -133,9 +147,13 @@ export default {
         try {
           const res = await signup(
             this.createParam.username,
-            this.createParam.password.password,
-            this.createParam.fullName
-          )
+            this.createParam.password,
+            this.createParam.fullName,
+          ).then(() => {
+            this.showSuccess();
+            this.fetchAllUser();
+            this.state = 'default'
+          })
           console.log(res)
 
 
@@ -146,6 +164,9 @@ export default {
         this.showError()
       }
 
+    },
+    editAccount(user) {
+      console.log(user)
     },
     formatRole(role) {
       switch (role) {
