@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar bg-white fixed z-10">
+  <div class="navbar bg-white fixed z-50">
     <div class="navbar-start flex gap-2 items-center">
       <router-link to="/"><img class="w-14 h-auto" src="../assets/img/logofita.png" alt="" />
       </router-link>

@@ -1,35 +1,38 @@
 <template>
   <div>
-    <div class="pb-5" v-if="postList">
-      <new-post-view />
-    </div>
-    <div class="post" v-if="postList">
-      <ul>
-        <li v-for="(post, index) in postList" :key="index">
-          <router-link :to="'/detail-post/' + post.id" data-aos="fade-right"
-            class="card card-side bg-base-100 shadow-xl my-4 hover:bg-gray-100 hover:shadow-lg">
-            <div class="card-body p-10">
-              <div class="flex gap-6">
-                <h2 class="card-title">{{ post.title }}</h2>
-                <div class="font-semibold">
-                  <div class="badge badge-lg badge-primary">#{{ post.tag }}</div>
-                  <div class="badge badge-lg badge-accent">#{{ post.subtag }}</div>
+
+    <div class="mx-96">
+      <div class="pb-5">
+        <new-post-view />
+      </div>
+      <div class="post">
+        <ul>
+          <li v-for="(post, index) in postList" :key="index">
+            <router-link :to="'/detail-post/' + post.id" data-aos="fade-right"
+              class="card card-side bg-base-100 shadow-xl my-4 hover:bg-gray-100 hover:shadow-lg">
+              <div class="card-body p-10">
+                <div class="flex gap-6">
+                  <h2 class="card-title">{{ post.title }}</h2>
+                  <div class="font-semibold">
+                    <div class="badge badge-lg badge-primary">#{{ post.tag }}</div>
+                    <div class="badge badge-lg badge-accent">#{{ post.subtag }}</div>
+                  </div>
                 </div>
-              </div>
-              <p class="italic flex justify-center">Bấm vào để xem chi tiết bài viết</p>
-              <!-- <div class="card-actions justify-end">
+                <p class="italic flex justify-center">Bấm vào để xem chi tiết bài viết</p>
+                <!-- <div class="card-actions justify-end">
                 <router-link :to="'/detail-post/' + post.id"><button
                     class="btn btn-primary rounded-full">Xem</button></router-link>
               </div> -->
-            </div>
-          </router-link>
-        </li>
-      </ul>
+              </div>
+            </router-link>
+          </li>
+        </ul>
+      </div>
     </div>
-    <div v-else>
+    <!-- <div v-else>
       <h1>Loading...</h1>
       <span class="loading loading-bars loading-lg"></span>
-    </div>
+    </div> -->
   </div>
 </template>
 <script setup>

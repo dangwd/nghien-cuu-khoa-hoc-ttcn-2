@@ -3,7 +3,7 @@
     <div class="card-body">
       <div class="avatar">
         <div class="w-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src="https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745" />
+          <img :src="avatarUrl" />
         </div>
 
       </div>
@@ -44,8 +44,17 @@
   </div>
 </template>
 
-<script setup>
-
+<script>
+export default {
+  computed: {
+    avatarUrl() {
+      const dataLocal = localStorage.getItem('vuex');
+      const parsedData = JSON.parse(dataLocal);
+      const avatar = parsedData.user.avatar
+      return avatar
+    }
+  }
+}
 
 </script>
 

@@ -139,11 +139,9 @@ export default {
     },
     edit(category) {
       this.state = 'edit'
-      this.dataTable.param.id = category.id,
-        this.dataTable.param.name = category.name,
-        this.dataTable.param.image = category.image,
-        this.dataTable.param.categoryType = category.categoryType,
-        console.log(category)
+      this.dataTable.param.name = category.name
+      this.dataTable.param.categoryType = category.categoryType
+
     },
     async fetchAllCategory() {
       try {

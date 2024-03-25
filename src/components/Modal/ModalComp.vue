@@ -1,6 +1,6 @@
 <template>
   <label :for="modalIdProps" :class="customClass">
-    {{labelBtn}}
+    {{ labelBtn }}
   </label>
   <input type="checkbox" :id="modalIdProps" class="modal-toggle" />
   <div class="modal" role="dialog">
@@ -11,7 +11,7 @@
       <p class="py-4">
         <slot name="content"></slot>
       </p>
-      <p class="py-4">
+      <p class="pt-4">
         <slot name="footer"></slot>
       </p>
       <div class="modal-action">

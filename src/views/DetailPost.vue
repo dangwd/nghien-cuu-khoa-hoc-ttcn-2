@@ -1,5 +1,5 @@
-<template >
-  <div>
+<template>
+  <div class="w-[1000px] mx-auto">
     <div>
       <h1 class="text-xl font-bold text-left">Chi tiết bài đăng</h1>
     </div>
