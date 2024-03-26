@@ -1,7 +1,7 @@
-// store/index.js
 import { createStore } from 'vuex';
-import api from '../api/auth/api';
 import createPersistedState from 'vuex-persistedstate';
+import api from '../api/auth/api';
+
 export default createStore({
   plugins: [createPersistedState()],
 

@@ -42,3 +42,4 @@ export const createCategory = (name, image, categoryType) => api.post('/category
 export const editCategory = (id, name, image, categoryType) => api.post('/category/admin/saveOrUpdate', {
   id, name, image, categoryType
 })
+export const deleteCategory = (id) => api.delete(`http://localhost:8083/api/category/admin/delete?id=${id}`)

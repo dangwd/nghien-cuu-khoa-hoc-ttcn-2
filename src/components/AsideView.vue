@@ -9,10 +9,10 @@
         </div>
         <ul class="space-y-4 font-medium p-3">
           <li>
-            <h1>Code with me</h1>
+            <h1 class="underline">#Code with me</h1>
           </li>
           <li>
-            <h1>Code together</h1>
+            <h1 class="underline">#Code together</h1>
           </li>
         </ul>
       </div>

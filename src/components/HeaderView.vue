@@ -37,7 +37,7 @@
             </router-link>
           </li>
           <li v-if="userRole == 'ROLE_ADMIN'">
-            <router-link to="/dashboard">Dashboard
+            <router-link to="/user-account">Dashboard
             </router-link>
           </li>
           <li><button @click="logout">Đăng xuất</button></li>

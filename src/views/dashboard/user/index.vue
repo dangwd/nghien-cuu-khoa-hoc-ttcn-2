@@ -7,26 +7,28 @@
       </div>
     </div>
     <div class="mx-auto">
-      <TableComp :headers="dataTable.headers">
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-          v-for="(row, index) in dataTable.data" :key="index">
-          <th scope="col" class="py-4 px-3 w-4">
-            {{ row.id }}
-          </th>
-          <td class="w-4 py-4 px-3">{{ row.fullName }}</td>
-          <td class="w-4 py-4 px-3">{{ row.username }}</td>
-          <td class="w-4 py-4 px-3">{{ formatRole(row.role) }}</td>
-          <td class="w-4 py-4 px-3">{{ row.createdDate }}</td>
-          <td class="w-4 py-4 px-3">
-            <div class="flex">
-              <div>
-                <Button btnIcon="icon" btnClass="bg-none text-blue-500 hover:underline"
-                  :config="{ label: 'Cấu hình', click: () => edit(row) }"></Button>
+      <transition name="fade">
+        <TableComp v-if="show" :headers="dataTable.headers">
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+            v-for="(row, index) in dataTable.data" :key="index">
+            <th scope="col" class="py-4 px-3 w-4">
+              {{ row.id }}
+            </th>
+            <td class="w-3 py-2 px-3">{{ row.fullName }}</td>
+            <td class="w-3 py-2 px-3">{{ row.username }}</td>
+            <td class="w-3 py-2 px-3">{{ formatRole(row.role) }}</td>
+            <td class="w-3 py-2 px-3">{{ row.createdDate }}</td>
+            <td class="w-3 py-2 px-3">
+              <div class="flex">
+                <div>
+                  <Button btnIcon="icon" btnClass="bg-none text-blue-500 hover:underline"
+                    :config="{ label: 'Cấu hình', click: () => edit(row) }"></Button>
+                </div>
               </div>
-            </div>
-          </td>
-        </tr>
-      </TableComp>
+            </td>
+          </tr>
+        </TableComp>
+      </transition>
     </div>
   </div>
   <div v-if="state == 'create'">
@@ -80,9 +82,13 @@ export default {
   },
   mounted() {
     this.fetchAllUser()
+    setTimeout(() => {
+      this.show = true
+    }, 500)
   },
   data() {
     return {
+      show: false,
       state: 'default',
       createParam: {
         username: "",
@@ -179,4 +185,28 @@ export default {
   }
 }
 </script>
-<style></style>
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  transition: all 0.5s ease-in-out;
+}
+
+.fade-enter-from {
+  transform: translateY(-20px);
+  opacity: 0;
+}
+
+.fade-enter-to {
+  transform: translateY(0);
+  opacity: 1;
+}
+</style>

@@ -1,7 +1,9 @@
 <template>
-  <div>
-
-    <div class="mx-96">
+  <div v-if="postList.length > 0">
+    <div class="w-64 bg-gray-200">
+      <AsideView />
+    </div>
+    <div class="max-w-4xl mx-auto">
       <div class="pb-5">
         <new-post-view />
       </div>
@@ -19,24 +21,22 @@
                   </div>
                 </div>
                 <p class="italic flex justify-center">Bấm vào để xem chi tiết bài viết</p>
-                <!-- <div class="card-actions justify-end">
-                <router-link :to="'/detail-post/' + post.id"><button
-                    class="btn btn-primary rounded-full">Xem</button></router-link>
-              </div> -->
               </div>
             </router-link>
           </li>
         </ul>
       </div>
     </div>
-    <!-- <div v-else>
-      <h1>Loading...</h1>
+  </div>
+  <div v-else>
+    <div class="flex justify-center">
       <span class="loading loading-bars loading-lg"></span>
-    </div> -->
+    </div>
   </div>
 </template>
 <script setup>
 import NewPostView from '@/components/NewPostView.vue';
+import AsideView from '@/components/AsideView.vue';
 import { onMounted } from 'vue';
 import AOS from 'aos'
 const postList = [

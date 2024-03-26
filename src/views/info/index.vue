@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="max-w-4xl mx-auto">
     <div class="card w-full bg-base-100 shadow-xl">
       <div class="flex">
         <figure class="px-10 py-10">
