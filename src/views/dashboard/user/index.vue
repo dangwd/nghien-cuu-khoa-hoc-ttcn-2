@@ -1,14 +1,19 @@
 <template>
-  <div v-if="state == 'default'">
-    <div class="flex justify-between pb-10">
-      <h1 class="p-3 font-bold text-xl">Quản lý tài khoản người dùng</h1>
-      <div>
-        <Button :config="{ label: 'Tạo', click: () => create() }">Tạo</Button>
-      </div>
+  <div v-if="isLoading">
+    <div class="flex items-center justify-center h-screen">
+      <div class="rounded-md h-12 w-12 border-4 border-t-4 border-blue-500 animate-spin absolute"></div>
     </div>
-    <div class="mx-auto">
-      <transition name="fade">
-        <TableComp v-if="show" :headers="dataTable.headers">
+  </div>
+  <div v-else>
+    <div v-if="state == 'default'">
+      <div class="flex justify-between pb-10">
+        <h1 class="p-3 font-bold text-xl">Quản lý tài khoản người dùng</h1>
+        <div>
+          <Button :config="{ label: 'Tạo', click: () => create() }">Tạo</Button>
+        </div>
+      </div>
+      <div class="mx-auto">
+        <TableComp :headers="dataTable.headers">
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
             v-for="(row, index) in dataTable.data" :key="index">
             <th scope="col" class="py-4 px-3 w-4">
@@ -28,44 +33,45 @@
             </td>
           </tr>
         </TableComp>
-      </transition>
-    </div>
-  </div>
-  <div v-if="state == 'create'">
-    <div class="flex justify-between pb-10">
-      <h1 class="p-3 font-bold text-xl">Tạo tài khoản người dùng</h1>
-      <div>
-        <Button :config="{ label: 'Trờ lại', click: () => back() }">Trở lại</Button>
+
       </div>
     </div>
+    <div v-if="state == 'create'">
+      <div class="flex justify-between pb-10">
+        <h1 class="p-3 font-bold text-xl">Tạo tài khoản người dùng</h1>
+        <div>
+          <Button :config="{ label: 'Trờ lại', click: () => back() }">Trở lại</Button>
+        </div>
+      </div>
 
-    <div class=" p-6 mx-auto bg-white border max-w-2xl border-gray-200 rounded-xl shadow grid gap-8">
-      <InputField @input-change="setName" :value="createParam.username" labelField="username" typeInput="text"
-        title="Tên tài khoản"></InputField>
-      <InputField @input-change="setPassword" :value="createParam.password" labelField="password" typeInput="password"
-        title="Mật khẩu"></InputField>
-      <InputField @input-change="setFullName" :value="createParam.fullName" labelField="fullName" typeInput="text"
-        title="Tên người dùng"></InputField>
-      <Button :config="{ label: 'Tạo tài khoản', click: () => createAccount() }">Trở lại</Button>
+      <div class=" p-6 mx-auto bg-white border max-w-2xl border-gray-200 rounded-xl shadow grid gap-8">
+        <InputField @input-change="setName" :value="createParam.username" labelField="username" typeInput="text"
+          title="Tên tài khoản"></InputField>
+        <InputField @input-change="setPassword" :value="createParam.password" labelField="password" typeInput="password"
+          title="Mật khẩu"></InputField>
+        <InputField @input-change="setFullName" :value="createParam.fullName" labelField="fullName" typeInput="text"
+          title="Tên người dùng"></InputField>
+        <Button :config="{ label: 'Tạo tài khoản', click: () => createAccount() }">Trở lại</Button>
 
-    </div>
-  </div>
-  <div v-if="state == 'edit'">
-    <div class="flex justify-between pb-10">
-      <h1 class="p-3 font-bold text-xl">Cấu hình tài khoản</h1>
-      <div>
-        <Button :config="{ label: 'Trờ lại', click: () => back() }">Trở lại</Button>
       </div>
     </div>
-    <div class=" p-6 mx-auto bg-white border max-w-2xl border-gray-200 rounded-xl shadow grid gap-8">
-      <InputField @input-change="setName" :value="dataTable.param.username" labelField="username" typeInput="text"
-        title="Tên tài khoản"></InputField>
-      <InputField @input-change="setPassword" :value="dataTable.param.password" labelField="password"
-        typeInput="password" title="Mật khẩu"></InputField>
-      <InputField @input-change="setFullName" :value="dataTable.param.fullName" labelField="fullName" typeInput="text"
-        title="Tên người dùng"></InputField>
-      <div class="flex items-center gap-2">
-        <Button :config="{ label: 'Sửa', click: () => editAccount(dataTable.param.id) }"></Button>
+    <div v-if="state == 'edit'">
+      <div class="flex justify-between pb-10">
+        <h1 class="p-3 font-bold text-xl">Cấu hình tài khoản</h1>
+        <div>
+          <Button :config="{ label: 'Trờ lại', click: () => back() }">Trở lại</Button>
+        </div>
+      </div>
+      <div class=" p-6 mx-auto bg-white border max-w-2xl border-gray-200 rounded-xl shadow grid gap-8">
+        <InputField @input-change="setName" :value="dataTable.param.username" labelField="username" typeInput="text"
+          title="Tên tài khoản"></InputField>
+        <InputField @input-change="setPassword" :value="dataTable.param.password" labelField="password"
+          typeInput="password" title="Mật khẩu"></InputField>
+        <InputField @input-change="setFullName" :value="dataTable.param.fullName" labelField="fullName" typeInput="text"
+          title="Tên người dùng"></InputField>
+        <div class="flex items-center gap-2">
+          <Button :config="{ label: 'Sửa', click: () => editAccount(dataTable.param.id) }"></Button>
+        </div>
       </div>
     </div>
   </div>
@@ -82,13 +88,15 @@ export default {
   },
   mounted() {
     this.fetchAllUser()
-    setTimeout(() => {
-      this.show = true
-    }, 500)
+      .then(() => {
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 700)
+      })
   },
   data() {
     return {
-      show: false,
+      isLoading: true,
       state: 'default',
       createParam: {
         username: "",
@@ -185,28 +193,4 @@ export default {
   }
 }
 </script>
-<style>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.fade-enter-active {
-  transition: all 0.5s ease-in-out;
-}
-
-.fade-enter-from {
-  transform: translateY(-20px);
-  opacity: 0;
-}
-
-.fade-enter-to {
-  transform: translateY(0);
-  opacity: 1;
-}
-</style>
+<style></style>

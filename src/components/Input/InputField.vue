@@ -12,7 +12,7 @@
     <!-- Input -->
     <div v-else>
       <label :for="labelField" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ title }}</label>
-      <input @input="inputChange" v-model="valueText" :type="typeInput" :id="labelField"
+      <input @input="inputChange" v-model="valueText" :type="typeInput" :id="labelField" :disabled="disabled"
         class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
         required />
     </div>
@@ -29,6 +29,10 @@ export default {
     styleClass: {
       type: String,
       default: ""
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     },
     labelField: {
       type: String,

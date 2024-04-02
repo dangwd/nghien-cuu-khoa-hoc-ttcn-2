@@ -13,8 +13,15 @@
           <th scope="col" class="py-4 px-3 w-4">
             {{ row.id }}
           </th>
-          <td class="w-4 py-4 px-3">{{ row.username }}</td>
-          <td class="w-4 py-4 px-3">{{ row.email }}</td>
+          <td class="w-4 py-4 px-3">{{ row.title }}</td>
+
+          <td class="w-4 py-4 px-3">
+            <img class="w-24" :src="row.image" alt="">
+          </td>
+          <td class="w-4 py-4 px-3">{{ row.description }}</td>
+          <td class="w-4 py-4 px-3">{{ row.createBy }}</td>
+          <td class="w-4 py-4 px-3">{{ row.createDate }}</td>
+
           <td class="w-4 py-4 px-3">
             <div class="flex">
               <div>
@@ -41,7 +48,7 @@
     <div class="flex justify-between pb-10">
       <h1 class="p-3 font-bold text-xl">Chỉnh sửa User</h1>
       <div>
-        <Button :config="{ label: 'Trờ lại', click: () => back() }">Trở lại</Button>
+        <Button :config="{ label: 'Trờ lại', click: () => back() }"></Button>
       </div>
     </div>
     <div>
@@ -59,27 +66,39 @@ export default {
     return {
       state: 'default',
       dataTable: {
-        headers: ['ID', 'Tên người dùng', 'Email', 'Thao tác'],
+        headers: ['ID', 'Tiêu đề bài viết', 'Ảnh', 'Mô tả', 'Người đăng bài', 'Ngày tạo', 'Thao tác'],
         data: [
           {
             id: 1,
-            username: 'Dang Nguyen',
-            email: 'dang@gmail.com'
+            title: 'Bài viết 1',
+            image: 'https://mevn-public.s3-ap-southeast-1.amazonaws.com/marketenterprise.vn/wp-images/2021/04/06170614/vuejs.png',
+            description: 'Mô tả bài viết 1',
+            createBy: 'Đăng',
+            createDate: "2/4"
           },
           {
             id: 2,
-            username: 'Tuan Nguyen',
-            email: 'tuan@gmail.com'
+            title: 'Bài viết 1',
+            image: 'https://mevn-public.s3-ap-southeast-1.amazonaws.com/marketenterprise.vn/wp-images/2021/04/06170614/vuejs.png',
+            description: 'Mô tả bài viết 1',
+            createBy: 'Đăng',
+            createDate: "2/4"
           },
           {
             id: 3,
-            username: 'Binh Nguyen',
-            email: 'binh@gmail.com'
+            title: 'Bài viết 1',
+            image: 'https://teky.edu.vn/blog/wp-content/uploads/2021/07/ban-co-biet-angular-la-gi-khong.jpg',
+            description: 'Mô tả bài viết 1',
+            createBy: 'Đăng',
+            createDate: "2/4"
           },
           {
             id: 4,
-            username: 'Dang Nguyen',
-            email: 'dang@gmail.com'
+            title: 'Bài viết 1',
+            image: 'https://thuanbui.me/wp-content/uploads/2021/08/react-js.png',
+            description: 'Mô tả bài viết 1',
+            createBy: 'Đăng',
+            createDate: "2/4"
           },
         ]
       }

@@ -13,11 +13,6 @@
 
       </a-menu>
       <a-space>
-        <a-avatar style="background-color: #87d068">
-          <template #icon>
-            <UserOutlined />
-          </template>
-        </a-avatar>
       </a-space>
 
     </a-layout-header>
@@ -33,5 +28,5 @@
 
 <script setup>
 import { ref } from 'vue';
-const selectedKeys = ref(['']);
+const selectedKeys = ref(['1']);
 </script>
