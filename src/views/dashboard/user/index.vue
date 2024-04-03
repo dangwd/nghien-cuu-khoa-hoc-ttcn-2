@@ -43,7 +43,6 @@
           <Button :config="{ label: 'Trờ lại', click: () => back() }">Trở lại</Button>
         </div>
       </div>
-
       <div class=" p-6 mx-auto bg-white border max-w-2xl border-gray-200 rounded-xl shadow grid gap-8">
         <InputField @input-change="setName" :value="createParam.username" labelField="username" typeInput="text"
           title="Tên tài khoản"></InputField>

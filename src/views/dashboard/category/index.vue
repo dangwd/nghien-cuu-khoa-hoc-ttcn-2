@@ -46,8 +46,9 @@
       <div class=" p-6 mx-auto bg-white border max-w-2xl border-gray-200 rounded-xl shadow grid gap-8">
         <InputField @input-change="setName" :value="createParam.name" labelField="name" typeInput="text"
           title="Tên danh mục"></InputField>
-        <InputField @input-change="setCategoryType" :value="createParam.categoryType" labelField="categoryType"
-          typeInput="text" title="Kiểu danh mục"></InputField>
+        <InputField @select-change="setCategoryType" :options="dataTable.options" type="select"
+          labelField="categoryType" title="Kiểu danh mục">
+        </InputField>
         <Button :config="{ label: 'Tạo danh mục', click: () => createCategory() }"></Button>
       </div>
     </div>

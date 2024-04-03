@@ -1,63 +1,90 @@
 <template>
-  <div v-if="state == 'default'">
-    <div class="flex justify-between pb-10">
-      <h1 class="p-3 font-bold text-xl">Quản lý bài viết</h1>
-      <div>
-        <Button :config="{ label: 'Tạo', click: () => create() }">Tạo</Button>
-      </div>
+  <div v-if="isLoading">
+    <div class="flex items-center justify-center h-screen">
+      <div class="rounded-md h-12 w-12 border-4 border-t-4 border-blue-500 animate-spin absolute"></div>
     </div>
-    <div class="mx-auto">
-      <TableComp :headers="dataTable.headers">
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-          v-for="(row, index) in dataTable.data" :key="index">
-          <th scope="col" class="py-4 px-3 w-4">
-            {{ row.id }}
-          </th>
-          <td class="w-4 py-4 px-3">{{ row.title }}</td>
+  </div>
+  <div v-else>
+    <div v-if="state == 'default'">
+      <div class="flex justify-between pb-10">
+        <h1 class="p-3 font-bold text-xl">Quản lý bài viết</h1>
+        <div>
+          <Button btnIcon="icon" iconBtnClass="bx bxs-edit-alt"
+            :config="{ label: 'Viết bài', click: () => create() }"></Button>
+        </div>
+      </div>
+      <div class="mx-auto">
+        <TableComp :headers="dataTable.headers">
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+            v-for="(row, index) in dataTable.data" :key="index">
+            <th scope="col" class="py-4 px-3 w-4">
+              {{ row.id }}
+            </th>
+            <td class="w-4 py-4 px-3">{{ index + 1 }}</td>
 
-          <td class="w-4 py-4 px-3">
-            <img class="w-24" :src="row.image" alt="">
-          </td>
-          <td class="w-4 py-4 px-3">{{ row.description }}</td>
-          <td class="w-4 py-4 px-3">{{ row.createBy }}</td>
-          <td class="w-4 py-4 px-3">{{ row.createDate }}</td>
+            <td class="w-4 py-4 px-3">{{ row.title }}</td>
 
-          <td class="w-4 py-4 px-3">
-            <div class="flex">
-              <div>
-                <button @click="edit()">Sửa</button>
+            <td class="w-4 py-4 px-3">
+              <img class="w-24 rounded-lg" :src="row.image" alt="">
+            </td>
+            <td class="w-4 py-4 px-3">{{ row.description }}</td>
+            <td class="w-4 py-4 px-3">{{ row.user.fullName }}</td>
+            <td :class="statusClass(row.actived)">{{ formatStatus(row.actived) }}</td>
+            <td class="w-4 py-4 px-3">{{ row.createdDate }}</td>
+
+            <td class="w-4 py-4 px-3">
+              <div class="flex">
+                <div>
+                  <button @click="edit()">Sửa</button>
+                </div>
               </div>
-            </div>
-          </td>
-        </tr>
-      </TableComp>
-    </div>
-  </div>
-  <div v-if="state == 'create'">
-    <div class="flex justify-between pb-10">
-      <h1 class="p-3 font-bold text-xl">Tạo tài bài viết</h1>
-      <div>
-        <Button :config="{ label: 'Trờ lại', click: () => back() }">Trở lại</Button>
+            </td>
+          </tr>
+        </TableComp>
       </div>
     </div>
-    <div>
-      Tạo tài khoản...
-    </div>
-  </div>
-  <div v-if="state == 'edit'">
-    <div class="flex justify-between pb-10">
-      <h1 class="p-3 font-bold text-xl">Chỉnh sửa User</h1>
+    <div v-if="state == 'create'">
+      <div class="flex justify-between pb-10">
+        <h1 class="p-3 font-bold text-xl">Tạo bài viết</h1>
+        <div>
+          <Button :config="{ label: 'Trờ lại', click: () => back() }">Trở lại</Button>
+        </div>
+      </div>
+      <div class=" p-6 mx-auto bg-white border max-w-2xl border-gray-200 rounded-xl shadow grid gap-8">
+        <InputField @input-change="setTitle" labelField="title" typeInput="text" title="Tiêu đề bài viết"></InputField>
+        <InputField @input-change="setDescription" labelField="description" typeInput="text" title="Mô tả"></InputField>
+        <InputField @input-change="setContent" labelField="content" typeInput="text" title="Nội dung bài viết">
+        </InputField>
+        <InputField @input-change="setImage" labelField="image" typeInput="text" title="Ảnh">
+        </InputField>
+        <InputField @select-change="setCategory" :options="dataTable.options" type="select" labelField="category"
+          title="Danh mục bài viết">
+        </InputField>
+        <Button btnIcon="icon" iconBtnClass="bx bx-check"
+          :config="{ label: 'Đăng bài', click: () => createPost() }"></Button>
+      </div>
       <div>
-        <Button :config="{ label: 'Trờ lại', click: () => back() }"></Button>
+
       </div>
     </div>
-    <div>
-      Chỉnh sửa tài khoản
+    <div v-if="state == 'edit'">
+      <div class="flex justify-between pb-10">
+        <h1 class="p-3 font-bold text-xl">Chỉnh sửa User</h1>
+        <div>
+          <Button :config="{ label: 'Trờ lại', click: () => back() }"></Button>
+        </div>
+      </div>
+      <div>
+        Chỉnh sửa tài khoản
+      </div>
     </div>
   </div>
 </template>
 <script>
 import TableComp from '@/components/Table/TableComp.vue'
+import { getAllPost, createPost } from '@/api/auth/api'
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 export default {
   components: {
     TableComp
@@ -65,46 +92,86 @@ export default {
   data() {
     return {
       state: 'default',
+      isLoading: true,
       dataTable: {
-        headers: ['ID', 'Tiêu đề bài viết', 'Ảnh', 'Mô tả', 'Người đăng bài', 'Ngày tạo', 'Thao tác'],
-        data: [
-          {
-            id: 1,
-            title: 'Bài viết 1',
-            image: 'https://mevn-public.s3-ap-southeast-1.amazonaws.com/marketenterprise.vn/wp-images/2021/04/06170614/vuejs.png',
-            description: 'Mô tả bài viết 1',
-            createBy: 'Đăng',
-            createDate: "2/4"
-          },
-          {
-            id: 2,
-            title: 'Bài viết 1',
-            image: 'https://mevn-public.s3-ap-southeast-1.amazonaws.com/marketenterprise.vn/wp-images/2021/04/06170614/vuejs.png',
-            description: 'Mô tả bài viết 1',
-            createBy: 'Đăng',
-            createDate: "2/4"
-          },
-          {
-            id: 3,
-            title: 'Bài viết 1',
-            image: 'https://teky.edu.vn/blog/wp-content/uploads/2021/07/ban-co-biet-angular-la-gi-khong.jpg',
-            description: 'Mô tả bài viết 1',
-            createBy: 'Đăng',
-            createDate: "2/4"
-          },
-          {
-            id: 4,
-            title: 'Bài viết 1',
-            image: 'https://thuanbui.me/wp-content/uploads/2021/08/react-js.png',
-            description: 'Mô tả bài viết 1',
-            createBy: 'Đăng',
-            createDate: "2/4"
-          },
-        ]
+        headers: ['ID', 'STT', 'Tiêu đề bài viết', 'Ảnh', 'Mô tả', 'Người đăng bài', 'Trạng thái', 'Ngày tạo', 'Thao tác'],
+        data: [],
+        options: [
+          { text: 'DOCUMENT', value: 8 },
+          { text: 'BLOG', value: 9 },
+        ],
+        postParam: {
+          title: "",
+          description: "",
+          image: "",
+          content: "",
+          linkFiles: [],
+          listCategoryId: [],
+        }
       }
     }
   },
+  mounted() {
+    this.getAllPost().then(() => {
+      setTimeout(() => {
+        this.isLoading = false
+      }, 700)
+    })
+  },
   methods: {
+    setTitle(value) {
+      this.dataTable.postParam.title = value
+    },
+    setDescription(value) {
+      this.dataTable.postParam.description = value
+    },
+    setImage(value) {
+      this.dataTable.postParam.image = value
+    },
+    setContent(value) {
+      this.dataTable.postParam.content = value
+    },
+    setCategory(value) {
+      this.dataTable.postParam.listCategoryId = [value]
+    },
+    showError() {
+      toast.showError('Có lỗi xảy ra vui lòng kiểm tra lại!')
+    },
+    showSuccess() {
+      toast.success("Thao tác thành công!");
+    },
+    async getAllPost() {
+      try {
+        const res = await getAllPost();
+        this.dataTable.data = res.data.content
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    async createPost() {
+      if (this.dataTable.postParam.title !== "" && this.dataTable.postParam.content !== "") {
+        try {
+          await createPost(
+            this.dataTable.postParam.title,
+            this.dataTable.postParam.description,
+            this.dataTable.postParam.image,
+            this.dataTable.postParam.content,
+            this.dataTable.postParam.linkFiles,
+            this.dataTable.postParam.listCategoryId
+          ).then(() => {
+            this.showSuccess();
+            this.getAllPost();
+            setTimeout(() => {
+              this.state = 'default'
+            }, 1500)
+          })
+        } catch (err) {
+          console.log(err)
+        }
+      } else {
+        this.showError()
+      }
+    },
     back() {
       this.state = 'default'
     },
@@ -113,6 +180,23 @@ export default {
     },
     edit() {
       this.state = 'edit'
+    },
+    statusClass(value) {
+      switch (value) {
+        case true:
+          return 'w-4 py-4 px-3 text-green-500'
+        case false:
+          return 'w-4 py-4 px-3 text-yellow-500'
+      }
+    },
+    formatStatus(value) {
+      switch (value) {
+        case true:
+          return "Đã duyệt";
+        case false:
+          return "Chờ duyệt";
+      }
+
     }
   }
 }

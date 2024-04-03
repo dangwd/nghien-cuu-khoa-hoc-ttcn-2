@@ -55,7 +55,7 @@ export default {
     },
     options: {
       type: Array,
-      required: true
+      required: false
     }
   },
   computed: {

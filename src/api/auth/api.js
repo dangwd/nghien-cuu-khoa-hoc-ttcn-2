@@ -52,8 +52,15 @@ export const editCategory = (id, name, image, categoryType) => api.post('/catego
   id, name, image, categoryType
 })
 // Delete Category
-export const deleteCategory = (id) => api.delete(`http://localhost:8083/api/category/admin/delete?id=${id}`)
+export const deleteCategory = (id) => api.delete(`/category/admin/delete?id=${id}`)
 
 
 //=======================POSTS API=======================
-export const getAllPost = () => api.get()
+
+//For Admin
+export const getAllPost = () => api.get('/blog/blog-manager/find-all')
+
+export const createPost = (title, description, image, content, linkFiles, listCategoryId) => api.post('/blog/all/save', {
+  title, description, image, content, linkFiles, listCategoryId
+})
+// For User
