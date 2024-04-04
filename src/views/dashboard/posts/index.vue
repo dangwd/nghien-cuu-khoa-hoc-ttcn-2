@@ -8,6 +8,7 @@
     <div v-if="state == 'default'">
       <div class="flex justify-between pb-10">
         <h1 class="p-3 font-bold text-xl">Quản lý bài viết</h1>
+        <!-- <h1>Tổng số bài viết: {{ dataTable.data.length }}</h1> -->
         <div>
           <Button btnIcon="icon" iconBtnClass="bx bxs-edit-alt"
             :config="{ label: 'Viết bài', click: () => create() }"></Button>

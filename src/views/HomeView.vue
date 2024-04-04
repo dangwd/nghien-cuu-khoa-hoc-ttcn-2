@@ -13,7 +13,7 @@
             <router-link :to="'/detail-post/' + post.id" data-aos="fade-right"
               class="card card-side bg-base-100 shadow-xl my-4 hover:bg-gray-100 hover:shadow-lg">
               <div class="card-body p-10">
-                <div class="flex gap-6">
+                <div class="flex gap-6 mb-2">
                   <h2 class="card-title">{{ post.title }}</h2>
                   <div class="font-semibold">
                     <div class="badge badge-lg badge-primary">#{{ post.tag }}</div>
