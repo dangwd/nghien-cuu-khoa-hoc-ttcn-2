@@ -24,6 +24,9 @@
               <h1 class="leading-10">Vai trò: {{ formatRole(user.role) }}</h1>
             </div>
           </div>
+          <div class="mb-6">
+            Bài viết của bạn
+          </div>
         </div>
         <div v-if="state == 'edit'" class="w-full max-w-4xl mx-auto">
           <div class="bg-white shadow-xl rounded-xl p-6">

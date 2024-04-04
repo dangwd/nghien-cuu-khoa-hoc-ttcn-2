@@ -3,7 +3,7 @@
     <div>
       <h1 class="text-xl font-bold text-left">Giới thiệu</h1>
     </div>
-    <div data-aos="fade-right" class="py-5">
+    <div class="py-5">
       <h1 class="text-base font-medium text-left uppercase">Thông tin chung</h1>
       <div class="leading-10">
         <ul style="list-style-type:disc">
@@ -40,12 +40,12 @@
           </li>
         </ul>
       </div>
-      <div data-aos="fade-left">
+      <div>
         <img class="rounded-md m-auto"
           src="https://fita.vnua.edu.vn/wp-content/uploads/2023/06/74572383_2511728615779603_4008666081718697984_o-768x389.jpg"
           alt="">
       </div>
-      <div data-aos="fade-right" v-for="(intro, index) in introList" :key="index" class="text-left leading-10 py-5">
+      <div v-for="(intro, index) in introList" :key="index" class="text-left leading-10 py-5">
         <h1 class="text-base font-medium text-left uppercase">{{ intro.title }}</h1>
         <p class="text-left">{{ intro.params }}</p>
       </div>

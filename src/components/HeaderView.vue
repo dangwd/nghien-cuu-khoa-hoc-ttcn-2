@@ -10,7 +10,7 @@
         <li><router-link to="/">Trang chủ</router-link></li>
         <li><router-link to="/document">Tài liệu</router-link></li>
 
-        <li><router-link to="/news">Tin tức</router-link></li>
+        <li><router-link to="/news">Danh mục</router-link></li>
         <li>
           <router-link to="/notification">Thông báo</router-link>
         </li>

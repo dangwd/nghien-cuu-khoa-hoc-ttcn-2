@@ -64,3 +64,4 @@ export const createPost = (title, description, image, content, linkFiles, listCa
   title, description, image, content, linkFiles, listCategoryId
 })
 // For User
+export const getAllPostPublic = () => api.get('/blog/public/get-all-blog')

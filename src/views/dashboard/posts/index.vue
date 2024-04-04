@@ -18,25 +18,26 @@
         <TableComp :headers="dataTable.headers">
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
             v-for="(row, index) in dataTable.data" :key="index">
-            <th scope="col" class="py-4 px-3 w-4">
+            <th scope="col" class="py-2 px-3 w-4">
               {{ row.id }}
             </th>
-            <td class="w-4 py-4 px-3">{{ index + 1 }}</td>
+            <td class="w-4 py-2 px-3">{{ index + 1 }}</td>
 
-            <td class="w-4 py-4 px-3">{{ row.title }}</td>
+            <td class="w-4 py-2 px-3">{{ row.title }}</td>
 
-            <td class="w-4 py-4 px-3">
+            <td class="w-4 py-2 px-3">
               <img class="w-24 rounded-lg" :src="row.image" alt="">
             </td>
-            <td class="w-4 py-4 px-3">{{ row.description }}</td>
-            <td class="w-4 py-4 px-3">{{ row.user.fullName }}</td>
+            <td class="w-4 py-2 px-3">{{ row.description }}</td>
+            <td class="w-4 py-2 px-3">{{ row.user.fullName }}</td>
             <td :class="statusClass(row.actived)">{{ formatStatus(row.actived) }}</td>
             <td class="w-4 py-4 px-3">{{ row.createdDate }}</td>
 
             <td class="w-4 py-4 px-3">
               <div class="flex">
                 <div>
-                  <button @click="edit()">Sửa</button>
+                  <Button btnIcon="icon" btnClass="bg-none text-blue-500 hover:underline"
+                    :config="{ label: 'Cấu hình', click: () => edit(row) }"></Button>
                 </div>
               </div>
             </td>
@@ -70,13 +71,13 @@
     </div>
     <div v-if="state == 'edit'">
       <div class="flex justify-between pb-10">
-        <h1 class="p-3 font-bold text-xl">Chỉnh sửa User</h1>
+        <h1 class="p-3 font-bold text-xl">Chỉnh sửa bài viết</h1>
         <div>
           <Button :config="{ label: 'Trờ lại', click: () => back() }"></Button>
         </div>
       </div>
       <div>
-        Chỉnh sửa tài khoản
+        Chỉnh sửa bài viết
       </div>
     </div>
   </div>
@@ -179,15 +180,16 @@ export default {
     create() {
       this.state = 'create'
     },
-    edit() {
+    edit(row) {
       this.state = 'edit'
+      console.log(row)
     },
     statusClass(value) {
       switch (value) {
         case true:
           return 'w-4 py-4 px-3 text-green-500'
         case false:
-          return 'w-4 py-4 px-3 text-yellow-500'
+          return 'w-4 py-4 px-3 text-red-500'
       }
     },
     formatStatus(value) {
