@@ -64,4 +64,13 @@ export const createPost = (title, description, image, content, linkFiles, listCa
   title, description, image, content, linkFiles, listCategoryId
 })
 // For User
-export const getAllPostPublic = () => api.get('/blog/public/get-all-blog')
+export const getAllPostPublic = (pageNum) => api.get(`/blog/public/get-all-blog?page=${pageNum}&size=2`)
+
+// Get post by Id
+export const getPostById = (id) => api.get(`/blog/all/get-blog-by-id?id=${id}`)
+
+//Comment
+// Get cmt
+export const getCommentById = (id) => api.get(`comment/public/find-by-blog?blogId=${id}`)
+// Write cmt
+export const commentPost = (content, blogId) => api.post('/comment/all/save', { content, blogId })
