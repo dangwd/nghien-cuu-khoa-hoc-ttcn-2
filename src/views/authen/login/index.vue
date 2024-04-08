@@ -72,7 +72,9 @@ export default {
     async login() {
       try {
         await this.store.dispatch('login', this.param).then(() => {
-          this.router.push({ name: 'Homepage' });
+          setTimeout(() => {
+            this.router.push({ name: 'Homepage' });
+          }, 1000)
           this.notify();
         });
 
@@ -82,7 +84,6 @@ export default {
     },
     notify() {
       this.toast("Chào mừng bạn quay trở lại!", {
-        autoClose: 100000,
       });
     },
   },

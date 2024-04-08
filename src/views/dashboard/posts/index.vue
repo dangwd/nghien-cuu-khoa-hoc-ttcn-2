@@ -14,7 +14,12 @@
             :config="{ label: 'Viết bài', click: () => create() }"></Button>
         </div>
       </div>
+
       <div class="mx-auto">
+        <div class="pt-5 pb-2 flex justify-end">
+          <Pagination :currentPage="paginationData.currentPage" :totalPages="paginationData.totalPages"
+            @update:currentPage="getAllPost($event)"></Pagination>
+        </div>
         <TableComp :headers="dataTable.headers">
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
             v-for="(row, index) in dataTable.data" :key="index">
@@ -22,17 +27,14 @@
               {{ row.id }}
             </th>
             <td class="w-4 py-2 px-3">{{ index + 1 }}</td>
-
-            <td class="w-4 py-2 px-3">{{ row.title }}</td>
-
+            <td class="w-4 py-2 px-3">{{ shortenText(row.title, maxLength) }}</td>
             <td class="w-4 py-2 px-3">
               <img class="w-24 rounded-lg" :src="row.image" alt="">
             </td>
-            <td class="w-4 py-2 px-3">{{ row.description }}</td>
+            <td class="w-4 py-2 px-3">{{ shortenText(row.description, maxLength) }}</td>
             <td class="w-4 py-2 px-3">{{ row.user.fullName }}</td>
             <td :class="statusClass(row.actived)">{{ formatStatus(row.actived) }}</td>
             <td class="w-4 py-4 px-3">{{ row.createdDate }}</td>
-
             <td class="w-4 py-4 px-3">
               <div class="flex">
                 <div>
@@ -76,15 +78,15 @@
           <Button :config="{ label: 'Trờ lại', click: () => back() }"></Button>
         </div>
       </div>
-      <div>
-        Chỉnh sửa bài viết
+      <div v-show="this.dataTable.postParam.actived == false">
+        <Button :config="{ label: 'Duyệt bài', click: () => activedPost() }"></Button>
       </div>
     </div>
   </div>
 </template>
 <script>
 import TableComp from '@/components/Table/TableComp.vue'
-import { getAllPost, createPost } from '@/api/auth/api'
+import { getAllPost, createPost, activePost } from '@/api/auth/api'
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 export default {
@@ -94,6 +96,11 @@ export default {
   data() {
     return {
       state: 'default',
+      paginationData: {
+        currentPage: 1,
+        totalPages: 0,
+      },
+      maxLength: 25,
       isLoading: true,
       dataTable: {
         headers: ['ID', 'STT', 'Tiêu đề bài viết', 'Ảnh', 'Mô tả', 'Người đăng bài', 'Trạng thái', 'Ngày tạo', 'Thao tác'],
@@ -102,19 +109,36 @@ export default {
           { text: 'DOCUMENT', value: 8 },
           { text: 'BLOG', value: 9 },
         ],
+        statusOption: [
+          { text: 'Duyệt bài', value: true },
+          { text: 'Không duyệt bài', value: false },
+        ],
         postParam: {
+          id: "",
           title: "",
           description: "",
           image: "",
           content: "",
+          actived: false,
           linkFiles: [],
           listCategoryId: [],
         }
       }
     }
   },
+  computed: {
+    shortenText() {
+      return (description, maxLength) => {
+        if (description.length <= maxLength) {
+          return description;
+        } else {
+          return description.slice(0, maxLength) + "...";
+        }
+      };
+    }
+  },
   mounted() {
-    this.getAllPost().then(() => {
+    this.getAllPost(this.paginationData.currentPage).then(() => {
       setTimeout(() => {
         this.isLoading = false
       }, 700)
@@ -142,9 +166,10 @@ export default {
     showSuccess() {
       toast.success("Thao tác thành công!");
     },
-    async getAllPost() {
+    async getAllPost(page) {
       try {
-        const res = await getAllPost();
+        const res = await getAllPost(page);
+        this.paginationData.totalPages = res.data.totalPages
         this.dataTable.data = res.data.content
       } catch (err) {
         console.log(err)
@@ -174,6 +199,17 @@ export default {
         this.showError()
       }
     },
+    async activedPost() {
+      try {
+        await activePost(this.dataTable.postParam.id).then(() => {
+          this.showSuccess()
+          this.getAllPost()
+          this.state = 'default'
+        })
+      } catch (err) {
+        console.log(err)
+      }
+    },
     back() {
       this.state = 'default'
     },
@@ -182,7 +218,8 @@ export default {
     },
     edit(row) {
       this.state = 'edit'
-      console.log(row)
+      this.dataTable.postParam.id = row.id
+      this.dataTable.postParam.actived = row.actived
     },
     statusClass(value) {
       switch (value) {

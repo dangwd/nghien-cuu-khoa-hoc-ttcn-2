@@ -4,7 +4,15 @@
       <div class="rounded-md h-12 w-12 border-4 border-t-4 border-blue-500 animate-spin absolute"></div>
     </div>
   </div>
-  <div v-else class="max-w-4xl mx-auto">
+  <div v-else class=" max-w-4xl mx-auto">
+    <div class="py-4 flex justify-end">
+      <router-link to="/homepage">
+        <button id="scroll-button"
+          class="w-10 h-10 text-white transition ease-in-out hover:scale-105 duration-150 bg-blue-600 hover:bg-blue-700 rounded-full">
+          <i class='bx bx-chevron-left text-2xl font-semibold '></i>
+        </button>
+      </router-link>
+    </div>
     <div class="py-5">
       <div class="bg-white mt-3">
         <img class="border rounded-t-xl shadow-xl w-full" :src="post.image">
@@ -14,9 +22,11 @@
             <div class="font-medium dark:text-white">
               <div class="font-semibold">{{ post.user.fullName }} <span v-show="post.user.role === 'ROLE_ADMIN'"><i
                     class='bx bxs-check-shield text-blue-500'></i></span></div>
-              <div class="text-sm text-gray-500 dark:text-gray-400 underline">Ngày đăng: {{ post.createdDate }}
+              <div class="text-sm text-gray-500 dark:text-gray-400 underline">Ngày đăng: {{ formatDate(post.createdDate)
+                }}
                 <i class='bx bx-check text-green-500 text-lg'></i>
               </div>
+
             </div>
           </div>
           <div class="py-5">
@@ -24,9 +34,7 @@
                 class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
                 {{ post.title }}</span></h1>
           </div>
-          <div class="py-5">
-            {{ post.content }}
-          </div>
+          <div v-html="post.content" class="py-5"></div>
           <div class="py-5" v-if="post.blogCategories[0]">
             <div class="badge badge-info gap-2 text-white text-xs">
               #{{ post.blogCategories[0].category.name }}
@@ -34,13 +42,12 @@
           </div>
           <div>
             <div class="flex gap-5">
-              <h1><i class='bx bx-like text-blue-600'></i> <span class="text-gray-700">123</span></h1>
+              <h1><i class='bx bx-like text-blue-600'></i> <span class="text-gray-700">{{ post.numLike }}</span></h1>
               <h1><i class='bx bx-message-square-dots text-red-600'></i> <span class="text-gray-700">{{ comments.length
                   }}</span></h1>
             </div>
           </div>
         </div>
-
         <div class="bg-white p-1 border-t shadow flex flex-row flex-wrap rounded-b-xl">
           <div
             class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-blue-500 hover:shadow-lg text-center text-xl rounded-xl text-gray-700 hover:text-white font-semibold">
@@ -60,6 +67,11 @@
       <div class="max-w-4xl p-6 bg-white rounded-xl shadow-lg">
         <div class="mb-5">
           <h1 class="font-bold text-xl">Comment</h1>
+          <div class="py-4">
+            <span class="bg-green-100 italic text-green-700 text-base me-2 px-2.5 py-0.5 rounded-full">Comment
+              văn minh, lịch sự hoặc tao ban account chúng mày!</span>
+          </div>
+
           <div class="flex items-start gap-2.5 mt-2">
             <img class="w-10 h-10 rounded-full" :src="user.avatar">
             <div class="flex flex-col w-full leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl">
@@ -72,7 +84,8 @@
                     <i class='bx bxs-check-shield text-blue-500'></i>
                   </span></span>
               </div>
-              <InputField @input-change="setCmt" :value="cmtParams.content" labelField="name" typeInput="text">
+              <InputField @input-change="setCmt" :value="cmtParams.content" labelField="name" type="ckeditor"
+                styleClass="pt-4">
               </InputField>
               <div class="flex justify-end py-2">
                 <Button btnIcon="icon" iconBtnClass="bx bxs-send" btnClass="bg-blue-600 text-white hover:bg-blue-700"
@@ -98,7 +111,7 @@
                   </span></span>
                 <span class="text-sm font-normal text-gray-500 ">{{ cmt.createdTime }}</span>
               </div>
-              <p class="text-sm font-normal py-2.5 text-gray-900">{{ cmt.content }}</p>
+              <p v-html="cmt.content" class="text-sm font-normal py-2.5 text-gray-900"></p>
               <span class="text-sm font-normal text-gray-500">Checked</span>
             </div>
           </div>
@@ -119,7 +132,7 @@
 import { commentPost, getCommentById, getPostById } from '@/api/auth/api';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
-
+import moment from 'moment'
 export default {
   data() {
     return {
@@ -143,17 +156,37 @@ export default {
       setTimeout(() => {
         this.isLoading = false
       }, 700)
-    })
+    });
+    window.addEventListener('scroll', () => {
+      const scrollButton = document.getElementById('scroll-button');
+      if (scrollButton) {
+        if (window.scrollY > 100) {
+          scrollButton.classList.add('sticky');
+        } else {
+          scrollButton.classList.remove('sticky');
+        }
+      }
+    });
   },
   methods: {
     setCmt(value) {
       this.cmtParams.content = value
     },
     showSuccess() {
-      toast.success('Đăng tải thành công!')
+      toast("Bình luận thành công!", {
+        "theme": "colored",
+        "type": "success",
+        "limit": 3,
+        "dangerouslyHTMLString": true
+      })
     },
     showError() {
-      toast.error('Đăng tải không thành công, vui lòng kiểm tra lại!')
+      toast("Có lỗi xảy ra!", {
+        "theme": "colored",
+        "type": "error",
+        "limit": 3,
+        "dangerouslyHTMLString": true
+      })
     },
     // Chi tiet bai viet
     async fetchDetailPost() {
@@ -177,18 +210,34 @@ export default {
     // Post cmt
     async createComment(postId) {
       try {
-        await commentPost(
-          this.cmtParams.content,
-          postId
-        ).then(() => {
-          this.showSuccess()
-          this.fetchComment()
-        })
+        if (this.cmtParams.content !== "") {
+          await commentPost(
+            this.cmtParams.content,
+            postId
+          ).then(() => {
+            this.showSuccess()
+            this.fetchComment()
+            this.cmtParams.content = ""
+          })
+        } else {
+          this.showError()
+        }
       } catch (err) {
         console.log(err)
+      }
+    },
+    formatDate(date) {
+      if (date) {
+        return moment(String(date)).format('dd/MM/yyyy')
       }
     }
   }
 }
 </script>
-<style></style>
+<style>
+#scroll-button.sticky {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+</style>

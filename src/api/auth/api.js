@@ -58,13 +58,14 @@ export const deleteCategory = (id) => api.delete(`/category/admin/delete?id=${id
 //=======================POSTS API=======================
 
 //For Admin
-export const getAllPost = () => api.get('/blog/blog-manager/find-all')
+export const getAllPost = (pageNum) => api.get(`/blog/blog-manager/find-all?page=${pageNum}&size=5`)
 
 export const createPost = (title, description, image, content, linkFiles, listCategoryId) => api.post('/blog/all/save', {
   title, description, image, content, linkFiles, listCategoryId
 })
+export const activePost = (postId) => api.post(`blog/blog-manager/active-or-unacative?blogId=${postId}`)
 // For User
-export const getAllPostPublic = (pageNum) => api.get(`/blog/public/get-all-blog?page=${pageNum}&size=2`)
+export const getAllPostPublic = (pageNum) => api.get(`/blog/public/get-all-blog?page=${pageNum}&size=3`)
 
 // Get post by Id
 export const getPostById = (id) => api.get(`/blog/all/get-blog-by-id?id=${id}`)
@@ -74,3 +75,5 @@ export const getPostById = (id) => api.get(`/blog/all/get-blog-by-id?id=${id}`)
 export const getCommentById = (id) => api.get(`comment/public/find-by-blog?blogId=${id}`)
 // Write cmt
 export const commentPost = (content, blogId) => api.post('/comment/all/save', { content, blogId })
+//Get post for user
+export const getPostByUser = (userId) => api.get(`blog/all/get-blog-by-user?userId=${userId}`)

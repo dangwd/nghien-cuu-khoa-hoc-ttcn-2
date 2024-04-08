@@ -1,9 +1,9 @@
 <template>
   <div class="navbar bg-white fixed z-50">
     <div class="navbar-start flex gap-2 items-center">
-      <router-link to="/"><img class="w-14 h-auto" src="../assets/img/logofita.png" alt="" />
+      <router-link to="/"><img class="w-14 h-auto" src="../assets/img/vnua-logo.jpg" alt="" />
       </router-link>
-      <h1 class="gap-2 font-bold text-xl">FITA Forums</h1>
+      <h1 class="gap-2 font-bold text-xl">VNUA Forums</h1>
     </div>
     <div class="navbar-center hidden lg:flex">
       <ul class="menu menu-horizontal mb-0 px-1 font-semibold text-base">
