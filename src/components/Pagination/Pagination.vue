@@ -16,7 +16,7 @@
         <li v-for="(page, index) in totalPages" :key="index" :class="{ active: currentPage === page }">
           <a href="#" @click.prevent="emitPageChange(page)"
             class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">{{
-          page }}</a>
+              page }}</a>
         </li>
         <li :class="{ disabled: currentPage === totalPages }">
           <a href="#" @click.prevent="emitPageChange(currentPage + 1)"

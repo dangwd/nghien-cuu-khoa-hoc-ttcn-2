@@ -62,7 +62,7 @@
                 <div class="font-medium dark:text-white">
                   <div class="font-semibold">{{ post.user.fullName }} <span v-show="post.user.role === 'ROLE_ADMIN'"><i
                         class='bx bxs-check-shield text-blue-500'></i></span></div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400 underline">Ngày đăng: {{ post.createdDate }}
+                  <div class="text-sm text-gray-500 dark:text-gray-400 italic">Ngày đăng: {{ post.createdDate }}
                     <i class='bx bx-check text-green-500 text-lg'></i>
                   </div>
                 </div>
@@ -148,7 +148,7 @@ export default {
   },
   methods: {
     async increaseLike() {
-      
+
     },
     setTitle(value) {
       this.createPost.title = value
