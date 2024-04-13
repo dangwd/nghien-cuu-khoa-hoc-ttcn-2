@@ -30,7 +30,7 @@
             </div>
           </div>
           <div class="py-5">
-            <h1 class="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl"><span
+            <h1 class="mb-4 text-3xl font-extrabold text-gray-700 dark:text-white md:text-5xl lg:text-6xl"><span
                 class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
                 {{ post.title }}</span></h1>
           </div>
@@ -76,7 +76,7 @@
             <img class="w-10 h-10 rounded-full" :src="user.avatar">
             <div class="flex flex-col w-full leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl">
               <div class="flex items-center space-x-2 rtl:space-x-reverse">
-                <span class="text-sm font-semibold text-gray-900">{{ user.fullName }}</span>
+                <span class="text-sm font-semibold text-gray-700">{{ user.fullName }}</span>
                 <span v-show="user.role === 'ROLE_ADMIN'"
                   class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
                   <span class="flex gap-2 items-center">
@@ -102,7 +102,7 @@
             <div
               class="flex flex-col w-full leading-1.5 p-4 my-2 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl">
               <div class="flex items-center space-x-2 rtl:space-x-reverse">
-                <span class="text-sm font-semibold text-gray-900">{{ cmt.user.fullName }}</span>
+                <span class="text-sm font-semibold text-gray-700">{{ cmt.user.fullName }}</span>
                 <span v-show="cmt.user.role === 'ROLE_ADMIN'"
                   class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
                   <span class="flex gap-2 items-center">
@@ -111,7 +111,7 @@
                   </span></span>
                 <span class="text-sm font-normal text-gray-500 ">{{ cmt.createdTime }}</span>
               </div>
-              <p v-html="cmt.content" class="text-sm font-normal py-2.5 text-gray-900"></p>
+              <p v-html="cmt.content" class="text-sm font-normal py-2.5 text-gray-700"></p>
               <span class="text-sm font-normal text-gray-500">Checked</span>
             </div>
           </div>

@@ -2,9 +2,9 @@
   <div :class="styleClass">
     <!-- Select Option -->
     <div v-if="type == 'select'">
-      <label :for="labelField" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ title }}</label>
+      <label :for="labelField" class="block mb-2 text-sm font-medium text-gray-700 dark:text-white">{{ title }}</label>
       <select v-model="selected" :id="labelField" @select-change="$emit('select-change', selected)"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2">
+        class="bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2">
         <option :value="opt.value" v-for="(opt, index) in options" :key="index">{{ opt.text }}</option>
       </select>
     </div>
@@ -31,7 +31,7 @@
       <label class="block mb-2 text-sm font-semibold text-gray-700" :for="labelField">
         {{ title }}</label>
       <input @change="handleFileChange"
-        class="block w-full text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
+        class="block w-full text-xs text-gray-700 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
         :id="labelField" type="file">
     </div>
     <div v-else-if="type == 'ckeditor'">
@@ -41,7 +41,7 @@
     <div v-else>
       <label :for="labelField" class="block mb-2 text-sm font-semibold text-gray-700">{{ title }}</label>
       <input @input="inputChange" v-model="valueText" :type="typeInput" :id="labelField" :disabled="disabled"
-        class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
+        class="shadow-sm bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
         required />
     </div>
   </div>

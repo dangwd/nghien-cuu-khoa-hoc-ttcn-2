@@ -5,7 +5,7 @@
         <div class="image overflow-hidden">
           <img class="h-auto w-40 mx-auto rounded-full m-3" :src="userInfo.avatar" alt="">
         </div>
-        <h1 class="text-gray-900 font-bold text-xl leading-8 my-1">{{ userInfo.fullName }}</h1>
+        <h1 class="text-gray-700 font-bold text-xl leading-8 my-1">{{ userInfo.fullName }}</h1>
         <div v-if="userInfo.role === 'ROLE_ADMIN'" class="italic">
           <h3 class="text-sm text-gray-500 hover:text-gray-600 leading-6">Tài khoản Quản trị viên</h3>
           <p class="text-sm text-gray-500 hover:text-gray-600 leading-6">Bạn có thể làm mọi thao tác trong trang web này
@@ -22,7 +22,7 @@
             <span class="text-base font-medium">Trạng thái tài khoản</span>
             <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm">{{
               formatStatus(userInfo.actived)
-            }}</span></span>
+                }}</span></span>
           </li>
           <li class="flex items-center py-3">
             <span class="text-base font-medium">Vai trò</span>
@@ -33,7 +33,7 @@
     </div>
     <div class="w-full h-full md:w-9/12 mx-2">
       <div class="bg-white p-3 shadow-sm rounded-sm">
-        <div v-if="state == 'default'" class="flex items-center space-x-2 font-semibold text-gray-900 leading-8">
+        <div v-if="state == 'default'" class="flex items-center space-x-2 font-semibold text-gray-700 leading-8">
           <span class="text-blue-500">
             <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -44,7 +44,7 @@
         </div>
         <div v-if="state == 'update'">
           <div class="flex justify-between">
-            <div class="flex items-center space-x-2 font-semibold text-gray-900 leading-8">
+            <div class="flex items-center space-x-2 font-semibold text-gray-700 leading-8">
               <span class="text-blue-500">
                 <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -63,7 +63,7 @@
           </div>
           <div class="grid grid-cols-2 gap-4">
             <InputField @input-change="setName" :value="userParam.username" labelField="username" title="Tài khoản"
-              typeInput="text"></InputField>
+              typeInput="email"></InputField>
             <InputField @input-change="setFullName" :value="userParam.fullname" labelField="fullname" title="Họ tên"
               typeInput="text"></InputField>
             <InputField :value="userParam.role" labelField="email" title="Vai trò" typeInput="text" disabled>
@@ -73,10 +73,10 @@
               </InputField>
             </div>
             <InputField @input-change="setPass" :value="userParam.password" labelField="email" title="Mật khẩu"
-              typeInput="text">
+              typeInput="password">
             </InputField>
             <InputField @input-change="setPassConfirm" :value="userParam.passwordConfirm" labelField="email"
-              title="Nhập lại mật khẩu" typeInput="text">
+              title="Nhập lại mật khẩu" typeInput="password">
             </InputField>
           </div>
         </div>
@@ -115,7 +115,7 @@
       <div class="my-4"></div>
       <div class="bg-white p-3 shadow-sm rounded-sm">
         <div>
-          <div class="flex items-center space-x-2 font-semibold text-gray-900 leading-8 mb-3">
+          <div class="flex items-center space-x-2 font-semibold text-gray-700 leading-8 mb-3">
             <span clas="text-blue-500">
               <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -148,7 +148,7 @@
               </div>
             </div>
             <div class="py-5">
-              <h1 class="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl"><span
+              <h1 class="mb-4 text-3xl font-extrabold text-gray-700 dark:text-white md:text-5xl lg:text-6xl"><span
                   class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
                   {{ post.title }}</span></h1>
             </div>
@@ -285,6 +285,7 @@ export default {
     async updateAccount() {
       if (this.userParam.password === this.userParam.passwordConfirm) {
         await editUser(
+          // id, username, fullName, avatar, password
           this.user.id,
           this.userParam.username,
           this.userParam.fullname,

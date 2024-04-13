@@ -113,7 +113,7 @@
     </div>
     <div v-if="state == 'edit'">
       <div class="flex justify-between pb-10">
-        <h1 class="p-3 font-bold text-xl">Chỉnh sửa bài viết</h1>
+        <h1 class="p-3 font-bold text-xl">Thông tin bài viết</h1>
         <div>
           <Button :config="{ label: 'Trờ lại', click: () => back() }"></Button>
         </div>
@@ -125,6 +125,7 @@
         <Button btnClass="bg-red-600 text-white"
           :config="{ label: 'Xóa bài viết', click: () => deletedPost() }"></Button>
       </div>
+      <div></div>
     </div>
   </div>
 </template>

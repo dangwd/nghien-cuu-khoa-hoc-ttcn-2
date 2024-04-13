@@ -12,7 +12,7 @@
           <div class="flex gap-2">
             <img class="w-10 h-10 rounded-full" :src="user.avatar" alt="">
             <input type="text" :placeholder="'Bạn đang nghĩ gì thế ' + user.fullName + ' ?'"
-              class="w-full p-2 text-gray-900 border border-gray-200 rounded-full bg-gray-50 text-sm italic" disabled>
+              class="w-full p-2 text-gray-700 border border-gray-200 rounded-full bg-gray-50 text-sm italic" disabled>
           </div>
           <div class="flex justify-end pt-3">
             <ModalComp labelBtn="Đăng bài" modalIdProps="createPost" size="4xl"
@@ -68,7 +68,7 @@
                 </div>
               </div>
               <div class="py-5">
-                <h1 class="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl"><span
+                <h1 class="mb-4 text-3xl font-extrabold text-gray-700 dark:text-white md:text-5xl lg:text-6xl"><span
                     class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
                     {{ post.title }}</span></h1>
               </div>
@@ -78,8 +78,8 @@
                   <h1><i class='bx bx-like text-blue-600'></i> <span class="text-gray-700">{{ post.numLike }}</span>
                   </h1>
                   <h1><i class='bx bx-message-square-dots text-red-600'></i> <span class="text-gray-700">{{
-                      post.numComment
-                      }}</span>
+                    post.numComment
+                  }}</span>
                   </h1>
                 </div>
               </div>
