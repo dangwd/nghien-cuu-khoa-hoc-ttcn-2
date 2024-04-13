@@ -1,5 +1,4 @@
 <template>
-
   <div>
     <div v-show="!isSidebarOpen">
       <button @click="toggleSidebar" class="fixed top-24 left-1 z-50">
@@ -34,7 +33,7 @@
 export default {
   data() {
     return {
-      isSidebarOpen: false,
+      isSidebarOpen: true,
       itemsSide: [
         {
           name: "Top"

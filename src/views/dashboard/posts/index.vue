@@ -8,15 +8,15 @@
     <div v-if="state == 'default'">
       <div class="flex justify-between pb-10">
         <h1 class="p-3 font-bold text-xl">Quản lý bài viết</h1>
-        <!-- <h1>Tổng số bài viết: {{ dataTable.data.length }}</h1> -->
         <div>
           <Button btnIcon="icon" iconBtnClass="bx bxs-edit-alt"
             :config="{ label: 'Viết bài', click: () => create() }"></Button>
         </div>
       </div>
-
       <div class="mx-auto">
-        <div class="pt-5 pb-2 flex justify-end">
+        <div class="pt-5 pb-2 flex justify-between items-center">
+          <Button btnIcon="icon" iconBtnClass="bx bx-time"
+            :config="{ label: 'Bài viết đang chờ duyệt', click: () => waitChecked() }"></Button>
           <Pagination :currentPage="paginationData.currentPage" :totalPages="paginationData.totalPages"
             @update:currentPage="getAllPost($event)"></Pagination>
         </div>
@@ -47,6 +47,42 @@
         </TableComp>
       </div>
     </div>
+    <div v-if="state == 'wait'">
+      <div class="flex justify-between pb-10">
+        <h1 class="p-3 font-bold text-xl">Danh sách bài viết đang chờ duyệt</h1>
+      </div>
+      <div class="pt-5 pb-2 flex justify-between items-center">
+        <Button btnIcon="icon" iconBtnClass="bx bx-list-ul"
+          :config="{ label: 'Danh sách bài viết', click: () => back() }"></Button>
+        <Pagination :currentPage="paginationData.currentPage" :totalPages="paginationData.totalPages"
+          @update:currentPage="getAllPost($event)"></Pagination>
+      </div>
+      <TableComp :headers="dataTable.headers">
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+          v-for="(row, index) in dataTable.data" :key="index">
+          <th scope="col" class="py-2 px-3 w-4">
+            {{ row.id }}
+          </th>
+          <td class="w-4 py-2 px-3">{{ index + 1 }}</td>
+          <td class="w-4 py-2 px-3">{{ shortenText(row.title, maxLength) }}</td>
+          <td class="w-4 py-2 px-3">
+            <img class="w-24 rounded-lg" :src="row.image" alt="">
+          </td>
+          <td class="w-4 py-2 px-3">{{ shortenText(row.description, maxLength) }}</td>
+          <td class="w-4 py-2 px-3">{{ row.user.fullName }}</td>
+          <td :class="statusClass(row.actived)">{{ formatStatus(row.actived) }}</td>
+          <td class="w-4 py-4 px-3">{{ row.createdDate }}</td>
+          <td class="w-4 py-4 px-3">
+            <div class="flex">
+              <div>
+                <Button btnIcon="icon" btnClass="bg-none text-blue-500 hover:underline"
+                  :config="{ label: 'Cấu hình', click: () => edit(row) }"></Button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </TableComp>
+    </div>
     <div v-if="state == 'create'">
       <div class="flex justify-between pb-10">
         <h1 class="p-3 font-bold text-xl">Tạo bài viết</h1>
@@ -54,16 +90,20 @@
           <Button :config="{ label: 'Trờ lại', click: () => back() }">Trở lại</Button>
         </div>
       </div>
-      <div class=" p-6 mx-auto bg-white border max-w-2xl border-gray-200 rounded-xl shadow grid gap-8">
-        <InputField @input-change="setTitle" labelField="title" typeInput="text" title="Tiêu đề bài viết"></InputField>
-        <InputField @input-change="setDescription" labelField="description" typeInput="text" title="Mô tả"></InputField>
-        <InputField @input-change="setContent" labelField="content" typeInput="text" title="Nội dung bài viết">
+      <div class=" p-6 mx-auto bg-white border max-w-3xl border-gray-200 rounded-xl shadow grid gap-8">
+        <InputField @input-change="setTitle" :value="dataTable.postParam.title" labelField="title"
+          title="Tiêu đề bài viết">
         </InputField>
-        <InputField @input-change="setImage" labelField="image" typeInput="text" title="Ảnh">
-        </InputField>
+        <InputField @input-change="setDescription" :value="dataTable.postParam.description" labelField="description"
+          title="Mô tả bài viết"></InputField>
         <InputField @select-change="setCategory" :options="dataTable.options" type="select" labelField="category"
           title="Danh mục bài viết">
         </InputField>
+        <InputField styleClass="py-2" @input-change="setContent" :value="dataTable.postParam.content" type="ckeditor">
+        </InputField>
+        <InputField @input-file="setImage" :value="dataTable.postParam.image" type="file-input" title="Ảnh">
+        </InputField>
+
         <Button btnIcon="icon" iconBtnClass="bx bx-check"
           :config="{ label: 'Đăng bài', click: () => createPost() }"></Button>
       </div>
@@ -78,17 +118,23 @@
           <Button :config="{ label: 'Trờ lại', click: () => back() }"></Button>
         </div>
       </div>
-      <div v-show="this.dataTable.postParam.actived == false">
-        <Button :config="{ label: 'Duyệt bài', click: () => activedPost() }"></Button>
+      <div class="flex gap-2">
+        <div v-show="this.dataTable.postParam.actived == false">
+          <Button :config="{ label: 'Duyệt bài', click: () => activedPost() }"></Button>
+        </div>
+        <Button btnClass="bg-red-600 text-white"
+          :config="{ label: 'Xóa bài viết', click: () => deletedPost() }"></Button>
       </div>
     </div>
   </div>
 </template>
 <script>
 import TableComp from '@/components/Table/TableComp.vue'
-import { getAllPost, createPost, activePost } from '@/api/auth/api'
+import { getAllPost, createPost, activePost, deletePostById } from '@/api/auth/api'
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/storage';
 export default {
   components: {
     TableComp
@@ -117,7 +163,7 @@ export default {
           id: "",
           title: "",
           description: "",
-          image: "",
+          image: null,
           content: "",
           actived: false,
           linkFiles: [],
@@ -151,8 +197,20 @@ export default {
     setDescription(value) {
       this.dataTable.postParam.description = value
     },
-    setImage(value) {
-      this.dataTable.postParam.image = value
+    setImage(file) {
+      this.dataTable.postParam.image = file
+      var storageRef = firebase.storage().ref('image/' + file.name)
+      let uploadTask = storageRef.put(file)
+      uploadTask.on('stage_changed', (snapshot) => {
+        console.log(snapshot)
+      }, (error) => {
+        console.log(error)
+      }, () => {
+        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+          this.dataTable.postParam.image = downloadURL
+          console.log(downloadURL)
+        })
+      })
     },
     setContent(value) {
       this.dataTable.postParam.content = value
@@ -187,6 +245,12 @@ export default {
             this.dataTable.postParam.listCategoryId
           ).then(() => {
             this.showSuccess();
+            this.dataTable.postParam.title = "",
+              this.dataTable.postParam.description = "",
+              this.dataTable.postParam.image = "",
+              this.dataTable.postParam.content = "",
+              this.dataTable.postParam.linkFiles = "",
+              this.dataTable.postParam.listCategoryId = ""
             this.getAllPost();
             setTimeout(() => {
               this.state = 'default'
@@ -210,11 +274,25 @@ export default {
         console.log(err)
       }
     },
+    async deletedPost() {
+      try {
+        await deletePostById(this.dataTable.postParam.id).then(() => {
+          this.showSuccess()
+          this.getAllPost()
+          this.state = 'default'
+        })
+      } catch (err) {
+        console.log(err)
+      }
+    },
     back() {
       this.state = 'default'
     },
     create() {
       this.state = 'create'
+    },
+    waitChecked() {
+      this.state = 'wait'
     },
     edit(row) {
       this.state = 'edit'

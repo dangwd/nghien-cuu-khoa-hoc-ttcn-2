@@ -29,7 +29,7 @@
                     <div>{{ user.fullName }}</div>
                     <span
                       class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">{{
-                        formatStatus(user.actived) }}</span>
+                        formatStatus(user.role) }}</span>
                   </div>
                 </div>
                 <InputField @input-change="setTitle" :value="createPost.title" labelField="title"
@@ -77,7 +77,9 @@
                 <div class="flex gap-5">
                   <h1><i class='bx bx-like text-blue-600'></i> <span class="text-gray-700">{{ post.numLike }}</span>
                   </h1>
-                  <h1><i class='bx bx-message-square-dots text-red-600'></i> <span class="text-gray-700">10</span>
+                  <h1><i class='bx bx-message-square-dots text-red-600'></i> <span class="text-gray-700">{{
+                      post.numComment
+                      }}</span>
                   </h1>
                 </div>
               </div>
@@ -115,6 +117,7 @@ export default {
   data() {
     return {
       like: 0,
+      comments: [],
       paginationData: {
         currentPage: 1,
         totalPages: 0,
@@ -139,6 +142,7 @@ export default {
     },
   },
   mounted() {
+
     this.fetchAllPostPub(this.paginationData.currentPage)
       .then(() => {
         setTimeout(() => {
@@ -176,8 +180,10 @@ export default {
     },
     formatStatus(value) {
       switch (value) {
-        case true:
-          return 'Đã kích hoạt'
+        case 'ROLE_USER':
+          return 'Bài viết chờ duyệt'
+        case 'ROLE_ADMIN':
+          return 'Đã duyệt'
       }
     },
     showMessage() {
@@ -224,7 +230,7 @@ export default {
       } catch (err) {
         console.log(err)
       }
-    }
+    },
   }
 }
 </script>

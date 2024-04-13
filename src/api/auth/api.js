@@ -33,10 +33,10 @@ export const signup = (username, password, fullName) => api.post('/regis', {
 //All user
 export const getAllUser = () => api.get('/admin/all-user')
 //Edit user
-export const editUser = (id, username, fullName, avatar, role) => api.post('/update-infor', {
-  id, username, fullName, avatar, role
+export const editUser = (id, username, fullName, avatar, password) => api.post('/update-infor', {
+  id, username, fullName, avatar, password
 })
-
+export const getUserById = (id) => api.get(`/all/find-user-by-id?id=${id}`)
 
 
 
@@ -69,6 +69,9 @@ export const getAllPostPublic = (pageNum) => api.get(`/blog/public/get-all-blog?
 
 // Get post by Id
 export const getPostById = (id) => api.get(`/blog/all/get-blog-by-id?id=${id}`)
+
+//Delete
+export const deletePostById = (id) => api.delete(`/blog/all/delete?blogId=${id}`)
 
 //Comment
 // Get cmt

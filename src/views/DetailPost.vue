@@ -69,7 +69,7 @@
           <h1 class="font-bold text-xl">Comment</h1>
           <div class="py-4">
             <span class="bg-green-100 italic text-green-700 text-base me-2 px-2.5 py-0.5 rounded-full">Comment
-              văn minh, lịch sự hoặc tao ban account chúng mày!</span>
+              văn minh, lịch sự góp phần xây dựng cộng đồng trong sạch!</span>
           </div>
 
           <div class="flex items-start gap-2.5 mt-2">
