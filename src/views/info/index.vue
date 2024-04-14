@@ -22,7 +22,7 @@
             <span class="text-base font-medium">Trạng thái tài khoản</span>
             <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm">{{
               formatStatus(userInfo.actived)
-                }}</span></span>
+            }}</span></span>
           </li>
           <li class="flex items-center py-3">
             <span class="text-base font-medium">Vai trò</span>
@@ -208,7 +208,7 @@ export default {
         password: "",
         passwordConfirm: "",
         actived: "",
-        avatar: null,
+        avatar: "",
         role: ""
       }
 

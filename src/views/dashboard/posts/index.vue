@@ -55,11 +55,11 @@
         <Button btnIcon="icon" iconBtnClass="bx bx-list-ul"
           :config="{ label: 'Danh sách bài viết', click: () => back() }"></Button>
         <Pagination :currentPage="paginationData.currentPage" :totalPages="paginationData.totalPages"
-          @update:currentPage="getAllPost($event)"></Pagination>
+          @update:currentPage="getAllPostUnactive($event)"></Pagination>
       </div>
       <TableComp :headers="dataTable.headers">
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-          v-for="(row, index) in dataTable.data" :key="index">
+          v-for="(row, index) in dataTable.listPostUnactive" :key="index">
           <th scope="col" class="py-2 px-3 w-4">
             {{ row.id }}
           </th>
@@ -125,13 +125,42 @@
         <Button btnClass="bg-red-600 text-white"
           :config="{ label: 'Xóa bài viết', click: () => deletedPost() }"></Button>
       </div>
-      <div></div>
+      <div>
+        <div class="py-5 max-w-3xl mx-auto">
+          <div class="bg-white mt-3">
+            <img class="border rounded-t-xl shadow-xl w-full" :src="this.viewParam.image">
+            <div class="bg-white shadow p-5 text-xl text-gray-700 font-semibold rounded-b-xl">
+              <div class="flex items-center gap-4" v-if="this.viewParam && this.viewParam.user">
+                <img class="w-10 h-10 rounded-full" :src="this.viewParam.user.avatar" alt="">
+                <div class="font-medium dark:text-white">
+                  <div class="font-semibold">{{ this.viewParam.user.fullName }} <span
+                      v-show="this.viewParam.user.role === 'ROLE_ADMIN'"><i
+                        class='bx bxs-check-shield text-blue-500'></i></span>
+                  </div>
+                  <div class="text-sm text-gray-500 dark:text-gray-400 underline">Ngày đăng: {{
+                    this.viewParam.createdDate
+                  }}
+                    <i class='bx bx-check text-green-500 text-lg'></i>
+                  </div>
+
+                </div>
+              </div>
+              <div class="py-5">
+                <h1 class="mb-4 text-3xl font-extrabold text-gray-700 dark:text-white md:text-5xl lg:text-6xl"><span
+                    class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
+                    {{ this.viewParam.title }}</span></h1>
+              </div>
+              <div v-html="this.viewParam.content" class="py-5"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 <script>
 import TableComp from '@/components/Table/TableComp.vue'
-import { getAllPost, createPost, activePost, deletePostById } from '@/api/auth/api'
+import { getAllPost, createPost, activePost, getPostUnactive, deletePostById } from '@/api/auth/api'
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import firebase from 'firebase/compat/app';
@@ -147,11 +176,24 @@ export default {
         currentPage: 1,
         totalPages: 0,
       },
+      viewParam: {
+        id: "",
+        title: "",
+        description: "",
+        image: null,
+        user: {},
+        content: "",
+        createdDate: "",
+        actived: false,
+        linkFiles: [],
+        listCategoryId: [],
+      },
       maxLength: 25,
       isLoading: true,
       dataTable: {
         headers: ['ID', 'STT', 'Tiêu đề bài viết', 'Ảnh', 'Mô tả', 'Người đăng bài', 'Trạng thái', 'Ngày tạo', 'Thao tác'],
         data: [],
+        listPostUnactive: [],
         options: [
           { text: 'DOCUMENT', value: 8 },
           { text: 'BLOG', value: 9 },
@@ -190,6 +232,7 @@ export default {
         this.isLoading = false
       }, 700)
     })
+
   },
   methods: {
     setTitle(value) {
@@ -234,6 +277,15 @@ export default {
         console.log(err)
       }
     },
+    async getAllPostUnactive(page) {
+      try {
+        const res = await getPostUnactive(page);
+        this.dataTable.listPostUnactive = res.data.content
+        console.log(res)
+      } catch (err) {
+        console.log(err)
+      }
+    },
     async createPost() {
       if (this.dataTable.postParam.title !== "" && this.dataTable.postParam.content !== "") {
         try {
@@ -266,7 +318,7 @@ export default {
     },
     async activedPost() {
       try {
-        await activePost(this.dataTable.postParam.id).then(() => {
+        await activePost(this.viewParam.id).then(() => {
           this.showSuccess()
           this.getAllPost()
           this.state = 'default'
@@ -277,7 +329,7 @@ export default {
     },
     async deletedPost() {
       try {
-        await deletePostById(this.dataTable.postParam.id).then(() => {
+        await deletePostById(this.viewParam.id).then(() => {
           this.showSuccess()
           this.getAllPost()
           this.state = 'default'
@@ -294,11 +346,19 @@ export default {
     },
     waitChecked() {
       this.state = 'wait'
+      this.getAllPostUnactive()
     },
     edit(row) {
       this.state = 'edit'
-      this.dataTable.postParam.id = row.id
+      this.viewParam.id = row.id
+      this.viewParam.image = row.image
+      this.viewParam.title = row.title
+      this.viewParam.description = row.description
+      this.viewParam.content = row.content
+      this.viewParam.user = row.user
+      this.viewParam.createdDate = row.createdDate
       this.dataTable.postParam.actived = row.actived
+      console.log(row)
     },
     statusClass(value) {
       switch (value) {
@@ -316,6 +376,11 @@ export default {
           return "Chờ duyệt";
       }
 
+    },
+    formatDate(date) {
+      if (date) {
+        return moment(String(date)).format('dd/MM/yyyy')
+      }
     }
   }
 }

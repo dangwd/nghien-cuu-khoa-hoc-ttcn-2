@@ -60,6 +60,8 @@ export const deleteCategory = (id) => api.delete(`/category/admin/delete?id=${id
 //For Admin
 export const getAllPost = (pageNum) => api.get(`/blog/blog-manager/find-all?page=${pageNum}&size=5`)
 
+export const getPostUnactive = (pageNum) => api.get(`/blog/public/get-all-blog-unactived?page=${pageNum}&size=5`)
+
 export const createPost = (title, description, image, content, linkFiles, listCategoryId) => api.post('/blog/all/save', {
   title, description, image, content, linkFiles, listCategoryId
 })
