@@ -22,7 +22,7 @@
             <span class="text-base font-medium">Trạng thái tài khoản</span>
             <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm">{{
               formatStatus(userInfo.actived)
-            }}</span></span>
+                }}</span></span>
           </li>
           <li class="flex items-center py-3">
             <span class="text-base font-medium">Vai trò</span>
@@ -165,7 +165,7 @@
           </div>
 
           <div v-if="post.actived == true" class="bg-white p-1 shadow flex flex-row flex-wrap rounded-b-xl">
-            <div @click="increaseLike()"
+            <div @click="increaseLike(post.id)"
               class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-blue-500 hover:shadow-lg text-center text-xl rounded-xl text-gray-700 hover:text-white font-semibold">
               Like</div>
             <router-link :to="'/detail-post/' + post.id"
@@ -190,7 +190,7 @@
   </div>
 </template>
 <script>
-import { editUser, getPostByUser, getUserById } from '@/api/auth/api'
+import { editUser, getPostByUser, getUserById, likePost } from '@/api/auth/api'
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import firebase from 'firebase/compat/app';
@@ -262,7 +262,16 @@ export default {
     showError() {
       toast.error("Có lỗi xảy ra, vui lòng kiểm tra lại!");
     },
-
+    async increaseLike(id) {
+      try {
+        await likePost(id).then((res) => {
+          console.log(res)
+        }
+        )
+      } catch (err) {
+        console.log(err)
+      }
+    },
     async fetchPost() {
       try {
         const userId = this.user.id;

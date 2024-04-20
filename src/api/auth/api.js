@@ -31,7 +31,7 @@ export const signup = (username, password, fullName) => api.post('/regis', {
   username, password, fullName
 })
 //All user
-export const getAllUser = () => api.get('/admin/all-user')
+export const getAllUser = (pageNum) => api.get(`/admin/all-user?page=${pageNum}&size=3`)
 //Edit user
 export const editUser = (id, username, fullName, avatar, password) => api.post('/update-infor', {
   id, username, fullName, avatar, password
@@ -67,7 +67,7 @@ export const createPost = (title, description, image, content, linkFiles, listCa
 })
 export const activePost = (postId) => api.post(`blog/blog-manager/active-or-unacative?blogId=${postId}`)
 // For User
-export const getAllPostPublic = (pageNum) => api.get(`/blog/public/get-all-blog?page=${pageNum}&size=3`)
+export const getAllPostPublic = (pageNum) => api.get(`/blog/public/get-all-blog?page=${pageNum}&size=6`)
 
 // Get post by Id
 export const getPostById = (id) => api.get(`/blog/all/get-blog-by-id?id=${id}`)
@@ -75,6 +75,8 @@ export const getPostById = (id) => api.get(`/blog/all/get-blog-by-id?id=${id}`)
 //Delete
 export const deletePostById = (id) => api.delete(`/blog/all/delete?blogId=${id}`)
 
+//Like
+export const likePost = (id) => api.post(`blog-like/all/like-or-unlike?blogId=${id}`)
 //Comment
 // Get cmt
 export const getCommentById = (id) => api.get(`comment/public/find-by-blog?blogId=${id}`)

@@ -13,6 +13,10 @@
         </div>
       </div>
       <div class="mx-auto">
+        <div class="pt-5 flex justify-end">
+          <Pagination :currentPage="paginationData.currentPage" :totalPages="paginationData.totalPages"
+            @update:currentPage="fetchAllUser($event)"></Pagination>
+        </div>
         <TableComp :headers="dataTable.headers">
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
             v-for="(row, index) in dataTable.data" :key="index">
@@ -97,6 +101,10 @@ export default {
     return {
       isLoading: true,
       state: 'default',
+      paginationData: {
+        currentPage: 1,
+        totalPages: 0
+      },
       createParam: {
         username: "",
         password: "",
@@ -147,10 +155,12 @@ export default {
       this.dataTable.param.name = user.name
       console.log(user)
     },
-    async fetchAllUser() {
+    async fetchAllUser(page) {
       try {
-        const res = await getAllUser();
-        this.dataTable.data = res.data.content
+        await getAllUser(page).then((res) => {
+          this.dataTable.data = res.data.content
+          this.paginationData.totalPages = res.data.totalPages
+        })
       } catch (err) {
         console.log(err)
       }

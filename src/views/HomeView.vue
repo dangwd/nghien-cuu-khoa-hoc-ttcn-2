@@ -79,16 +79,17 @@
                   </h1>
                   <h1><i class='bx bx-message-square-dots text-red-600'></i> <span class="text-gray-700">{{
                     post.numComment
-                  }}</span>
+                      }}</span>
                   </h1>
                 </div>
               </div>
             </div>
 
             <div class="bg-white p-1 shadow flex flex-row flex-wrap rounded-b-xl">
-              <div @click="increaseLike()"
+              <div @click="increaseLike(post.id)"
                 class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-blue-500 hover:shadow-lg text-center text-xl rounded-xl text-gray-700 hover:text-white font-semibold">
                 Like</div>
+
               <router-link :to="'/detail-post/' + post.id"
                 class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-red-500 hover:text-white hover:shadow-lg rounded-xl text-center text-xl text-gray-700 font-semibold">
                 Comment
@@ -104,7 +105,7 @@
   </div>
 </template>
 <script>
-import { getAllPostPublic, createPost } from '@/api/auth/api'
+import { getAllPostPublic, createPost, likePost } from '@/api/auth/api'
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import AsideView from '@/components/AsideView.vue';
@@ -116,7 +117,7 @@ export default {
   },
   data() {
     return {
-      like: 0,
+      statusLike: false,
       comments: [],
       paginationData: {
         currentPage: 1,
@@ -142,7 +143,6 @@ export default {
     },
   },
   mounted() {
-
     this.fetchAllPostPub(this.paginationData.currentPage)
       .then(() => {
         setTimeout(() => {
@@ -151,8 +151,10 @@ export default {
       })
   },
   methods: {
-    async increaseLike() {
-
+    async increaseLike(id) {
+      await likePost(id).then((res) => {
+        this.fetchAllPostPub()
+      })
     },
     setTitle(value) {
       this.createPost.title = value

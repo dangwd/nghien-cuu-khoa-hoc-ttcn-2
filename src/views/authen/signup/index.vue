@@ -64,7 +64,7 @@ const signup = async () => {
     await SignupAPI(username.value, password.value, fullName.value).then(() => {
       showSuccess()
     });
-    // localStorage.setItem('token', response.data.token);
+  // localStorage.setItem('token', response.data.token);
   } catch (error) {
     console.log(error)
   }

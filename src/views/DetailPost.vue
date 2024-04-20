@@ -49,7 +49,7 @@
           </div>
         </div>
         <div class="bg-white p-1 border-t shadow flex flex-row flex-wrap rounded-b-xl">
-          <div
+          <div @click="increaseLike(post.id)"
             class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-blue-500 hover:shadow-lg text-center text-xl rounded-xl text-gray-700 hover:text-white font-semibold">
             Like</div>
           <div
@@ -129,7 +129,7 @@
   </div>
 </template>
 <script>
-import { commentPost, getCommentById, getPostById } from '@/api/auth/api';
+import { commentPost, getCommentById, getPostById, likePost } from '@/api/auth/api';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import moment from 'moment'
@@ -172,6 +172,22 @@ export default {
     setCmt(value) {
       this.cmtParams.content = value
     },
+    async increaseLike(id) {
+      try {
+        const res = await likePost(id);
+        this.fetchDetailPost();
+        console.log(res.data);
+        if (res.data) {
+          toast.success("Liked!");
+        } else {
+          toast.success('Unlike!');
+        }
+      } catch (err) {
+        console.log(err);
+        toast.error(err.message);
+      }
+    },
+
     showSuccess() {
       toast("Bình luận thành công!", {
         "theme": "colored",
