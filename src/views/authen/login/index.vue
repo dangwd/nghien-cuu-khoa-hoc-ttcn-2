@@ -69,21 +69,21 @@ export default {
   methods: {
     async login() {
       try {
-        await this.store.dispatch('login', this.param).then(() => {
-          setTimeout(() => {
-            this.router.push({ name: 'Homepage' });
-          }, 1000)
-          this.notify();
-        });
+        await this.store.dispatch('login', this.param)
+          .then(() => {
+            setTimeout(() => {
+              this.router.push({ name: 'Homepage' });
+            }, 1000)
+            this.toast("Chào mừng bạn quay trở lại!")
+          }).catch((err) => {
+            this.toast(err.response.data.localizedMessage)
+          });
 
       } catch (err) {
         console.error(err);
       }
     },
-    notify() {
-      this.toast("Chào mừng bạn quay trở lại!", {
-      });
-    },
+
   },
 };
 </script>

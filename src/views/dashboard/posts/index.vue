@@ -57,7 +57,7 @@
         <Pagination :currentPage="paginationData.currentPage" :totalPages="paginationData.totalPages"
           @update:currentPage="getAllPostUnactive($event)"></Pagination>
       </div>
-      <TableComp :headers="dataTable.headers">
+      <TableComp v-if="dataTable.listPostUnactive.length > 0" :headers="dataTable.headers">
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
           v-for="(row, index) in dataTable.listPostUnactive" :key="index">
           <th scope="col" class="py-2 px-3 w-4">
@@ -82,6 +82,9 @@
           </td>
         </tr>
       </TableComp>
+      <div v-else>
+        <h1>Hiện không có bài viết!</h1>
+      </div>
     </div>
     <div v-if="state == 'create'">
       <div class="flex justify-between pb-10">

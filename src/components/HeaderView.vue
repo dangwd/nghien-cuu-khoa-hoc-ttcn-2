@@ -5,8 +5,12 @@
       </router-link>
       <h1 class="gap-2 font-bold text-xl">VNUA Forums</h1>
     </div>
-    <div class="navbar-center hidden lg:flex">
-      <ul class="menu menu-horizontal mb-0 px-1 font-semibold text-base">
+    <div class="navbar-center mx-auto hidden lg:flex">
+      <InputField type="custom-input"
+        customClass="shadow-sm bg-gray-100 border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-[800px] p-2"
+        placeholder="Tìm kiếm...">
+      </InputField>
+      <!-- <ul class="menu menu-horizontal mb-0 px-1 font-semibold text-base">
         <li><router-link to="/">Trang chủ</router-link></li>
         <li><router-link to="/document">Tài liệu</router-link></li>
 
@@ -19,10 +23,10 @@
           <router-link to="/introduce">Giới thiệu chung</router-link>
         </li>
 
-      </ul>
+      </ul> -->
     </div>
     <div class="navbar-end">
-      <input type="search" placeholder="Tìm kiếm..." class="input input-bordered rounded-full w-80 max-w-xs mx-2" />
+
       <!-- User button -->
       <div class="dropdown dropdown-end">
         <label tabindex="0" class="btn btn-ghost btn-circle avatar">

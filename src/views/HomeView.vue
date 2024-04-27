@@ -48,10 +48,7 @@
             </ModalComp>
           </div>
         </div>
-        <div class="pt-5 flex justify-end">
-          <Pagination :currentPage="paginationData.currentPage" :totalPages="paginationData.totalPages"
-            @update:currentPage="fetchAllPostPub($event)"></Pagination>
-        </div>
+
         <div v-for="(post, index) in posts" :key="index" class="mt-3 flex flex-col">
           <div class="bg-white mt-3  hover:shadow-lg">
             <img class="border rounded-t-xl shadow-xl w-full" :src="post.image">
@@ -79,7 +76,7 @@
                   </h1>
                   <h1><i class='bx bx-message-square-dots text-red-600'></i> <span class="text-gray-700">{{
                     post.numComment
-                      }}</span>
+                  }}</span>
                   </h1>
                 </div>
               </div>
@@ -119,10 +116,7 @@ export default {
     return {
       statusLike: false,
       comments: [],
-      paginationData: {
-        currentPage: 1,
-        totalPages: 0,
-      },
+
       createPost: {
         title: "",
         description: "",
@@ -143,7 +137,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchAllPostPub(this.paginationData.currentPage)
+    this.fetchAllPostPub()
       .then(() => {
         setTimeout(() => {
           this.isLoading = false
@@ -153,6 +147,7 @@ export default {
   methods: {
     async increaseLike(id) {
       await likePost(id).then((res) => {
+        this.showSuccess()
         this.fetchAllPostPub()
       })
     },
@@ -204,11 +199,10 @@ export default {
         "dangerouslyHTMLString": true
       })
     },
-    async fetchAllPostPub(page) {
+    async fetchAllPostPub() {
       try {
-        await getAllPostPublic(page).then((res) => {
+        await getAllPostPublic().then((res) => {
           this.posts = res.data.content
-          this.paginationData.totalPages = res.data.totalPages
         })
       } catch (err) {
         console.log(err)

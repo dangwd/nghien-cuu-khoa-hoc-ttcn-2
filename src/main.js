@@ -35,6 +35,7 @@ import ModalComp from './components/Modal/ModalComp.vue'
 import Button from './components/Button/Button.vue'
 import InputField from './components/Input/InputField.vue'
 import Pagination from './components/Pagination/Pagination.vue'
+import AsideView from './components/AsideView.vue'
 const app = createApp(App)
 
 app.use(store)
@@ -43,6 +44,7 @@ app.use(Vue3Toastify)
 app.use(Antd)
 app.use(router)
 app.component('ModalComp', ModalComp)
+app.component('AsideView', AsideView)
 app.component('InputField', InputField)
 app.component('Pagination', Pagination)
 // eslint-disable-next-line vue/no-reserved-component-names

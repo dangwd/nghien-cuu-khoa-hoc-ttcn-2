@@ -5,6 +5,7 @@
     </div>
   </div>
   <div v-else class=" max-w-4xl mx-auto">
+    <AsideView></AsideView>
     <div class="py-4 flex justify-end">
       <router-link to="/homepage">
         <button id="scroll-button"
@@ -131,9 +132,13 @@
 <script>
 import { commentPost, getCommentById, getPostById, likePost } from '@/api/auth/api';
 import { toast } from 'vue3-toastify';
+import AsideView from '@/components/AsideView.vue';
 import 'vue3-toastify/dist/index.css';
 import moment from 'moment'
 export default {
+  components: {
+    AsideView
+  },
   data() {
     return {
       isLoading: true,
