@@ -7,11 +7,11 @@
   <div v-else class="max-w-4xl mx-auto">
     <AsideView></AsideView>
     <div>
-      <div class="grid grid-cols-3 gap-2">
+      <div class="grid grid-cols-2 gap-2">
         <InputField @select-change="chooseDpt" type="select" title="Khoa" :options="departmentOpt"
           :selected="dptSelected"></InputField>
         <InputField @select-change="chooseMajor" type="select" title="Ngành" :options="majorOpt"></InputField>
-        <InputField @select-change="chooseSubject" type="select" title="Bộ môn" :options="subjectOpt"></InputField>
+        <!-- <InputField @select-change="chooseSubject" type="select" title="Bộ môn" :options="subjectOpt"></InputField> -->
       </div>
       <div class="pt-4">
         <Button btnClass="bg-blue-600 hover:bg-blue-700 text-white w-full"

@@ -1,4 +1,5 @@
 <template>
+  <AsideView />
   <div class="container mx-auto my-5 p-5 max-w-4xl">
     <div class="w-full md:w-3/12 md:mx-2">
       <div class="bg-white p-3 border-t-4 border-blue-500">
@@ -22,7 +23,7 @@
             <span class="text-base font-medium">Trạng thái tài khoản</span>
             <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm">{{
               formatStatus(userInfo.actived)
-            }}</span></span>
+                }}</span></span>
           </li>
           <li class="flex items-center py-3">
             <span class="text-base font-medium">Vai trò</span>
