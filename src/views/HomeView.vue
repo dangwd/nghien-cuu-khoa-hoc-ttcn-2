@@ -11,6 +11,7 @@
         <div class="bg-white w-full shadow rounded-xl p-5">
           <div class="flex gap-2">
             <img class="w-10 h-10 rounded-full" :src="user.avatar" alt="">
+
             <input type="text" :placeholder="'Bạn đang nghĩ gì thế ' + user.fullName + ' ?'"
               class="w-full p-2 text-gray-700 border border-gray-200 rounded-full bg-gray-50 text-sm italic" disabled>
           </div>
@@ -76,7 +77,7 @@
                   </h1>
                   <h1><i class='bx bx-message-square-dots text-red-600'></i> <span class="text-gray-700">{{
                     post.numComment
-                  }}</span>
+                      }}</span>
                   </h1>
                 </div>
               </div>

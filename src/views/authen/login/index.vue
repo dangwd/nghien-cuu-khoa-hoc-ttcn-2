@@ -26,8 +26,9 @@
                 required="">
             </div>
             <div class="flex items-center justify-between">
-              <a href="#" class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">Quên mật
-                khẩu?</a>
+              <router-link to="/forgot-pass"
+                class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">Quên mật
+                khẩu?</router-link>
             </div>
             <button type="submit"
               class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
@@ -35,6 +36,10 @@
             <p class="text-sm font-light text-gray-500 dark:text-gray-400">
               Chưa có tài khoản? <router-link to="/signup"
                 class="font-medium text-primary-600 hover:underline dark:text-primary-500">Đăng ký ngay!</router-link>
+            </p>
+            <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+              Không đăng nhập <router-link to="/no-login"
+                class="font-medium text-primary-600 hover:underline dark:text-primary-500">Bấm vào đây!</router-link>
             </p>
           </form>
         </div>

@@ -36,6 +36,7 @@ import Button from './components/Button/Button.vue'
 import InputField from './components/Input/InputField.vue'
 import Pagination from './components/Pagination/Pagination.vue'
 import AsideView from './components/AsideView.vue'
+
 const app = createApp(App)
 
 app.use(store)

@@ -22,6 +22,16 @@ const router = createRouter({
       component: () => import('../views/authen/signup/index.vue')
     },
     {
+      path: '/forgot-pass',
+      name: 'ForgotPass',
+      component: () => import('../views/authen/forgetpass/index.vue')
+    },
+    {
+      path: '/no-login',
+      name: 'NoLogin',
+      component: () => import('../views/nologin/index.vue')
+    },
+    {
       path: '/dashboard',
       name: 'Dashboard',
       component: () => import('../views/dashboard/master/index.vue'),
