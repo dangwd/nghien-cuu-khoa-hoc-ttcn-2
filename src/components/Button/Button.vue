@@ -17,7 +17,7 @@ export default {
   props: {
     btnClass: {
       type: String,
-      default: "bg-blue-700 text-white"
+      default: "bg-green-700 text-white"
     },
     btnIcon: {
       type: String,

@@ -23,7 +23,7 @@
             <span class="text-base font-medium">Trạng thái tài khoản</span>
             <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm">{{
               formatStatus(userInfo.actived)
-                }}</span></span>
+            }}</span></span>
           </li>
           <li class="flex items-center py-3">
             <span class="text-base font-medium">Vai trò</span>
@@ -109,7 +109,7 @@
         </div>
         <div v-if="state == 'update'">
           <Button btnIcon="icon" iconBtnClass="bx bxs-edit-alt"
-            btnClass="w-full text-blue-500 text-sm font-semibold rounded-lg bg-blue-100 hover:bg-blue-200 focus:outline-none focus:shadow-outline focus:bg-gray-100 hover:shadow-xs p-3 my-4"
+            btnClass="w-full text-blue-500 text-sm font-semibold rounded-lg bg-green-100 hover:bg-green-200 focus:outline-none focus:shadow-outline focus:bg-gray-100 hover:shadow-xs p-3 my-4"
             :config="{ label: 'Cập nhật tài khoản', click: () => updateAccount() }"></Button>
         </div>
       </div>
@@ -168,14 +168,14 @@
 
             <div v-if="post.actived == true" class="bg-white p-1 shadow flex flex-row flex-wrap rounded-b-xl">
               <div @click="increaseLike(post.id)"
-                class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-blue-500 hover:shadow-lg text-center text-xl rounded-xl text-gray-700 hover:text-white font-semibold">
+                class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-green-500 hover:shadow-lg text-center text-xl rounded-xl text-gray-700 hover:text-white font-semibold">
                 Like</div>
               <router-link :to="'/detail-post/' + post.id"
                 class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-red-500 hover:text-white hover:shadow-lg rounded-xl text-center text-xl text-gray-700 font-semibold">
                 Comment
               </router-link>
               <div @click="showMessage()"
-                class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-blue-500 hover:text-white hover:shadow-lg rounded-xl text-center text-xl text-gray-700 font-semibold">
+                class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-green-500 hover:text-white hover:shadow-lg rounded-xl text-center text-xl text-gray-700 font-semibold">
                 Share</div>
             </div>
             <div v-else>

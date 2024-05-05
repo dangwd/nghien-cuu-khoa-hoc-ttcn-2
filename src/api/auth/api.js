@@ -31,7 +31,7 @@ export const signup = (username, password, fullName) => api.post('/regis', {
   username, password, fullName
 })
 //All user
-export const getAllUser = (pageNum) => api.get(`/admin/all-user?page=${pageNum}&size=3`)
+export const getAllUser = (pageNum) => api.get(`/admin/get-all-user?page=${pageNum}&size=5`)
 //Edit user
 export const editUser = (id, username, fullName, avatar, password) => api.post('/update-infor', {
   id, username, fullName, avatar, password

@@ -1,7 +1,7 @@
 <template>
   <div v-if="isLoading">
     <div class="flex items-center justify-center h-screen">
-      <div class="rounded-md h-12 w-12 border-4 border-t-4 border-blue-500 animate-spin absolute"></div>
+      <div class="rounded-md h-12 w-12 border-4 border-t-4 border-green-500 animate-spin absolute"></div>
     </div>
   </div>
   <div v-else class="max-w-4xl mx-auto">
@@ -14,7 +14,7 @@
         <!-- <InputField @select-change="chooseSubject" type="select" title="Bộ môn" :options="subjectOpt"></InputField> -->
       </div>
       <div class="pt-4">
-        <Button btnClass="bg-blue-600 hover:bg-blue-700 text-white w-full"
+        <Button btnClass="bg-green-600 hover:bg-green-700 text-white w-full"
           :config="{ label: 'Xác nhận', click: () => test() }"></Button>
       </div>
       <div v-if="documents.length > 0">

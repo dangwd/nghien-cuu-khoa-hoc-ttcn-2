@@ -1,7 +1,7 @@
 <template>
   <div v-if="isLoading">
     <div class="flex items-center justify-center h-screen">
-      <div class="rounded-md h-12 w-12 border-4 border-t-4 border-blue-500 animate-spin absolute"></div>
+      <div class="rounded-md h-12 w-12 border-4 border-t-4 border-green-500 animate-spin absolute"></div>
     </div>
   </div>
   <div v-else class=" max-w-4xl mx-auto">
@@ -9,7 +9,7 @@
     <div class="py-4 flex justify-end">
       <router-link to="/homepage">
         <button id="scroll-button"
-          class="w-10 h-10 text-white transition ease-in-out hover:scale-105 duration-150 bg-blue-600 hover:bg-blue-700 rounded-full">
+          class="w-10 h-10 text-white transition ease-in-out hover:scale-105 duration-150 bg-green-600 hover:bg-green-700 rounded-full">
           <i class='bx bx-chevron-left text-2xl font-semibold '></i>
         </button>
       </router-link>
@@ -79,7 +79,7 @@
               <div class="flex items-center space-x-2 rtl:space-x-reverse">
                 <span class="text-sm font-semibold text-gray-700">{{ user.fullName }}</span>
                 <span v-show="user.role === 'ROLE_ADMIN'"
-                  class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                  class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full ">
                   <span class="flex gap-2 items-center">
                     <h1 class="text-xs">Quản trị viên</h1>
                     <i class='bx bxs-check-shield text-blue-500'></i>
@@ -89,7 +89,7 @@
                 styleClass="pt-4">
               </InputField>
               <div class="flex justify-end py-2">
-                <Button btnIcon="icon" iconBtnClass="bx bxs-send" btnClass="bg-blue-600 text-white hover:bg-blue-700"
+                <Button btnIcon="icon" iconBtnClass="bx bxs-send" btnClass="bg-green-600 text-white hover:bg-green-700"
                   :config="{ click: () => createComment(post.id) }"></Button>
               </div>
 
@@ -105,7 +105,7 @@
               <div class="flex items-center space-x-2 rtl:space-x-reverse">
                 <span class="text-sm font-semibold text-gray-700">{{ cmt.user.fullName }}</span>
                 <span v-show="cmt.user.role === 'ROLE_ADMIN'"
-                  class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                  class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full ">
                   <span class="flex gap-2 items-center">
                     <h1 class="text-xs">Quản trị viên</h1>
                     <i class='bx bxs-check-shield text-blue-500'></i>

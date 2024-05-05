@@ -71,7 +71,7 @@ export default {
         },
         {
           name: "Thông báo",
-          url: "/news",
+          url: "/notification",
           icon: "bx bx-bell text-lg font-semibold"
         },
         {
