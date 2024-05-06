@@ -82,7 +82,7 @@
                 <div class="flex gap-5">
                   <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span class="text-gray-700 text-base">{{
                     post.numLike
-                      }}</span>
+                  }}</span>
                   </h1>
                   <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
                       class="text-gray-700 text-base">{{
@@ -111,7 +111,7 @@
           </div>
         </div>
       </div>
-
+      <AsideRight />
     </div>
   </div>
 
