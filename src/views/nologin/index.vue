@@ -4,7 +4,7 @@
       <div class="rounded-md h-12 w-12 border-4 border-t-4 border-green-500 animate-spin absolute"></div>
     </div>
   </div>
-  <div v-else class="w-full flex flex-row flex-wrap max-w-4xl mx-auto">
+  <div v-else class="w-full flex flex-row flex-wrap max-w-3xl mx-auto">
     <div class="h-20 w-full pt-2">
       <router-link to="/login" class="px-2.5 flex items-center justify-between">
         <h1 class="text-base font-semibold">Đăng nhập để có trải nghiệm tốt nhất!</h1>
@@ -27,7 +27,7 @@
             <div class="flex justify-between items-center py-3 hover:bg-gray-100 px-2 rounded-lg">
               <div>
                 <button @click="showInfo" class="flex items-center gap-2">
-                  <img class="w-10 h-10 rounded-full" src="http://127.0.0.1:5173/src/assets/img/vnua-logo.jpg" alt="">
+                  <img class="w-10 h-10 rounded-full" src="../../assets/img/vnua-logo.jpg" alt="">
                   <h1 class="text-sm font-semibold text-gray-700">Khách</h1>
                 </button>
               </div>
@@ -89,7 +89,7 @@
                   </h1>
                   <h1><i class='bx bx-message-square-dots text-red-600'></i> <span class="text-gray-700">{{
                     post.numComment
-                  }}</span>
+                      }}</span>
                   </h1>
                 </div>
               </div>

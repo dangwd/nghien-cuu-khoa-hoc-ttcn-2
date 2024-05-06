@@ -7,7 +7,7 @@
   <div v-else>
     <div v-if="state == 'default'">
       <div class="flex justify-between pb-10">
-        <h1 class="p-3 font-bold text-xl">Quản lý tài liệu</h1>
+        <h1 class="p-3 font-bold text-xl">Thông báo</h1>
         <div>
           <Button :config="{ label: 'Tạo', click: () => create() }">Tạo</Button>
         </div>

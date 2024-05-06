@@ -36,9 +36,10 @@ export const getAllUser = (pageNum) => api.get(`/admin/get-all-user?page=${pageN
 export const editUser = (id, username, fullName, avatar, password) => api.post('/update-infor', {
   id, username, fullName, avatar, password
 })
+//Get by id
 export const getUserById = (id) => api.get(`/all/find-user-by-id?id=${id}`)
-
-
+//Quen mk
+export const remindPass = (mail) => api.post(`mail/send-mail?to=${mail}`)
 
 //=======================CATEGORY API=======================
 //All Category
@@ -82,5 +83,17 @@ export const likePost = (id) => api.post(`blog-like/all/like-or-unlike?blogId=${
 export const getCommentById = (id) => api.get(`comment/public/find-by-blog?blogId=${id}`)
 // Write cmt
 export const commentPost = (content, blogId) => api.post('/comment/all/save', { content, blogId })
+
+export const removeCmtPost = (id) => api.delete(`/comment/all/delete?id=${id}`)
 //Get post for user
 export const getPostByUser = (userId) => api.get(`blog/all/get-blog-by-user?userId=${userId}`)
+
+//=======================DOCS API=======================
+export const getAllDpt = () => api.get("/department/public/get-all-department")
+
+//=======================INFOMATION API=======================
+//get all
+export const getAllNotification = () => api.get("notification/all/get-all-notification")
+
+//get by id
+export const getNotiById = (id) => api.get(`/notification/all/get-notification-by-id?id=${id}`)

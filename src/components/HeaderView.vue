@@ -8,7 +8,7 @@
     <div class="navbar-center mx-auto hidden lg:flex">
       <div class="flex items-center gap-2">
         <InputField :value="searchQuery" @input-change="setSearch" type="custom-input"
-          customClass="shadow-sm bg-gray-100 border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-[800px] p-2 my-2"
+          customClass="shadow-sm bg-gray-100 border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-[670px] p-2 my-2"
           placeholder="Tìm kiếm...">
         </InputField>
         <Button btnIcon="icon" iconBtnClass="bx bx-search" btnClass="bg-green-600 text-white hover:bg-green-700"
@@ -45,7 +45,11 @@
 import { useRouter } from 'vue-router';
 import { computed, ref } from 'vue';
 const router = useRouter();
-
+defineProps(
+  {
+    searchResult: []
+  }
+)
 const searchQuery = ref("")
 const userRole = computed(() => {
   const vuexData = JSON.parse(localStorage.getItem('vuex'));
@@ -65,9 +69,10 @@ const avatar = computed(() => {
 const setSearch = (value) => {
   searchQuery.value = value
 }
-const search = () => {
+const search = async () => {
   if (searchQuery.value) {
     router.push({ path: '/search', query: { q: searchQuery.value } })
+
   }
 }
 const logout = () => {

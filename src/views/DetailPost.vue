@@ -4,7 +4,7 @@
       <div class="rounded-md h-12 w-12 border-4 border-t-4 border-green-500 animate-spin absolute"></div>
     </div>
   </div>
-  <div v-else class=" max-w-4xl mx-auto">
+  <div v-else class=" max-w-3xl mx-auto">
     <AsideView></AsideView>
     <div class="py-4 flex justify-end">
       <router-link to="/homepage">
@@ -23,19 +23,20 @@
             <div class="font-medium dark:text-white">
               <div class="font-semibold">{{ post.user.fullName }} <span v-show="post.user.role === 'ROLE_ADMIN'"><i
                     class='bx bxs-check-shield text-blue-500'></i></span></div>
-              <div class="text-sm text-gray-500 dark:text-gray-400 underline">Ngày đăng: {{ formatDate(post.createdDate)
-                }}
-                <i class='bx bx-check text-green-500 text-lg'></i>
+              <div class="flex gap-2">
+                <h1 class="text-xs text-gray-500">{{ post.createdTime }} /</h1>
+                <h1 class="text-xs text-gray-500">{{ post.createdDate }}</h1>
+                <i class='bx bxs-planet text-xs text-gray-500'></i>
               </div>
 
             </div>
           </div>
           <div class="py-5">
-            <h1 class="mb-4 text-3xl font-extrabold text-gray-700 dark:text-white md:text-5xl lg:text-6xl"><span
+            <h1 class="mb-4 text-xl font-extrabold text-gray-700 dark:text-white"><span
                 class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
                 {{ post.title }}</span></h1>
           </div>
-          <div v-html="post.content" class="py-5"></div>
+          <div class="text-base font-medium" v-html="post.content"></div>
           <div class="py-5" v-if="post.blogCategories[0]">
             <div class="badge badge-info gap-2 text-white text-xs">
               #{{ post.blogCategories[0].category.name }}
@@ -43,29 +44,37 @@
           </div>
           <div>
             <div class="flex gap-5">
-              <h1><i class='bx bx-like text-blue-600'></i> <span class="text-gray-700">{{ post.numLike }}</span></h1>
-              <h1><i class='bx bx-message-square-dots text-red-600'></i> <span class="text-gray-700">{{ comments.length
-                  }}</span></h1>
+              <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span class="text-gray-700 text-base">{{
+                post.numLike
+              }}</span>
+              </h1>
+              <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
+                  class="text-gray-700 text-base">{{
+                    post.numComment
+                  }}</span>
+              </h1>
             </div>
           </div>
         </div>
-        <div class="bg-white p-1 border-t shadow flex flex-row flex-wrap rounded-b-xl">
-          <div @click="increaseLike(post.id)"
-            class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-blue-500 hover:shadow-lg text-center text-xl rounded-xl text-gray-700 hover:text-white font-semibold">
-            Like</div>
-          <div
-            class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-red-500 hover:text-white hover:shadow-lg rounded-xl text-center text-xl text-gray-700 font-semibold">
-            Comment
-          </div>
-          <div
-            class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-green-500 hover:text-white hover:shadow-lg rounded-xl text-center text-xl text-gray-700 font-semibold">
-            Share</div>
+        <div class="bg-white p-1 shadow flex flex-row flex-wrap border-t rounded-b-xl">
+          <button @click="increaseLike(post.id)"
+            class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-green-600 font-semibold">
+            <i class='bx bxs-heart text-lg'></i> Like
+          </button>
 
+          <router-link :to="'/detail-post/' + post.id"
+            class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-blue-600 font-semibold">
+            <i class='bx bx bxs-message-square-dots text-lg'></i> Comment
+          </router-link>
+          <button @click="showMessage()"
+            class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-red-600 font-semibold">
+            <i class='bx bxs-share'></i> Share
+          </button>
         </div>
       </div>
     </div>
     <div class="h-screen">
-      <div class="max-w-4xl p-6 bg-white rounded-xl shadow-lg">
+      <div class="max-w-3xl p-6 bg-white rounded-xl shadow-lg">
         <div class="mb-5">
           <h1 class="font-bold text-xl">Comment</h1>
           <div class="py-4">
@@ -75,7 +84,8 @@
 
           <div class="flex items-start gap-2.5 mt-2">
             <img class="w-10 h-10 rounded-full" :src="user.avatar">
-            <div class="flex flex-col w-full leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl">
+            <div
+              class="flex flex-col w-full leading-1.5 p-4 border-gray-200 border bg-gray-100 rounded-e-xl rounded-es-xl">
               <div class="flex items-center space-x-2 rtl:space-x-reverse">
                 <span class="text-sm font-semibold text-gray-700">{{ user.fullName }}</span>
                 <span v-show="user.role === 'ROLE_ADMIN'"
@@ -111,6 +121,12 @@
                     <i class='bx bxs-check-shield text-blue-500'></i>
                   </span></span>
                 <span class="text-sm font-normal text-gray-500 ">{{ cmt.createdTime }}</span>
+                <div class="grow"></div>
+                <div v-show="user.role === 'ROLE_ADMIN'">
+                  <Button btnIcon="icon" iconBtnClass="bx bxs-trash-alt"
+                    btnClass="text-red-600 hover:text-red-700 text-lg font-semibold"
+                    :config="{ click: () => deleteCmt(cmt.id) }"></Button>
+                </div>
               </div>
               <p v-html="cmt.content" class="text-sm font-normal py-2.5 text-gray-700"></p>
               <span class="text-sm font-normal text-gray-500">Checked</span>
@@ -130,7 +146,7 @@
   </div>
 </template>
 <script>
-import { commentPost, getCommentById, getPostById, likePost } from '@/api/auth/api';
+import { commentPost, getCommentById, getPostById, likePost, removeCmtPost } from '@/api/auth/api';
 import { toast } from 'vue3-toastify';
 import AsideView from '@/components/AsideView.vue';
 import 'vue3-toastify/dist/index.css';
@@ -181,12 +197,7 @@ export default {
       try {
         const res = await likePost(id);
         this.fetchDetailPost();
-        console.log(res.data);
-        if (res.data) {
-          toast.success("Liked!");
-        } else {
-          toast.success('Unlike!');
-        }
+
       } catch (err) {
         console.log(err);
         toast.error(err.message);
@@ -194,7 +205,7 @@ export default {
     },
 
     showSuccess() {
-      toast("Bình luận thành công!", {
+      toast("Xóa thành công!", {
         "theme": "colored",
         "type": "success",
         "limit": 3,
@@ -222,7 +233,17 @@ export default {
         const commentId = this.$route.params.id;
         await getCommentById(commentId).then((res) => {
           this.comments = res.data.content
-          console.log(this.comments)
+
+        })
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    async deleteCmt(id) {
+      try {
+        await removeCmtPost(id).then((res) => {
+          this.fetchComment()
+          this.showSuccess()
         })
       } catch (err) {
         console.log(err)
@@ -236,7 +257,6 @@ export default {
             this.cmtParams.content,
             postId
           ).then(() => {
-            this.showSuccess()
             this.fetchComment()
             this.cmtParams.content = ""
           })
@@ -259,6 +279,7 @@ export default {
 #scroll-button.sticky {
   position: fixed;
   bottom: 20px;
-  right: 20px;
+  right: 330px;
+  z-index: 9999;
 }
 </style>

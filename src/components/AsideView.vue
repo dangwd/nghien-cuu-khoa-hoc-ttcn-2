@@ -5,7 +5,7 @@
         <i class='bx bx-chevron-right text-2xl font-bold'></i>
       </button>
     </div>
-    <aside id="default-sidebar" class="fixed top-16 left-0 z-40 lg:w-72 h-screen transition-transform"
+    <aside id="default-sidebar" class="fixed top-16 left-0 z-40 border-r w-80 h-screen transition-transform"
       :class="{ '-translate-x-full': !isSidebarOpen, 'translate-x-0': isSidebarOpen }" aria-label="Sidebar">
       <div class="h-full px-3 py-4 overflow-y-auto bg-white shadow-lg">
         <div class="flex justify-between items-center py-3 hover:bg-gray-100 px-2 rounded-lg">

@@ -4,10 +4,10 @@
       <div class="rounded-md h-12 w-12 border-4 border-t-4 border-green-500 animate-spin absolute"></div>
     </div>
   </div>
-  <div v-else class="w-full flex flex-row flex-wrap max-w-4xl mx-auto">
-    <div class="w-full  h-screen flex flex-row flex-wrap justify-center">
+  <div v-else class="w-full flex flex-row flex-wrap  mx-auto">
+    <div class="w-full h-screen flex flex-row flex-wrap justify-center">
       <AsideView></AsideView>
-      <div class="w-full md:w-3/4 lg:w-4/5 p-5 md:px-12 lg:24 h-full antialiased">
+      <div class="max-w-3xl md:w-3/4 lg:w-4/5 p-5 md:px-12 lg:24 h-full antialiased">
         <div class="bg-white w-full shadow rounded-xl p-5">
           <div class="flex gap-2">
             <img class="w-10 h-10 rounded-full" :src="user.avatar" alt="">
@@ -37,9 +37,11 @@
                   title="Tiêu đề bài viết"></InputField>
                 <InputField @input-change="setDescription" :value="create.description" labelField="description"
                   title="Mô tả bài viết"></InputField>
+                <InputField type="select-name" @select-change="setCategory" :options="categoryOptions"
+                  labelField="description" title="Danh mục"></InputField>
                 <InputField styleClass="py-2" @input-change="setContent" :value="createPost.content" type="ckeditor">
                 </InputField>
-                <InputField @input-file="setImage" :value="createPost.image" type="file"></InputField>
+                <InputField @input-file="setImage" :value="createPost.image" type="file-input"></InputField>
               </template>
               <template #footer>
                 <div class="flex justify-end">
@@ -51,32 +53,40 @@
         </div>
 
         <div v-for="(post, index) in posts" :key="index" class="mt-3 flex flex-col">
-          <div class="bg-white mt-3  hover:shadow-lg">
+          <div class="bg-white mt-3 ">
             <img class="border rounded-t-xl shadow-xl w-full" :src="post.image">
 
             <div class="bg-white border-b border-1 shadow p-5 text-xl text-gray-700 font-semibold">
               <div class="flex items-center gap-4">
                 <img class="w-10 h-10 rounded-full" :src="post.user.avatar" alt="">
-                <div class="font-medium dark:text-white">
-                  <div class="font-semibold">{{ post.user.fullName }} <span v-show="post.user.role === 'ROLE_ADMIN'"><i
-                        class='bx bxs-check-shield text-blue-500'></i></span></div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400 italic">Ngày đăng: {{ post.createdDate }}
-                    <i class='bx bx-check text-green-500 text-lg'></i>
+                <div class="font-medium">
+                  <div class="font-semibold text-base">{{ post.user.fullName }} <span
+                      v-show="post.user.role === 'ROLE_ADMIN'"><i class='bx bxs-check-shield text-blue-500'></i></span>
+                  </div>
+                  <div class="flex gap-2">
+                    <h1 class="text-xs text-gray-500">{{ post.createdTime }} /</h1>
+                    <h1 class="text-xs text-gray-500">{{ post.createdDate }}</h1>
+                    <i class='bx bxs-planet text-xs text-gray-500'></i>
                   </div>
                 </div>
               </div>
               <div class="py-5">
-                <h1 class="mb-4 text-3xl font-extrabold text-gray-700 dark:text-white md:text-5xl lg:text-6xl"><span
+                <h1 class="mb-4 text-lg font-extrabold text-gray-700"><span
                     class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
                     {{ post.title }}</span></h1>
+                <div class="text-base font-medium" v-html="post.content"></div>
+
               </div>
               <!-- Reaction -->
               <div>
                 <div class="flex gap-5">
-                  <h1><i class='bx bx-like text-blue-600'></i> <span class="text-gray-700">{{ post.numLike }}</span>
+                  <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span class="text-gray-700 text-base">{{
+                    post.numLike
+                      }}</span>
                   </h1>
-                  <h1><i class='bx bx-message-square-dots text-red-600'></i> <span class="text-gray-700">{{
-                    post.numComment
+                  <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
+                      class="text-gray-700 text-base">{{
+                        post.numComment
                       }}</span>
                   </h1>
                 </div>
@@ -84,26 +94,30 @@
             </div>
 
             <div class="bg-white p-1 shadow flex flex-row flex-wrap rounded-b-xl">
-              <div @click="increaseLike(post.id)"
-                class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-blue-500 hover:shadow-lg text-center text-xl rounded-xl text-gray-700 hover:text-white font-semibold">
-                Like</div>
+              <button @click="increaseLike(post.id)"
+                class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-green-600 font-semibold">
+                <i class='bx bxs-heart text-lg'></i> Like
+              </button>
 
               <router-link :to="'/detail-post/' + post.id"
-                class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-red-500 hover:text-white hover:shadow-lg rounded-xl text-center text-xl text-gray-700 font-semibold">
-                Comment
+                class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-blue-600 font-semibold">
+                <i class='bx bx bxs-message-square-dots text-lg'></i> Comment
               </router-link>
-              <div @click="showMessage()"
-                class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-green-500 hover:text-white hover:shadow-lg rounded-xl text-center text-xl text-gray-700 font-semibold">
-                Share</div>
+              <button @click="showMessage()"
+                class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-red-600 font-semibold">
+                <i class='bx bxs-share'></i> Share
+              </button>
             </div>
           </div>
         </div>
       </div>
+
     </div>
   </div>
+
 </template>
 <script>
-import { getAllPostPublic, createPost, likePost } from '@/api/auth/api'
+import { getAllPostPublic, createPost, likePost, getAllCategory } from '@/api/auth/api'
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import AsideView from '@/components/AsideView.vue';
@@ -117,16 +131,14 @@ export default {
     return {
       statusLike: false,
       comments: [],
-
+      categoryOptions: [],
       createPost: {
         title: "",
         description: "",
         content: "",
         image: null,
         linkFiles: [],
-        listCategoryId: [
-          8
-        ]
+        listCategoryId: []
       },
       isLoading: true,
       posts: []
@@ -138,6 +150,7 @@ export default {
     },
   },
   mounted() {
+    this.fetchCategory()
     this.fetchAllPostPub()
       .then(() => {
         setTimeout(() => {
@@ -148,7 +161,6 @@ export default {
   methods: {
     async increaseLike(id) {
       await likePost(id).then((res) => {
-        this.showSuccess()
         this.fetchAllPostPub()
       })
     },
@@ -160,6 +172,10 @@ export default {
     },
     setContent(value) {
       this.createPost.content = value
+    },
+    setCategory(value) {
+      this.createPost.listCategoryId = value
+      console.log(this.createPost.listCategoryId)
     },
     setImage(file) {
       this.createPost.image = file
@@ -207,6 +223,16 @@ export default {
         })
       } catch (err) {
         console.log(err)
+      }
+    },
+    async fetchCategory() {
+      try {
+        await getAllCategory().then((res) => {
+          this.categoryOptions = res.data
+          console.log(this.categoryOptions)
+        })
+      } catch (err) {
+        console.log(err);
       }
     },
     async create() {

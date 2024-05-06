@@ -11,10 +11,10 @@
           <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-700 md:text-2xl dark:text-white">
             Quên mật khẩu
           </h1>
-          <form @submit.prevent="login" class="space-y-4 md:space-y-6" action="#">
+          <form @submit.prevent="sendMail" class="space-y-4 md:space-y-6" action="#">
             <div>
               <label for="email" class="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Tài khoản</label>
-              <input id="email"
+              <input v-model="email" id="email"
                 class="bg-gray-50 border border-gray-300 text-gray-700 sm:text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="name@company.com" required="">
             </div>
@@ -34,9 +34,29 @@
   </section>
 </template>
 <script>
-
+import { remindPass } from '@/api/auth/api'
 
 export default {
+  data() {
+    return {
+      email: ""
+    }
+  },
+  methods: {
+    async sendMail() {
+      try {
+        if (this.email !== "") {
+          await remindPass(this.email).then((res) => {
+            console.log(res)
+          })
+        } else {
+          console.log("Trường đang trống")
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  }
 }
 </script>
 

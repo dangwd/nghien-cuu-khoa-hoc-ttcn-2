@@ -1,6 +1,6 @@
 <template>
   <AsideView></AsideView>
-  <div class="max-w-4xl mx-auto">
+  <div class="max-w-3xl mx-auto">
     Danh mục
   </div>
 </template>

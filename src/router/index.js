@@ -57,6 +57,11 @@ const router = createRouter({
           path: '/category',
           component: () => import('../views/dashboard/category/index.vue')
         },
+        {
+          name: 'Noti',
+          path: '/noti',
+          component: () => import('../views/dashboard/noti/index.vue')
+        },
       ]
     },
     {

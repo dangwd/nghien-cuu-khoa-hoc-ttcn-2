@@ -4,12 +4,11 @@
       <div class="rounded-md h-12 w-12 border-4 border-t-4 border-green-500 animate-spin absolute"></div>
     </div>
   </div>
-  <div v-else class="max-w-4xl mx-auto">
+  <div v-else class="max-w-3xl mx-auto">
     <AsideView></AsideView>
     <div>
       <div class="grid grid-cols-2 gap-2">
-        <InputField @select-change="chooseDpt" type="select" title="Khoa" :options="departmentOpt"
-          :selected="dptSelected"></InputField>
+        <InputField @select-change="chooseDpt" type="select" title="Khoa" :options="departmentOpt"></InputField>
         <InputField @select-change="chooseMajor" type="select" title="Ngành" :options="majorOpt"></InputField>
         <!-- <InputField @select-change="chooseSubject" type="select" title="Bộ môn" :options="subjectOpt"></InputField> -->
       </div>
@@ -42,6 +41,7 @@
   </div>
 </template>
 <script>
+import { getAllDpt } from '@/api/auth/api';
 import AsideView from '@/components/AsideView.vue';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 export default {
@@ -55,30 +55,9 @@ export default {
       dptSelected: "",
       sbjSelected: "",
       mjSelected: "",
-      documents: [
-        {
-          title: "Tài liệu 1",
-          descriptions: "Mô tả"
-        },
-        {
-          title: "Tài liệu 1",
-          descriptions: "Mô tả"
-        },
-        {
-          title: "Tài liệu 1",
-          descriptions: "Mô tả"
-        }
-      ],
-      departmentOpt: [
-        { text: "Công nghệ thông tin", value: "Công nghệ thông tin" },
-        { text: "Công nghệ sinh học", value: "Công nghệ sinh học" },
-        { text: "Công nghệ thực phẩm", value: "Công nghệ thực phẩm" },
-      ],
-      majorOpt: [
-        { text: "CNTT", value: "CNTT" },
-        { text: "KHMT", value: "KHMT" },
-        { text: "MMT", value: "MMT" },
-      ],
+      documents: [],
+      departmentOpt: [],
+      majorOpt: [],
       subjectOpt: [
         { text: "demo", value: 1 },
         { text: "demo", value: 2 },
@@ -86,15 +65,37 @@ export default {
       ]
     }
   },
+  mounted() {
+    this.fetchAllDpt()
+  },
   methods: {
     chooseDpt(value) {
       this.dptSelected = value
+      console.log(value)
     },
     chooseMajor(value) {
       this.mjSelected = value
     },
     chooseSubject(value) {
       this.sbjSelected = value
+    },
+    async fetchAllDpt() {
+      try {
+        await getAllDpt().then((res) => {
+          const data = res.data
+          data.forEach(item => {
+            item.text = item.nameDepartment
+            item.value = item.id
+          })
+          this.departmentOpt = data
+
+        })
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    async fetchAllMajor() {
+
     },
     test() {
       const data = {

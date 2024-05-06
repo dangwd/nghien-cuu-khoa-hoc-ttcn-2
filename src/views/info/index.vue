@@ -2,7 +2,7 @@
   <AsideView />
   <div class="container mx-auto my-5 p-5 max-w-4xl">
     <div class="w-full md:w-3/12 md:mx-2">
-      <div class="bg-white p-3 border-t-4 border-blue-500">
+      <div class="bg-white p-3 border-t-4 border-green-500">
         <div class="image overflow-hidden">
           <img class="h-auto w-40 mx-auto rounded-full m-3" :src="userInfo.avatar" alt="">
         </div>
@@ -20,14 +20,14 @@
         </div>
         <ul class="bg-gray-100 text-gray-600 py-2 px-3 mt-3 divide-y rounded-xl shadow-sm">
           <li class="flex items-center py-3">
-            <span class="text-base font-medium">Trạng thái tài khoản</span>
-            <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm">{{
+            <span class="text-sm font-semibold">Trạng thái tài khoản</span>
+            <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm font-semibold">{{
               formatStatus(userInfo.actived)
             }}</span></span>
           </li>
           <li class="flex items-center py-3">
-            <span class="text-base font-medium">Vai trò</span>
-            <span class="ml-auto text-base font-medium">{{ formatRole(userInfo.role) }}</span>
+            <span class="text-sm font-semibold">Vai trò</span>
+            <span class="ml-auto text-sm font-semibold">{{ formatRole(userInfo.role) }}</span>
           </li>
         </ul>
       </div>
@@ -109,7 +109,7 @@
         </div>
         <div v-if="state == 'update'">
           <Button btnIcon="icon" iconBtnClass="bx bxs-edit-alt"
-            btnClass="w-full text-blue-500 text-sm font-semibold rounded-lg bg-green-100 hover:bg-green-200 focus:outline-none focus:shadow-outline focus:bg-gray-100 hover:shadow-xs p-3 my-4"
+            btnClass="w-full text-blue-500 text-sm font-semibold rounded-lg bg-blue-100 hover:bg-blue-200 focus:outline-none focus:shadow-outline focus:bg-gray-100 hover:shadow-xs p-3 my-4"
             :config="{ label: 'Cập nhật tài khoản', click: () => updateAccount() }"></Button>
         </div>
       </div>
@@ -135,10 +135,14 @@
               <div class="flex items-center gap-4">
                 <img class="w-10 h-10 rounded-full" :src="post.user.avatar" alt="">
                 <div class="font-medium dark:text-white">
-                  <div class="font-semibold">{{ user.fullName }} <span v-show="post.user.role === 'ROLE_ADMIN'"><i
-                        class='bx bxs-check-shield text-blue-500'></i></span></div>
+                  <div class="font-semibold text-base">{{ user.fullName }} <span
+                      v-show="post.user.role === 'ROLE_ADMIN'"><i class='bx bxs-check-shield text-blue-500'></i></span>
+                  </div>
                   <div class="flex gap-2">
-                    <div class="text-sm text-gray-500 dark:text-gray-400 italic">Ngày đăng: {{ post.createdDate }}
+                    <div class="flex gap-2">
+                      <h1 class="text-xs text-gray-500">{{ post.createdTime }} /</h1>
+                      <h1 class="text-xs text-gray-500">{{ post.createdDate }}</h1>
+                      <i class='bx bxs-planet text-xs text-gray-500'></i>
                     </div>
                     <span v-if="post.actived == true"
                       class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">{{
@@ -149,34 +153,43 @@
                   </div>
                 </div>
               </div>
-              <div class="py-5">
-                <h1 class="mb-4 text-3xl font-extrabold text-gray-700 dark:text-white md:text-5xl lg:text-6xl"><span
+              <div class="pt-5">
+                <h1 class="mb-4 text-xl font-extrabold text-gray-700 dark:text-white"><span
                     class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
                     {{ post.title }}</span></h1>
               </div>
-              <div v-html="post.content" class="py-5"></div>
+              <div class="text-base font-medium py-5" v-html="post.content"></div>
+
               <!-- Reaction -->
               <div>
                 <div class="flex gap-5">
-                  <h1><i class='bx bx-like text-blue-600'></i> <span class="text-gray-700">{{ post.numLike }}</span>
+                  <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span class="text-gray-700 text-base">{{
+                    post.numLike
+                  }}</span>
                   </h1>
-                  <h1><i class='bx bx-message-square-dots text-red-600'></i> <span class="text-gray-700">0</span>
+                  <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
+                      class="text-gray-700 text-base">{{
+                        post.numComment
+                      }}</span>
                   </h1>
                 </div>
               </div>
             </div>
 
             <div v-if="post.actived == true" class="bg-white p-1 shadow flex flex-row flex-wrap rounded-b-xl">
-              <div @click="increaseLike(post.id)"
-                class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-green-500 hover:shadow-lg text-center text-xl rounded-xl text-gray-700 hover:text-white font-semibold">
-                Like</div>
+              <button @click="increaseLike(post.id)"
+                class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-green-600 font-semibold">
+                <i class='bx bxs-heart text-lg'></i> Like
+              </button>
+
               <router-link :to="'/detail-post/' + post.id"
-                class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-red-500 hover:text-white hover:shadow-lg rounded-xl text-center text-xl text-gray-700 font-semibold">
-                Comment
+                class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-blue-600 font-semibold">
+                <i class='bx bx bxs-message-square-dots text-lg'></i> Comment
               </router-link>
-              <div @click="showMessage()"
-                class="w-1/3 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-green-500 hover:text-white hover:shadow-lg rounded-xl text-center text-xl text-gray-700 font-semibold">
-                Share</div>
+              <button @click="showMessage()"
+                class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-red-600 font-semibold">
+                <i class='bx bxs-share'></i> Share
+              </button>
             </div>
             <div v-else>
               <div class="bg-white p-1 shadow flex flex-row flex-wrap rounded-b-xl justify-center">
