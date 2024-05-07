@@ -54,7 +54,6 @@
         <div v-for="(post, index) in posts" :key="index" class="mt-3 flex flex-col">
           <div class="bg-white mt-3 rounded-lg">
             <img class="border rounded-t-xl shadow-xl w-full" :src="post.image">
-
             <div class="bg-white border-b border-1 shadow p-5 text-xl text-gray-700 font-semibold">
               <div class="flex items-center gap-4">
                 <img class="w-10 h-10 rounded-full" :src="post.user.avatar" alt="">
@@ -74,7 +73,6 @@
                     class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
                     {{ post.title }}</span></h1>
                 <div class="text-base font-medium" v-html="post.content"></div>
-
               </div>
               <!-- Reaction -->
               <div>

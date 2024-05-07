@@ -1,104 +1,136 @@
 <template>
-  <div v-if="isLoading">
-    <div class="flex items-center justify-center h-screen">
-      <div class="rounded-md h-12 w-12 border-4 border-t-4 border-green-500 animate-spin absolute"></div>
-    </div>
-  </div>
-  <div v-else class="w-full flex flex-row flex-wrap max-w-3xl mx-auto">
-    <div class="h-20 w-full pt-2">
-      <router-link to="/login" class="px-2.5 flex items-center justify-between">
-        <h1 class="text-base font-semibold">Đăng nhập để có trải nghiệm tốt nhất!</h1>
-        <button type="button"
-          class="text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">Quay
-          lại
-          trang đăng nhập</button>
-      </router-link>
-    </div>
-    <div class="w-full  h-screen flex flex-row flex-wrap justify-center">
-      <div>
-        <div v-show="!isSidebarOpen">
-          <button @click="toggleSidebar" class="fixed top-16 left-1 z-50">
-            <i class='bx bx-chevron-right text-2xl font-bold'></i>
-          </button>
-        </div>
-        <aside id="default-sidebar" class="fixed top-0 left-0 z-40 lg:w-72 h-screen transition-transform"
-          :class="{ '-translate-x-full': !isSidebarOpen, 'translate-x-0': isSidebarOpen }" aria-label="Sidebar">
-          <div class="h-full px-3 py-4 overflow-y-auto bg-white shadow-lg">
-            <div class="flex justify-between items-center py-3 hover:bg-gray-100 px-2 rounded-lg">
-              <div>
-                <button @click="showInfo" class="flex items-center gap-2">
-                  <img class="w-10 h-10 rounded-full" src="../../assets/img/vnua-logo.jpg" alt="">
-                  <h1 class="text-sm font-semibold text-gray-700">Khách</h1>
-                </button>
-              </div>
-              <div v-show="isSidebarOpen">
-                <button @click="toggleSidebar">
-                  <i class='bx bx-chevron-left text-2xl font-bold'></i>
-                </button>
-              </div>
-            </div>
-            <ul @click="showInfo" v-for="(item, index) in menuList" :key="index" class="space-y-2 font-medium">
-              <li>
-                <router-link to="/login"
-                  class="flex items-center p-2 text-gray-700 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                  <span><i :class='item.icon'></i></span>
-                  <span class="flex-1 ms-3 whitespace-nowrap">{{ item.name }}</span>
-                </router-link>
-              </li>
-            </ul>
-            <div class="pt-4">
-              <h1 class="text-sm font-semibold text-gray-700">#HashTag</h1>
-            </div>
-            <ul v-for="(item, index) in itemsSide" :key="index" class="space-y-2 font-medium">
-              <li>
-                <a href="#"
-                  class="flex items-center p-2 text-gray-700 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                  <span><i class='bx bx-message-square-dots text-lg font-semibold'></i></span>
-                  <span class="flex-1 ms-3 whitespace-nowrap">{{ item.name }}</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </aside>
+  <div>
+    <div v-if="isLoading">
+      <div class="flex items-center justify-center h-screen">
+        <div class="rounded-md h-12 w-12 border-4 border-t-4 border-green-500 animate-spin absolute"></div>
       </div>
-      <div class="w-full md:w-3/4 lg:w-4/5 p-5 md:px-12 lg:24 h-full antialiased">
-        <div v-for="(post, index) in posts" :key="index" class="mt-3 flex flex-col">
-          <div class="bg-white mt-3  hover:shadow-lg">
-            <img class="border rounded-t-xl shadow-xl w-full" :src="post.image">
-            <div class="bg-white border-b border-1 shadow p-5 text-xl text-gray-700 font-semibold">
-              <div class="flex items-center gap-4">
-                <img class="w-10 h-10 rounded-full" :src="post.user.avatar" alt="">
-                <div class="font-medium dark:text-white">
-                  <div class="font-semibold">{{ post.user.fullName }} <span v-show="post.user.role === 'ROLE_ADMIN'"><i
-                        class='bx bxs-check-shield text-blue-500'></i></span></div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400 italic">Ngày đăng: {{ post.createdDate }}
-                    <i class='bx bx-check text-green-500 text-lg'></i>
+    </div>
+    <div v-else class="w-full flex flex-row flex-wrap mx-auto">
+      <div class="navbar bg-white fixed z-50">
+        <div class="navbar-start flex gap-2 items-center">
+          <router-link to="/"><img class="w-14 h-auto" src="../../assets/img/vnua-logo.jpg" alt="" />
+          </router-link>
+          <h1 class="gap-2 font-bold text-xl text-green-700">VNUA Forums</h1>
+        </div>
+        <div class="navbar-center mx-auto hidden lg:flex">
+          <div class="flex items-center gap-2">
+            <InputField :value="searchQuery" @input-change="setSearch" type="custom-input"
+              customClass="shadow-sm bg-gray-100 border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-[670px] p-2 my-2"
+              placeholder="Tìm kiếm...">
+            </InputField>
+            <Button btnIcon="icon" iconBtnClass="bx bx-search" btnClass="bg-green-600 text-white hover:bg-green-700"
+              :config="{ click: () => showInfo() }"></Button>
+          </div>
+        </div>
+        <div class="navbar-end">
+          <router-link to="/login" class="px-2.5 flex items-center justify-between">
+            <button type="button"
+              class="text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">Quay
+              lại
+              trang đăng nhập</button>
+          </router-link>
+        </div>
+      </div>
+      <div class="w-full h-screen flex flex-row flex-wrap justify-center">
+        <div>
+          <div v-show="!isSidebarOpen">
+            <button @click="toggleSidebar" class="fixed top-24 left-1 z-50">
+              <i class='bx bx-chevron-right text-2xl font-bold'></i>
+            </button>
+          </div>
+          <aside id="default-sidebar" class="fixed top-16 left-0 z-40 lg:w-72 h-screen transition-transform"
+            :class="{ '-translate-x-full': !isSidebarOpen, 'translate-x-0': isSidebarOpen }" aria-label="Sidebar">
+            <div class="h-full px-3 py-4 overflow-y-auto bg-white shadow-lg">
+              <div class="flex justify-between items-center py-3 hover:bg-gray-100 px-2 rounded-lg">
+                <div>
+                  <button @click="showInfo" class="flex items-center gap-2">
+                    <img class="w-10 h-10 rounded-full"
+                      src="https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745" alt="">
+                    <h1 class="text-sm font-semibold text-gray-700">Khách</h1>
+                  </button>
+                </div>
+                <div v-show="isSidebarOpen">
+                  <button @click="toggleSidebar">
+                    <i class='bx bx-chevron-left text-2xl font-bold'></i>
+                  </button>
+                </div>
+              </div>
+              <ul @click="showInfo" v-for="(item, index) in menuList" :key="index" class="space-y-2 font-medium">
+                <li>
+                  <router-link to="/login"
+                    class="flex items-center p-2 text-gray-700 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    <span><i :class='item.icon'></i></span>
+                    <span class="flex-1 ms-3 whitespace-nowrap">{{ item.name }}</span>
+                  </router-link>
+                </li>
+              </ul>
+              <div class="bg-green-600 rounded-lg w-full h-80 p-4">
+                <div class="text-white font-semibold text-base">
+                  <h1 class="pb-2">Ủng hộ chúng tớ tại:</h1>
+                  <img src="../../../src/assets/img/donate.jpg" alt="">
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+        <div class="w-full md:w-3/4 lg:w-4/5 p-5 md:px-12 lg:24 h-full pt-20 max-w-3xl antialiased">
+          <div class="bg-white w-full shadow rounded-xl p-5">
+            <div class="flex gap-2">
+              <img class="w-10 h-10 rounded-full"
+                src="https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745" alt="">
+              <input type="text"
+                class="w-full p-2 text-gray-700 border border-gray-200 rounded-full bg-gray-50 text-sm italic" disabled>
+            </div>
+            <h1 class="italic text-base text-center pt-2">Chức năng đăng bài sẽ hiển thị khi bạn đăng nhập!</h1>
+          </div>
+          <div v-for="(post, index) in posts" :key="index" class="mt-3 flex flex-col">
+            <div class="bg-white mt-3 rounded-lg">
+              <img class="border rounded-t-xl shadow-xl w-full" :src="post.image">
+              <div class="bg-white border-b border-1 shadow p-5 text-xl text-gray-700 font-semibold">
+                <div class="flex items-center gap-4">
+                  <img class="w-10 h-10 rounded-full" :src="post.user.avatar" alt="">
+                  <div class="font-medium">
+                    <div class="font-semibold text-base">{{ post.user.fullName }} <span
+                        v-show="post.user.role === 'ROLE_ADMIN'"><i
+                          class='bx bxs-check-shield text-blue-500'></i></span>
+                    </div>
+                    <div class="flex gap-2">
+                      <h1 class="text-xs text-gray-500">{{ post.createdTime }} /</h1>
+                      <h1 class="text-xs text-gray-500">{{ post.createdDate }}</h1>
+                      <i class='bx bxs-planet text-xs text-gray-500'></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="py-5">
+                  <h1 class="mb-4 text-lg font-extrabold text-gray-700"><span
+                      class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
+                      {{ post.title }}</span></h1>
+                  <div class="text-base font-medium" v-html="post.content"></div>
+                </div>
+                <!-- Reaction -->
+                <div>
+                  <div class="flex gap-5">
+                    <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span
+                        class="text-gray-700 text-base">{{
+                          post.numLike
+                        }}</span>
+                    </h1>
+                    <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
+                        class="text-gray-700 text-base">{{
+                          post.numComment
+                        }}</span>
+                    </h1>
                   </div>
                 </div>
               </div>
-              <div class="py-5">
-                <h1 class="mb-4 text-3xl font-extrabold text-gray-700 md:text-5xl lg:text-6xl"><span
-                    class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
-                    {{ post.title }}</span></h1>
+              <div class="bg-white p-1 shadow flex rounded-b-xl justify-center">
+                <h1 class="text-sm text-center font-medium italic">Bạn cần đăng nhập để tương tác!</h1>
+
               </div>
-              <div v-html="post.content" class="py-5"></div>
-              <!-- Reaction -->
-              <div>
-                <div class="flex gap-5">
-                  <h1><i class='bx bx-like text-blue-600'></i> <span class="text-gray-700">{{ post.numLike }}</span>
-                  </h1>
-                  <h1><i class='bx bx-message-square-dots text-red-600'></i> <span class="text-gray-700">{{
-                    post.numComment
-                      }}</span>
-                  </h1>
-                </div>
-              </div>
-            </div>
-            <div class="bg-white p-1 shadow flex flex-row flex-wrap rounded-b-xl justify-center">
-              <h1 class="italic text-base">Thao tác sẽ hiển thị khi bạn đăng nhập!</h1>
             </div>
           </div>
         </div>
+        <AsideRight />
       </div>
     </div>
   </div>
@@ -109,6 +141,7 @@ import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import AsideView from '@/components/AsideView.vue';
 import 'firebase/compat/storage';
+import AsideRight from '@/components/AsideRight.vue';
 export default {
   components: {
     AsideView
