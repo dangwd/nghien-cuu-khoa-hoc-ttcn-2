@@ -3,7 +3,7 @@
     <div class="navbar-start flex gap-2 items-center">
       <router-link to="/"><img class="w-14 h-auto" src="../assets/img/vnua-logo.jpg" alt="" />
       </router-link>
-      <h1 class="gap-2 font-bold text-xl">VNUA Forums</h1>
+      <h1 class="gap-2 font-bold text-xl text-green-700">VNUA Forums</h1>
     </div>
     <div class="navbar-center mx-auto hidden lg:flex">
       <div class="flex items-center gap-2">

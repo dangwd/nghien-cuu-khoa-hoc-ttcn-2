@@ -4,10 +4,7 @@ import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <RouterView />
-
+  <RouterView class="bg-gray-100 h-screen overflow-auto" />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

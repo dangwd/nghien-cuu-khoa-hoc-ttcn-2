@@ -11,7 +11,6 @@
         <div class="bg-white w-full shadow rounded-xl p-5">
           <div class="flex gap-2">
             <img class="w-10 h-10 rounded-full" :src="user.avatar" alt="">
-
             <input type="text" :placeholder="'Bạn đang nghĩ gì thế ' + user.fullName + ' ?'"
               class="w-full p-2 text-gray-700 border border-gray-200 rounded-full bg-gray-50 text-sm italic" disabled>
           </div>
@@ -53,7 +52,7 @@
         </div>
 
         <div v-for="(post, index) in posts" :key="index" class="mt-3 flex flex-col">
-          <div class="bg-white mt-3 ">
+          <div class="bg-white mt-3 rounded-lg">
             <img class="border rounded-t-xl shadow-xl w-full" :src="post.image">
 
             <div class="bg-white border-b border-1 shadow p-5 text-xl text-gray-700 font-semibold">
@@ -174,7 +173,7 @@ export default {
       this.createPost.content = value
     },
     setCategory(value) {
-      this.createPost.listCategoryId = value
+      this.createPost.listCategoryId = [value]
       console.log(this.createPost.listCategoryId)
     },
     setImage(file) {
