@@ -15,14 +15,14 @@
             <div>
               <label for="email" class="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Tài khoản</label>
               <input v-model="param.username" id="email"
-                class="bg-gray-50 border border-gray-300 text-gray-700 sm:text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="name@company.com" required="">
+                class="bg-gray-50 border border-gray-300 text-gray-700 sm:text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
+                placeholder="name@company.com">
             </div>
             <div>
-              <label for="password" class="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Mật
+              <label for="password" class="block mb-2 text-sm font-medium text-gray-700">Mật
                 khẩu</label>
               <input v-model="param.password" type="password" name="password" id="password" placeholder="••••••••"
-                class="bg-gray-50 border border-gray-300 text-gray-700 sm:text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                class="bg-gray-50 border border-gray-300 text-gray-700 sm:text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
                 required="">
             </div>
             <div class="flex items-center justify-between">

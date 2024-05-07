@@ -7,7 +7,7 @@
       <div class="flex-grow mx-auto h-full pt-20 ">
         <router-view></router-view>
       </div>
-      <AsideRight />
+
     </div>
   </div>
 </template>

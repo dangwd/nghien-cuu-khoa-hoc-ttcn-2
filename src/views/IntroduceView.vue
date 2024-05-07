@@ -1,6 +1,6 @@
 <template>
   <AsideView></AsideView>
-  <div class="w-[1000px] mx-auto">
+  <div class="max-w-3xl mx-auto">
     <div>
       <h1 class="text-xl font-bold text-left">Giới thiệu</h1>
     </div>
@@ -52,6 +52,7 @@
       </div>
     </div>
   </div>
+  <AsideRight />
 </template>
 <script setup>
 const introList = [

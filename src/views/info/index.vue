@@ -1,8 +1,8 @@
 <template>
   <AsideView />
-  <div class="container mx-auto my-5 p-5 max-w-4xl">
+  <div class="container mx-auto my-5 p-5 max-w-4xl ">
     <div class="w-full md:w-3/12 md:mx-2">
-      <div class="bg-white p-3 border-t-4 border-green-500">
+      <div class="bg-white p-3 border-t-4 border-green-500 rounded-lg">
         <div class="image overflow-hidden">
           <img class="h-auto w-40 mx-auto rounded-full m-3" :src="userInfo.avatar" alt="">
         </div>
@@ -23,7 +23,7 @@
             <span class="text-sm font-semibold">Trạng thái tài khoản</span>
             <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm font-semibold">{{
               formatStatus(userInfo.actived)
-            }}</span></span>
+                }}</span></span>
           </li>
           <li class="flex items-center py-3">
             <span class="text-sm font-semibold">Vai trò</span>
@@ -129,7 +129,7 @@
       </div>
       <div v-if="posts.length > 0">
         <div v-for="(post, index) in posts" :key="index" class="mt-3 flex flex-col">
-          <div class="bg-white mt-3  hover:shadow-lg">
+          <div class="bg-white mt-3 rounded-lg">
             <img class="border rounded-t-xl shadow-xl w-full" :src="post.image">
             <div class="bg-white border-b border-1 shadow p-5 text-xl text-gray-700 font-semibold">
               <div class="flex items-center gap-4">
@@ -165,7 +165,7 @@
                 <div class="flex gap-5">
                   <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span class="text-gray-700 text-base">{{
                     post.numLike
-                  }}</span>
+                      }}</span>
                   </h1>
                   <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
                       class="text-gray-700 text-base">{{
@@ -207,6 +207,7 @@
       </div>
     </div>
   </div>
+  <AsideRight />
 </template>
 <script>
 import { editUser, getPostByUser, getUserById, likePost } from '@/api/auth/api'

@@ -124,7 +124,7 @@
                 <div class="grow"></div>
                 <div v-show="user.role === 'ROLE_ADMIN'">
                   <Button btnIcon="icon" iconBtnClass="bx bxs-trash-alt"
-                    btnClass="text-red-600 hover:text-red-700 text-lg font-semibold"
+                    btnClass="text-gray-600 hover:text-gray-700 text-lg font-semibold"
                     :config="{ click: () => deleteCmt(cmt.id) }"></Button>
                 </div>
               </div>
@@ -143,6 +143,7 @@
         </div>
       </div>
     </div>
+    <AsideRight />
   </div>
 </template>
 <script>

@@ -31,7 +31,7 @@
           </li>
         </ul>
         <div class="pt-4">
-          <h1 class="text-sm font-semibold text-gray-700">#HashTag</h1>
+          <h1 class="text-sm font-semibold text-gray-700">Danh mục</h1>
         </div>
         <ul v-for="(item, index) in itemsSide" :key="index" class="space-y-2 font-medium">
           <li>
