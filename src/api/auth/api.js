@@ -31,7 +31,7 @@ export const signup = (username, password, fullName) => api.post('/regis', {
   username, password, fullName
 })
 //All user
-export const getAllUser = (pageNum) => api.get(`/admin/get-all-user?page=${pageNum}&size=5`)
+export const getAllUser = (pageNum) => api.get(`/admin/get-all-user?page=${pageNum}&size=10`)
 //Edit user
 export const editUser = (id, username, fullName, avatar, password) => api.post('/update-infor', {
   id, username, fullName, avatar, password
@@ -59,9 +59,9 @@ export const deleteCategory = (id) => api.delete(`/category/admin/delete?id=${id
 //=======================POSTS API=======================
 
 //For Admin
-export const getAllPost = (pageNum) => api.get(`/blog/blog-manager/find-all?page=${pageNum}&size=5`)
+export const getAllPost = (pageNum) => api.get(`/blog/blog-manager/find-all?page=${pageNum}&size=10`)
 
-export const getPostUnactive = (pageNum) => api.get(`/blog/public/get-all-blog-unactived?page=${pageNum}&size=5`)
+export const getPostUnactive = (pageNum) => api.get(`/blog/public/get-all-blog-unactived?page=${pageNum}&size=10`)
 
 export const createPost = (title, description, image, content, linkFiles, listCategoryId) => api.post('/blog/all/save', {
   title, description, image, content, linkFiles, listCategoryId
@@ -97,3 +97,6 @@ export const getAllNotification = () => api.get("notification/all/get-all-notifi
 
 //get by id
 export const getNotiById = (id) => api.get(`/notification/all/get-notification-by-id?id=${id}`)
+
+//create
+export const createNoti = (title, content, image, linkFiles) => api.post("/notification/admin/add-and-update-notification", { title, content, image, linkFiles })

@@ -9,7 +9,7 @@
         <a-menu-item key="2"><router-link to="/document-manage">Quản lý tài liệu</router-link></a-menu-item>
         <a-menu-item key="3"><router-link to="/post-manage">Quản lý bài viết</router-link></a-menu-item>
         <a-menu-item key="4"><router-link to="/category">Quản lý danh mục</router-link></a-menu-item>
-        <a-menu-item key="5"><router-link to="/noti">Thông báo</router-link></a-menu-item>
+        <a-menu-item key="5"><router-link to="/noti">Quản lý thông báo</router-link></a-menu-item>
         <a-menu-item key="6"><router-link to="/">Trang người dùng</router-link></a-menu-item>
       </a-menu>
       <a-space>
@@ -17,7 +17,7 @@
 
     </a-layout-header>
     <a-layout-content>
-      <div class="bg-white px-24 py-10">
+      <div class=" px-24 py-10">
         <router-view />
       </div>
     </a-layout-content>

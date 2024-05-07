@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="mx-auto">
-        <div class="pt-5 flex justify-end">
+        <div class="pt-5 pb-2 flex justify-end">
           <Pagination :currentPage="paginationData.currentPage" :totalPages="paginationData.totalPages"
             @update:currentPage="fetchAllUser($event)"></Pagination>
         </div>
@@ -23,9 +23,11 @@
             <th scope="col" class="py-4 px-3 w-4">
               {{ row.id }}
             </th>
-            <td class="w-3 py-2 px-3">{{ row.fullName }}</td>
-            <td class="w-3 py-2 px-3">{{ row.username }}</td>
-            <td class="w-3 py-2 px-3">{{ formatRole(row.role) }}</td>
+            <td>{{ shortenText(row.title, 25) }}</td>
+            <td>{{ shortenText(row.content, 25) }}</td>
+            <td class="w-3 py-2 px-3">
+              <img class="w-10" :src="row.image" alt="">
+            </td>
             <td class="w-3 py-2 px-3">{{ row.createdDate }}</td>
             <td class="w-3 py-2 px-3">
               <div class="flex">
@@ -42,38 +44,28 @@
     </div>
     <div v-if="state == 'create'">
       <div class="flex justify-between pb-10">
-        <h1 class="p-3 font-bold text-xl">Tạo tài khoản người dùng</h1>
+        <h1 class="p-3 font-bold text-xl">Viết thông báo</h1>
         <div>
           <Button :config="{ label: 'Trờ lại', click: () => back() }">Trở lại</Button>
         </div>
       </div>
       <div class=" p-6 mx-auto bg-white border max-w-2xl border-gray-200 rounded-xl shadow grid gap-8">
-        <InputField @input-change="setName" :value="createParam.username" labelField="username" typeInput="text"
-          title="Tên tài khoản"></InputField>
-        <InputField @input-change="setPassword" :value="createParam.password" labelField="password" typeInput="password"
-          title="Mật khẩu"></InputField>
-        <InputField @input-change="setFullName" :value="createParam.fullName" labelField="fullName" typeInput="text"
-          title="Tên người dùng"></InputField>
-        <Button :config="{ label: 'Tạo tài khoản', click: () => createAccount() }">Trở lại</Button>
+        <InputField @input-change="setTitle" :value="createParam.username" labelField="title" typeInput="text"
+          title="Tiêu đề"></InputField>
+        <InputField @input-file="setImage" :value="createParam.image" type="file-input" title="Ảnh">
+        </InputField>
+        <InputField styleClass="py-2" @input-change="setContent" :value="createParam.content" type="ckeditor">
+        </InputField>
+
+        <Button :config="{ label: 'Tạo', click: () => createNoti() }">Trở lại</Button>
 
       </div>
     </div>
     <div v-if="state == 'edit'">
       <div class="flex justify-between pb-10">
-        <h1 class="p-3 font-bold text-xl">Cấu hình tài khoản</h1>
+        <h1 class="p-3 font-bold text-xl">Cấu hình thông báo</h1>
         <div>
           <Button :config="{ label: 'Trờ lại', click: () => back() }">Trở lại</Button>
-        </div>
-      </div>
-      <div class=" p-6 mx-auto bg-white border max-w-2xl border-gray-200 rounded-xl shadow grid gap-8">
-        <InputField @input-change="setName" :value="dataTable.param.username" labelField="username" typeInput="text"
-          title="Tên tài khoản"></InputField>
-        <InputField @input-change="setPassword" :value="dataTable.param.password" labelField="password"
-          typeInput="password" title="Mật khẩu"></InputField>
-        <InputField @input-change="setFullName" :value="dataTable.param.fullName" labelField="fullName" typeInput="text"
-          title="Tên người dùng"></InputField>
-        <div class="flex items-center gap-2">
-          <Button :config="{ label: 'Sửa', click: () => editAccount(dataTable.param.id) }"></Button>
         </div>
       </div>
     </div>
@@ -81,8 +73,9 @@
 </template>
 <script>
 import TableComp from '@/components/Table/TableComp.vue'
-import { getAllUser, signup } from '@/api/auth/api'
-
+import { createNoti, getAllNotification, signup } from '@/api/auth/api'
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/storage';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 export default {
@@ -90,7 +83,7 @@ export default {
     TableComp
   },
   mounted() {
-    this.fetchAllUser()
+    this.fetchAllNoti()
       .then(() => {
         setTimeout(() => {
           this.isLoading = false;
@@ -106,15 +99,12 @@ export default {
         totalPages: 0
       },
       createParam: {
-        username: "",
-        password: "",
-        actived: true,
-        avatar: "",
-        role: "ROLE_USER",
-        fullName: "",
+        title: "",
+        content: "",
+        image: ""
       },
       dataTable: {
-        headers: ['ID', 'Tên người dùng', 'Tài khoản', 'Vai trò', 'Ngày tạo', 'Thao tác'],
+        headers: ['ID', 'Tiêu đề bài viết', 'Nội dung', 'Ảnh', 'Ngày tạo', 'Thao tác'],
         data: [],
         param: {
           id: "",
@@ -129,14 +119,26 @@ export default {
     }
   },
   methods: {
-    setName(value) {
-      this.createParam.username = value
+    setTitle(value) {
+      this.createParam.title = value
     },
-    setPassword(value) {
-      this.createParam.password = value
+    setContent(value) {
+      this.createParam.content = value
     },
-    setFullName(value) {
-      this.createParam.fullName = value
+    setImage(file) {
+      this.createParam.image = file
+      var storageRef = firebase.storage().ref('image/' + file.name)
+      let uploadTask = storageRef.put(file)
+      uploadTask.on('stage_changed', (snapshot) => {
+        console.log(snapshot)
+      }, (error) => {
+        console.log(error)
+      }, () => {
+        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+          this.createParam.image = downloadURL
+          console.log(downloadURL)
+        })
+      })
     },
     showSuccess() {
       toast.success("Tạo tài khoản thành công!");
@@ -150,14 +152,13 @@ export default {
     create() {
       this.state = 'create'
     },
-    edit(user) {
+    edit(noti) {
       this.state = 'edit'
-      this.dataTable.param.name = user.name
-      console.log(user)
+      console.log(noti)
     },
-    async fetchAllUser(page) {
+    async fetchAllNoti(page) {
       try {
-        await getAllUser(page).then((res) => {
+        await getAllNotification(page).then((res) => {
           this.dataTable.data = res.data.content
           this.paginationData.totalPages = res.data.totalPages
         })
@@ -165,39 +166,30 @@ export default {
         console.log(err)
       }
     },
-    async createAccount() {
-      if (this.createParam.username !== "" && this.createParam.password !== "" && this.createParam.fullName !== "") {
-        try {
-          const res = await signup(
-            this.createParam.username,
-            this.createParam.password,
-            this.createParam.fullName,
-          ).then(() => {
-            this.showSuccess();
-            this.fetchAllUser();
-            this.state = 'default'
-          })
+    async createNoti() {
+      try {
+        await createNoti(
+          this.createParam.title, this.createParam.content, this.createParam.image
+        ).then((res) => {
           console.log(res)
-
-
-        } catch (err) {
-          console.log(err)
+          this.fetchAllNoti()
+          this.state = 'default'
+          this.showSuccess()
+        })
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  },
+  computed: {
+    shortenText() {
+      return (description, maxLength) => {
+        if (description.length <= maxLength) {
+          return description;
+        } else {
+          return description.slice(0, maxLength) + "...";
         }
-      } else {
-        this.showError()
-      }
-
-    },
-    editAccount(user) {
-      console.log(user)
-    },
-    formatRole(role) {
-      switch (role) {
-        case 'ROLE_ADMIN':
-          return 'Quản trị viên'
-        case 'ROLE_USER':
-          return 'Người dùng'
-      }
+      };
     }
   }
 }

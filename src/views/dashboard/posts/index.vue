@@ -136,24 +136,24 @@
               <div class="flex items-center gap-4" v-if="this.viewParam && this.viewParam.user">
                 <img class="w-10 h-10 rounded-full" :src="this.viewParam.user.avatar" alt="">
                 <div class="font-medium dark:text-white">
-                  <div class="font-semibold">{{ this.viewParam.user.fullName }} <span
+                  <div class="font-semibold text-base">{{ this.viewParam.user.fullName }} <span
                       v-show="this.viewParam.user.role === 'ROLE_ADMIN'"><i
                         class='bx bxs-check-shield text-blue-500'></i></span>
                   </div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400 underline">Ngày đăng: {{
-                    this.viewParam.createdDate
-                  }}
-                    <i class='bx bx-check text-green-500 text-lg'></i>
+                  <div class="flex gap-2">
+                    <div class="text-xs text-gray-500"> {{ this.viewParam.createdTime }}</div>
+                    <div class="text-xs text-gray-500"> {{ this.viewParam.createdDate }}</div>
+                    <i class='bx bxs-planet text-xs text-gray-500'></i>
                   </div>
-
                 </div>
               </div>
               <div class="py-5">
-                <h1 class="mb-4 text-3xl font-extrabold text-gray-700 dark:text-white md:text-5xl lg:text-6xl"><span
+                <h1 class="mb-4 text-lg font-extrabold text-gray-700"><span
                     class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
                     {{ this.viewParam.title }}</span></h1>
               </div>
-              <div v-html="this.viewParam.content" class="py-5"></div>
+              <div class="text-base font-medium" v-html="this.viewParam.content">
+              </div>
             </div>
           </div>
         </div>
@@ -187,6 +187,7 @@ export default {
         user: {},
         content: "",
         createdDate: "",
+        createdTime: "",
         actived: false,
         linkFiles: [],
         listCategoryId: [],
@@ -360,6 +361,7 @@ export default {
       this.viewParam.content = row.content
       this.viewParam.user = row.user
       this.viewParam.createdDate = row.createdDate
+      this.viewParam.createdTime = row.createdTime
       this.dataTable.postParam.actived = row.actived
       console.log(row)
     },

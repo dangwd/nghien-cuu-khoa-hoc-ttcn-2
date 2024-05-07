@@ -79,7 +79,7 @@
                 <div class="flex gap-5">
                   <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span class="text-gray-700 text-base">{{
                     post.numLike
-                  }}</span>
+                      }}</span>
                   </h1>
                   <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
                       class="text-gray-700 text-base">{{
@@ -91,7 +91,7 @@
             </div>
 
             <div class="bg-white p-1 shadow flex flex-row flex-wrap rounded-b-xl">
-              <button @click="increaseLike(post.id)"
+              <button @click="increaseLike(post.id)" :class="{ 'text-green-600': statusLike }"
                 class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-green-600 font-semibold">
                 <i class='bx bxs-heart text-lg'></i> Like
               </button>

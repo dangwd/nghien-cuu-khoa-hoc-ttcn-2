@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="mx-auto">
-        <div class="pt-5 flex justify-end">
+        <div class="pt-5 pb-2 flex justify-end">
           <Pagination :currentPage="paginationData.currentPage" :totalPages="paginationData.totalPages"
             @update:currentPage="fetchAllUser($event)"></Pagination>
         </div>

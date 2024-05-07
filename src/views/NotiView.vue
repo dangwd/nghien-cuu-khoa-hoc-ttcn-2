@@ -19,9 +19,9 @@
           </div>
         </div>
         <div @click="viewDetail(info.id)" v-for="(info, index) in listInfos" :key="index"
-          class="card my-4 w-full bg-gray-50 shadow-xl hover:text-green-600 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-150 hover:bg-gray-100 hover:shadow-lg">
+          class="card my-4 w-full bg-gray-50 shadow-xl hover:text-white hover:bg-green-600 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-105 duration-150 hover:shadow-lg">
           <div class="card-body">
-            <h2 class="card-title">{{ info.title }}</h2>
+            <h2 class="card-title text-base">{{ info.title }}</h2>
             <p class="text-sm italic text-center my-2">Bấm vào để xem chi tiết!</p>
           </div>
         </div>
@@ -34,11 +34,11 @@
             <i class='bx bx-chevron-left text-2xl font-semibold '></i>
           </button>
         </div>
-        <div>
-          <h1>Thời gian đăng: <span class="font-semibold text-gray-700">{{ notiDetail.createdTime }} / {{
-            notiDetail.createdDate }}</span></h1>
-          <h1>Người đăng: <span class="font-semibold text-gray-700">Quản trị viên</span></h1>
-        </div>
+        <div v-html="notiDetail.content"></div>
+        <h1 class="text-sm">Thời gian đăng: <span class="font-semibold text-gray-700">{{ notiDetail.createdTime }} /{{
+          notiDetail.createdDate }}</span></h1>
+        <h1 class="text-sm">Người đăng: <span class="font-semibold text-gray-700">Quản trị viên</span></h1>
+
         <img :src="notiDetail.image" alt="">
       </div>
     </div>
