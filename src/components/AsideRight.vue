@@ -16,13 +16,13 @@
       </div>
       <div class="p-2 m-2 border-2 border-green-600 rounded-xl">
         <div class="p-2">
-          <h1 class="text-base font-semibold text-gray-700">Có thể bạn sẽ thích!</h1>
+          <h1 class="text-base font-semibold text-gray-700 pb-2">Có thể bạn sẽ thích!</h1>
           <ul v-for="(item, index) in itemsSide" :key="index" class="space-y-2 font-medium">
             <li>
               <a href="#"
                 class="flex items-center p-2 text-gray-700 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                 <span><i class='bx bx-message-square-dots text-sm font-semibold'></i></span>
-                <span class="flex-1 ms-3 whitespace-nowrap">{{ item.name }}</span>
+                <span class="flex-1 ms-3 whitespace-nowrap">{{ shortenText(item.name, 25) }}</span>
               </a>
             </li>
           </ul>
@@ -39,37 +39,45 @@
   </aside>
 </template>
 <script setup>
-import { ref } from "vue";
-
+import { computed, ref } from "vue";
+const shortenText = computed(() => {
+  return (description, maxLength) => {
+    if (description.length <= maxLength) {
+      return description;
+    } else {
+      return description.slice(0, maxLength) + "...";
+    }
+  };
+})
 const itemsSide = ref([
   {
-    name: "Top"
+    name: "MediaTek Dimensity 6300: Tăng 50% hiệu năng GPU cho những chiếc điện thoại bình dân"
   },
   {
-    name: "Nên học ngôn ngữ nào ?"
+    name: "Trải nghiệm tai nghe fullsize chuyên cho dân làm âm thanh: Sennheiser HD 490 Pro"
   },
   {
-    name: "Top công nghệ năm 2024"
+    name: "Trải nghiệm tính năng Photo Remaster trên Galaxy A35 5G: Chỉnh sửa ảnh tự động, nhanh và tiện lợi"
   },
   {
-    name: "Nên học IT không ?"
+    name: "Google sẽ ngưng tiện ích Google One VPN từ cuối năm nay"
   },
   {
-    name: "Project Demo 2024"
+    name: "Một thị trường Apple Vision Pro đang âm thầm chiếm lĩnh: Bảo trì và lắp ráp động cơ hàng không"
   },
   {
-    name: "Top"
+    name: "Google sẽ mang công cụ chỉnh sửa ảnh AI lên iPhone vào ngày 15/5 tới, không cần trả phí"
   },
   {
-    name: "Nên học ngôn ngữ nào ?"
+    name: "Apple cho phép những trình giả lập game cũ phân phối trên App Store"
   },
   {
-    name: "Top công nghệ năm 2024"
+    name: "Hướng nghiệp CNTT – Định hướng nghề nghiệp cho các bạn trẻ"
   },
   {
-    name: "Nên học IT không ?"
+    name: "Nông nghiệp phát triển"
   }, {
-    name: "Top"
+    name: "Ngành thiết kế website còn hot không ?"
   },
 
 ])

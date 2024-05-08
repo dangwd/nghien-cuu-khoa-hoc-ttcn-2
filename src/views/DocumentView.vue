@@ -65,14 +65,30 @@
     </div>
     <div v-if="state == 'details'">
       <div class="py-4 flex justify-between items-center">
-        <h1 class="text-base text-gray-700 font-semibold">Danh sách tài liệu</h1>
+        <h1 class="text-base text-gray-700 font-semibold uppercase">Bộ môn thiết kế web</h1>
         <button @click="back()" id="scroll-button"
           class="w-10 h-10 text-white transition ease-in-out hover:scale-105 duration-150 bg-green-600 hover:bg-green-700 rounded-full">
           <i class='bx bx-chevron-left text-2xl font-semibold '></i>
         </button>
       </div>
-      <div>
-        {{ docList }}
+      <div class="p-2 flex items-center justify-between">
+        <h1 class="text-base text-gray-700 font-semibold">Danh sách tài liệu</h1>
+        <InputField placeholder="Tìm kiếm"></InputField>
+      </div>
+      <div class="grid grid-cols-3 gap-4">
+        <div v-for="(doc, index) in docList" :key="index"
+          class="card w-60 bg-base-100 shadow-xl hover:bg-gray-100 transition duration-150 ease-in-out hover:scale-105">
+          <figure class="px-5 pt-5">
+            <img src="../../src/assets/img/document.jpg" class="rounded-xl" />
+          </figure>
+          <div class="card-body items-center text-center px-2">
+            <h2 class="card-title text-base">{{ doc.title }}</h2>
+            <div class="pt-2">
+              <p class="text-sm">Ngày đăng: {{ doc.date }}</p>
+              <p class="text-sm italic">Tác giả: {{ doc.author }}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <AsideRight />
@@ -103,7 +119,53 @@ export default {
       sbjSelected: "",
       mjSelected: "",
       subjectsList: [],
-      docList: [],
+      docList: [
+        {
+          title: "Slide bài giảng ASP.NET ngày 8/5",
+          date: "8/5/2024",
+          author: "Nguyễn Minh Đăng"
+        },
+        {
+          title: "Slide bài giảng ASP.NET ngày 8/5",
+          date: "8/5/2024",
+          author: "Nguyễn Minh Đăng"
+        },
+        {
+          title: "Slide bài giảng ASP.NET ngày 8/5",
+          date: "8/5/2024",
+          author: "Nguyễn Minh Đăng"
+        },
+        {
+          title: "Slide bài giảng ASP.NET ngày 8/5",
+          date: "8/5/2024",
+          author: "Nguyễn Minh Đăng"
+        },
+        {
+          title: "Slide bài giảng ASP.NET ngày 8/5",
+          date: "8/5/2024",
+          author: "Nguyễn Minh Đăng"
+        },
+        {
+          title: "Slide bài giảng ASP.NET ngày 8/5",
+          date: "8/5/2024",
+          author: "Nguyễn Minh Đăng"
+        },
+        {
+          title: "Slide bài giảng ASP.NET ngày 8/5",
+          date: "8/5/2024",
+          author: "Nguyễn Minh Đăng"
+        },
+        {
+          title: "Slide bài giảng ASP.NET ngày 8/5",
+          date: "8/5/2024",
+          author: "Nguyễn Minh Đăng"
+        },
+        {
+          title: "Slide bài giảng ASP.NET ngày 8/5",
+          date: "8/5/2024",
+          author: "Nguyễn Minh Đăng"
+        },
+      ],
       departmentOpt: [],
       majorOpt: [],
       subjectOpt: []
@@ -179,7 +241,7 @@ export default {
     async detailsView(sbjId) {
       try {
         await getDocById(sbjId).then((res) => {
-          this.docList = res
+          // this.docList = res
         })
       } catch (err) {
         console.log(err)
