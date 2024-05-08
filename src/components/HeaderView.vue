@@ -8,7 +8,7 @@
     <div class="navbar-center mx-auto hidden lg:flex">
       <div class="flex items-center gap-2">
         <InputField :value="searchQuery" @input-change="setSearch" type="custom-input"
-          customClass="shadow-sm bg-gray-100 border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-[670px] p-2 my-2"
+          customClass="shadow-sm bg-gray-100 border border-gray-200 text-gray-700 text-sm rounded-xl focus:outline-none focus:ring-green-700 focus:border-green-700 focus:ring-1 transition ease-in-out duration-150 focus:text-green-700  block w-[670px] p-2 my-2"
           placeholder="Tìm kiếm...">
         </InputField>
         <Button btnIcon="icon" iconBtnClass="bx bx-search" btnClass="bg-green-600 text-white hover:bg-green-700"

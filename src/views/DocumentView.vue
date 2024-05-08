@@ -7,27 +7,46 @@
   <div v-else class="max-w-3xl mx-auto">
     <AsideView></AsideView>
     <div v-if="state == 'default'">
-      <div class="grid grid-cols-2 gap-2">
-        <InputField @select-change="chooseDpt" type="select" title="Khoa" :options="departmentOpt"></InputField>
-        <InputField @select-change="chooseMajor" type="select" title="Ngành" :options="majorOpt">
-        </InputField>
+      <div class="bg-white w-full shadow rounded-xl p-5">
+        <div class="flex gap-2">
+          <img class="w-10 h-10 rounded-full" :src="user.avatar" alt="">
+          <input type="text" :placeholder="'Bạn muốn đăng tài liệu không ' + user.fullName + ' ?'"
+            class="w-full p-2 text-gray-700 border border-gray-200 rounded-full bg-gray-50 text-sm italic" disabled>
+        </div>
+        <div class="flex justify-end pt-3">
+          <ModalComp labelBtn="Đăng bài" modalIdProps="createPost" size="4xl"
+            customClass="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold">
+
+          </ModalComp>
+        </div>
       </div>
-      <div class="pt-4">
-        <Button btnClass="bg-green-600 hover:bg-green-700 text-white w-full"
-          :config="{ label: 'Xác nhận', click: () => fetchAllSubject() }"></Button>
+      <div class="mt-2 bg-white rounded-xl border">
+        <div class="p-2">
+          <div class="grid grid-cols-2 gap-2 px-4 pt-4 pb-3">
+            <InputField @select-change="chooseDpt" type="select" title="Khoa" :options="departmentOpt"></InputField>
+            <InputField @select-change="chooseMajor" type="select" title="Ngành" :options="majorOpt">
+            </InputField>
+          </div>
+          <div class="flex justify-end">
+            <Button btnClass="bg-green-600 hover:bg-green-700 text-white mx-3 text-sm font-semibold mb-2"
+              :config="{ label: 'Xác nhận', click: () => fetchAllSubject() }"></Button>
+          </div>
+        </div>
       </div>
       <div v-if="subjectsList.length > 0">
         <div class="pt-4 flex justify-between items-center">
           <h1 class="text-base font-semibold text-gray-700">Danh sách Bộ môn</h1>
           <div class="flex gap-2 items-center">
-            <InputField type="custom-input" placeholder="Tìm kiếm..."></InputField>
-            <Button btnIcon="icon" iconBtnClass="bx bx-search" btnClass="bg-green-600 text-white hover:bg-green-700"
-              :config="{ click: () => search() }"></Button>
+            <InputField @input-change="setSearch" placeholder="Tìm kiếm..."></InputField>
           </div>
         </div>
       </div>
       <div v-else>
-        <h1 class="text-sm font-semibold text-gray-700">Hãy chọn Khoa bạn học!</h1>
+        <div class="flex justify-center items-center">
+          <span>
+            <div class="px-12"><i class='bx bxs-inbox text-9xl text-gray-700'></i></div>
+          </span>
+        </div>
       </div>
       <div v-for="(sbj, index) in subjectsList" :key="index">
         <div
@@ -37,8 +56,8 @@
             src="https://media.istockphoto.com/id/1359932120/vector/contract-document-icon-in-flat-style-report-with-folder-vector-illustration-on-isolated.jpg?s=612x612&w=0&k=20&c=eJUJzNLAWNHutYtNiX1x0ORNXMpOriOMH0S4aX0vUm0="
             alt="">
           <div class="flex flex-col justify-between px-4 leading-normal">
-            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-700">{{ sbj.title }}</h5>
-            <p class="mb-3 font-normal text-gray-700">{{ sbj.descriptions }}</p>
+            <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-700">{{ sbj.nameSubject }}</h5>
+            <p class="mb-3 font-normal text-gray-700 italic text-sm">Chọn để xem chi tiết tài liệu!~</p>
           </div>
         </div>
       </div>
@@ -53,14 +72,14 @@
         </button>
       </div>
       <div>
-        Tài liệu bla bla
+        {{ docList }}
       </div>
     </div>
     <AsideRight />
   </div>
 </template>
 <script>
-import { getAllDpt, getAllMajor, getAllSubject } from '@/api/auth/api';
+import { getAllDpt, getAllMajor, getAllSubject, getDocById } from '@/api/auth/api';
 import AsideView from '@/components/AsideView.vue';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { toast } from 'vue3-toastify';
@@ -69,21 +88,22 @@ export default {
   components: {
     AsideView,
   },
+  computed: {
+    user() {
+      return this.$store.state.user
+    },
+  },
   data() {
     return {
       isLoading: true,
       state: "default",
       editor: ClassicEditor,
+      searchQuery: "",
       dptSelected: "",
       sbjSelected: "",
       mjSelected: "",
-      subjectsList: [
-        {
-          id: 1,
-          title: 'Bộ môn Khoa học máy tính',
-          descriptions: 'Tài liệu bao gồm:...'
-        },
-      ],
+      subjectsList: [],
+      docList: [],
       departmentOpt: [],
       majorOpt: [],
       subjectOpt: []
@@ -106,6 +126,9 @@ export default {
     },
     chooseSubject(value) {
       this.sbjSelected = value
+    },
+    setSearch(value) {
+      this.searchQuery = value
     },
     showError() {
       toast.error("Có lỗi xảy ra!")
@@ -143,7 +166,8 @@ export default {
       try {
         if (this.dptSelected != "" && this.mjSelected != "") {
           await getAllSubject(this.dptSelected, this.mjSelected).then((res) => {
-            console.log(res)
+            this.subjectsList = res.data.content
+
           })
         } else {
           this.showError()
@@ -152,9 +176,16 @@ export default {
         console.log(err)
       }
     },
-    detailsView(id) {
+    async detailsView(sbjId) {
+      try {
+        await getDocById(sbjId).then((res) => {
+          this.docList = res
+        })
+      } catch (err) {
+        console.log(err)
+      }
       this.state = 'details'
-      console.log(id)
+
     },
     back() {
       this.state = 'default'

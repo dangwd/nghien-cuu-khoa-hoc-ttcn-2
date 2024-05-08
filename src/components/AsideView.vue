@@ -33,13 +33,13 @@
         <div class="pt-4">
           <h1 class="text-sm font-semibold text-gray-700">Danh mục</h1>
         </div>
-        <ul v-for="(item, index) in itemsSide" :key="index" class="space-y-2 font-medium">
+        <ul v-for="(item, index) in cateSide" :key="index" class="space-y-2 font-medium">
           <li>
-            <a href="#"
+            <router-link :to="'/detail-cate/' + item.id"
               class="flex items-center p-2 text-gray-700 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-              <span><i class='bx bx-message-square-dots text-lg font-semibold'></i></span>
+              <span><i class='bx bx-category text-lg font-semibold'></i></span>
               <span class="flex-1 ms-3 whitespace-nowrap">{{ item.name }}</span>
-            </a>
+            </router-link>
           </li>
         </ul>
       </div>
@@ -47,7 +47,7 @@
   </div>
 </template>
 <script>
-
+import { getAllCategory } from '@/api/auth/api';
 
 export default {
   data() {
@@ -80,23 +80,7 @@ export default {
           icon: "bx bx-news text-lg font-semibold"
         }
       ],
-      itemsSide: [
-        {
-          name: "Top"
-        },
-        {
-          name: "Nên học ngôn ngữ nào ?"
-        },
-        {
-          name: "Top công nghệ năm 2024"
-        },
-        {
-          name: "Nên học IT không ?"
-        },
-        {
-          name: "Project Demo 2024"
-        },
-      ]
+      cateSide: []
     }
   },
   computed: {
@@ -104,9 +88,22 @@ export default {
       return this.$store.state.user
     }
   },
+  mounted() {
+    this.fetchAllCategory()
+  },
   methods: {
     toggleSidebar() {
       this.isSidebarOpen = !this.isSidebarOpen;
+    },
+    async fetchAllCategory() {
+      try {
+        await getAllCategory().then((res) => {
+          this.cateSide = res.data
+          console.log(this.cateSide)
+        })
+      } catch (err) {
+        console.log(err)
+      }
     }
   },
 }

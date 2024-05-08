@@ -88,6 +88,11 @@ const router = createRouter({
           component: () => import('../views/DetailPost.vue')
         },
         {
+          name: 'detail-cate',
+          path: '/detail-cate/:id',
+          component: () => import('../views/DetailCategory.vue')
+        },
+        {
           name: 'introduce',
           path: '/introduce',
           component: () => import('../views/IntroduceView.vue')

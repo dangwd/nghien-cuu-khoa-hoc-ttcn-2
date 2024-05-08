@@ -172,7 +172,6 @@ export default {
     },
     setCategory(value) {
       this.createPost.listCategoryId = [value]
-      console.log(this.createPost.listCategoryId)
     },
     setImage(file) {
       this.createPost.image = file
@@ -226,7 +225,6 @@ export default {
       try {
         await getAllCategory().then((res) => {
           this.categoryOptions = res.data
-          console.log(this.categoryOptions)
         })
       } catch (err) {
         console.log(err);
