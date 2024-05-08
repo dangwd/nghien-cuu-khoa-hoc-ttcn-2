@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar bg-white fixed z-50">
+  <div class="navbar bg-white fixed shadow z-50">
     <div class="navbar-start flex gap-2 items-center">
       <router-link to="/"><img class="w-14 h-auto" src="../assets/img/vnua-logo.jpg" alt="" />
       </router-link>
@@ -44,12 +44,10 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { computed, ref } from 'vue';
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 const router = useRouter();
-defineProps(
-  {
-    searchResult: []
-  }
-)
+
 const searchQuery = ref("")
 const userRole = computed(() => {
   const vuexData = JSON.parse(localStorage.getItem('vuex'));
@@ -73,12 +71,17 @@ const search = async () => {
   if (searchQuery.value) {
     router.push({ path: '/search', query: { q: searchQuery.value } })
 
+  } else {
+    showMessage()
   }
 }
 const logout = () => {
   localStorage.removeItem('vuex');
   localStorage.removeItem('token');
   router.push('/login')
+}
+const showMessage = () => {
+  toast.info("Nhập thông tin cần tìm kiếm!")
 }
 </script>
 

@@ -38,7 +38,7 @@
           </div>
           <div class="text-base font-medium" v-html="post.content"></div>
           <div class="py-5" v-if="post.blogCategories[0]">
-            <div class="badge badge-info gap-2 text-white text-xs">
+            <div class="badge bg-blue-600 gap-2 text-white text-xs">
               #{{ post.blogCategories[0].category.name }}
             </div>
           </div>
@@ -46,7 +46,7 @@
             <div class="flex gap-5">
               <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span class="text-gray-700 text-base">{{
                 post.numLike
-              }}</span>
+                  }}</span>
               </h1>
               <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
                   class="text-gray-700 text-base">{{

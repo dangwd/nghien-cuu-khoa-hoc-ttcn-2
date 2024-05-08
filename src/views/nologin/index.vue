@@ -67,7 +67,7 @@
               <div class="bg-green-600 rounded-lg w-full h-80 p-4">
                 <div class="text-white font-semibold text-base">
                   <h1 class="pb-2">Ủng hộ chúng tớ tại:</h1>
-                  <img src="../../../src/assets/img/donate.jpg" alt="">
+                  <!-- <img src="../../../src/assets/img/donate.jpg" alt=""> -->
                 </div>
               </div>
             </div>

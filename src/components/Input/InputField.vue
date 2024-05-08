@@ -5,7 +5,7 @@
       <label :for="labelField" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">{{ title
         }}</label>
       <select v-model="selected" :id="labelField" @select-change="$emit('select-change', selected)"
-        class="bg-gray-50 border border-gray-300 text-gray-700 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5">
+        class="bg-gray-50 border border-gray-300 text-gray-700 text-base rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5">
         <option :value="opt.value" v-for="(opt, index) in options" :key="index">{{ opt.text }}</option>
       </select>
     </div>
@@ -47,7 +47,7 @@
       <ckeditor @input="inputChange" :editor="editor" v-model="valueText"></ckeditor>
     </div>
     <div v-else-if="type == 'custom-input'">
-      <label :for="labelField" class="block mb-2 text-sm font-semibold text-gray-700">{{ title }}</label>
+      <label :for="labelField" class="block text-sm font-semibold text-gray-700">{{ title }}</label>
       <input @input="inputChange" :placeholder="placeholder" v-model="valueText" :type="typeInput" :id="labelField"
         :disabled="disabled" :class="customClass" required />
     </div>

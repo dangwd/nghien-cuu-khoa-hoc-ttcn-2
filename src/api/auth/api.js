@@ -91,6 +91,9 @@ export const getPostByUser = (userId) => api.get(`blog/all/get-blog-by-user?user
 //=======================DOCS API=======================
 export const getAllDpt = () => api.get("/department/public/get-all-department")
 
+export const getAllMajor = (id) => api.get(`/specialize/public/get-specialize-by-department?departmentId=${id}`)
+
+export const getAllSubject = (dptId, mjId) => api.get(`/subject/public/get-subject-by-department-and-specialize?departmentId=${dptId}&specializeId=${mjId}`)
 //=======================INFOMATION API=======================
 //get all
 export const getAllNotification = () => api.get("notification/all/get-all-notification")
