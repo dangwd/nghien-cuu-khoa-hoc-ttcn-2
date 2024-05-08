@@ -35,7 +35,7 @@
         </div>
         <ul v-for="(item, index) in cateSide" :key="index" class="space-y-2 font-medium">
           <li>
-            <router-link :to="'/detail-cate/' + item.id"
+            <router-link @click="fetchPostByCateId(item.id)" :to="'/detail-cate/' + item.id"
               class="flex items-center p-2 text-gray-700 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
               <span><i class='bx bx-category text-lg font-semibold'></i></span>
               <span class="flex-1 ms-3 whitespace-nowrap">{{ item.name }}</span>
@@ -48,7 +48,7 @@
 </template>
 <script>
 import { getAllCategory } from '@/api/auth/api';
-
+import store from '@/store';
 export default {
   data() {
     return {
@@ -86,7 +86,8 @@ export default {
   computed: {
     user() {
       return this.$store.state.user
-    }
+    },
+
   },
   mounted() {
     this.fetchAllCategory()
@@ -104,6 +105,9 @@ export default {
       } catch (err) {
         console.log(err)
       }
+    },
+    fetchPostByCateId(id) {
+      store.dispatch('fetchPostByCateId', id)
     }
   },
 }

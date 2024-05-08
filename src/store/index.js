@@ -1,17 +1,21 @@
 import { createStore } from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
 import api from '../api/auth/api';
-
+import { getPostByCateId } from '../api/auth/api';
 export default createStore({
   plugins: [createPersistedState()],
 
   state: {
     user: null,
     token: localStorage.getItem('token') || null,
+    postData: [],
   },
   mutations: {
     setUser(state, user) {
       state.user = user;
+    },
+    setPostData(state, data) {
+      state.postData = data
     },
     setToken(state, token) {
       state.token = token;
@@ -45,5 +49,13 @@ export default createStore({
         throw error;
       }
     },
+    async fetchPostByCateId({ commit }, id) {
+      try {
+        const res = await getPostByCateId(id)
+        commit('setPostData', res)
+      } catch (err) {
+        console.error(err)
+      }
+    }
   },
 });

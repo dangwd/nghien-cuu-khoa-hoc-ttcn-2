@@ -16,7 +16,6 @@
         <div class="flex justify-end pt-3">
           <ModalComp labelBtn="Đăng bài" modalIdProps="createPost" size="4xl"
             customClass="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold">
-
           </ModalComp>
         </div>
       </div>

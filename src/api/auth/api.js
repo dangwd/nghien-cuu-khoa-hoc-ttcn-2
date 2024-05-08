@@ -70,9 +70,12 @@ export const activePost = (postId) => api.post(`blog/blog-manager/active-or-unac
 // For User
 export const getAllPostPublic = () => api.get(`/blog/public/get-all-blog`)
 
+export const getPostByCateId = (cateId) => api.get(`/blog/public/get-blog-by-category?categoryId=${cateId}`)
 // Get post by Id
 export const getPostById = (id) => api.get(`/blog/all/get-blog-by-id?id=${id}`)
 
+//get top 10 post
+export const getPostTopTier = () => api.get("blog/public/get-top10-blog?size=10")
 //Delete
 export const deletePostById = (id) => api.delete(`/blog/all/delete?blogId=${id}`)
 

@@ -22,7 +22,7 @@
               <a href="#"
                 class="flex items-center p-2 text-gray-700 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                 <span><i class='bx bx-message-square-dots text-sm font-semibold'></i></span>
-                <span class="flex-1 ms-3 whitespace-nowrap">{{ shortenText(item.name, 25) }}</span>
+                <span class="flex-1 ms-3 whitespace-nowrap">{{ shortenText(item.title, 25) }}</span>
               </a>
             </li>
           </ul>
@@ -39,7 +39,9 @@
   </aside>
 </template>
 <script setup>
-import { computed, ref } from "vue";
+import { getPostTopTier } from "@/api/auth/api";
+import { computed, onMounted, ref } from "vue";
+
 const shortenText = computed(() => {
   return (description, maxLength) => {
     if (description.length <= maxLength) {
@@ -49,36 +51,17 @@ const shortenText = computed(() => {
     }
   };
 })
-const itemsSide = ref([
-  {
-    name: "MediaTek Dimensity 6300: Tăng 50% hiệu năng GPU cho những chiếc điện thoại bình dân"
-  },
-  {
-    name: "Trải nghiệm tai nghe fullsize chuyên cho dân làm âm thanh: Sennheiser HD 490 Pro"
-  },
-  {
-    name: "Trải nghiệm tính năng Photo Remaster trên Galaxy A35 5G: Chỉnh sửa ảnh tự động, nhanh và tiện lợi"
-  },
-  {
-    name: "Google sẽ ngưng tiện ích Google One VPN từ cuối năm nay"
-  },
-  {
-    name: "Một thị trường Apple Vision Pro đang âm thầm chiếm lĩnh: Bảo trì và lắp ráp động cơ hàng không"
-  },
-  {
-    name: "Google sẽ mang công cụ chỉnh sửa ảnh AI lên iPhone vào ngày 15/5 tới, không cần trả phí"
-  },
-  {
-    name: "Apple cho phép những trình giả lập game cũ phân phối trên App Store"
-  },
-  {
-    name: "Hướng nghiệp CNTT – Định hướng nghề nghiệp cho các bạn trẻ"
-  },
-  {
-    name: "Nông nghiệp phát triển"
-  }, {
-    name: "Ngành thiết kế website còn hot không ?"
-  },
-
-])
+const itemsSide = ref([])
+onMounted(() => {
+  fetchPostTopTiers()
+})
+const fetchPostTopTiers = async () => {
+  try {
+    await getPostTopTier().then((res) => {
+      itemsSide.value = res.data.content
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
 </script>
