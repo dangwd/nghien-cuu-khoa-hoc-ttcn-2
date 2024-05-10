@@ -23,8 +23,8 @@
         </div>
         <ul v-for="(item, index) in menuList" :key="index" class="space-y-2 font-medium">
           <li>
-            <router-link :to="item.url"
-              class="flex items-center p-2 text-gray-700 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <router-link :to="item.url" :class="{ 'bg-green-600 text-white hover:bg-green-700 ': isSelected(item) }"
+              class="flex items-center p-2 text-gray-700 rounded-lg hover:text-gray-800 hover:bg-gray-100 group">
               <span><i :class='item.icon'></i></span>
               <span class="flex-1 ms-3 whitespace-nowrap">{{ item.name }}</span>
             </router-link>
@@ -53,10 +53,11 @@ export default {
   data() {
     return {
       isSidebarOpen: true,
+      selectedMenuItem: null,
       menuList: [
         {
           name: "Trang chủ",
-          url: "/",
+          url: "/homepage",
           icon: "bx bx-home-alt-2 text-lg font-semibold"
         },
         {
@@ -76,7 +77,7 @@ export default {
         },
         {
           name: "Giới thiệu chung",
-          url: "introduce",
+          url: "/introduce",
           icon: "bx bx-news text-lg font-semibold"
         }
       ],
@@ -105,6 +106,9 @@ export default {
       } catch (err) {
         console.log(err)
       }
+    },
+    isSelected(item) {
+      return item.url === '/' && this.$route.path === '/' || item.url !== '/' && this.$route.path.startsWith(item.url);
     },
     fetchPostByCateId(id) {
       store.dispatch('fetchPostByCateId', id)

@@ -4,10 +4,10 @@
       <div class="rounded-md h-12 w-12 border-4 border-t-4 border-green-500 animate-spin absolute"></div>
     </div>
   </div>
-  <div v-else class="w-full flex flex-row flex-wrap  mx-auto">
-    <div class="w-full h-screen flex flex-row flex-wrap justify-center">
+  <div v-else class="w-full flex flex-row flex-wrap mx-auto">
+    <div class="w-full flex flex-row flex-wrap justify-center">
       <AsideView></AsideView>
-      <div class="max-w-3xl md:w-3/4 lg:w-4/5 p-5 md:px-12 lg:24 h-full antialiased">
+      <div class="max-w-3xl md:w-3/4 lg:w-4/5 p-5 md:px-12 lg:24 antialiased">
         <div class="bg-white w-full shadow rounded-xl p-5">
           <div class="flex gap-2">
             <img class="w-10 h-10 rounded-full" :src="user.avatar" alt="">
@@ -40,6 +40,7 @@
                   labelField="description" title="Danh mục"></InputField>
                 <InputField styleClass="py-2" @input-change="setContent" :value="createPost.content" type="ckeditor">
                 </InputField>
+                <progress class="progress progress-success w-full" :value="progressUpload" max="100"></progress>
                 <InputField @input-file="setImage" :value="createPost.image" type="file-input"></InputField>
               </template>
               <template #footer>
@@ -50,65 +51,70 @@
             </ModalComp>
           </div>
         </div>
-
-        <div v-for="(post, index) in posts" :key="index" class="mt-3 flex flex-col">
-          <div class="bg-white mt-3 rounded-lg">
-            <img class="border rounded-t-xl shadow-xl w-full" :src="post.image">
-            <div class="bg-white border-b border-1 shadow p-5 text-xl text-gray-700 font-semibold">
-              <div class="flex items-center gap-4">
-                <img class="w-10 h-10 rounded-full" :src="post.user.avatar" alt="">
-                <div class="font-medium">
-                  <div class="font-semibold text-base">{{ post.user.fullName }} <span
-                      v-show="post.user.role === 'ROLE_ADMIN'"><i class='bx bxs-check-shield text-blue-500'></i></span>
+        <div>
+          <div v-for="(post, index) in posts" :key="index" class="mt-3 flex flex-col">
+            <div class="bg-white mt-3 rounded-lg">
+              <img class="border rounded-t-xl shadow-xl w-full" :src="post.image">
+              <div class="bg-white border-b border-1 shadow p-5 text-xl text-gray-700 font-semibold">
+                <div class="flex items-center gap-4">
+                  <img class="w-10 h-10 rounded-full" :src="post.user.avatar" alt="">
+                  <div class="font-medium">
+                    <div class="font-semibold text-base">{{ post.user.fullName }} <span
+                        v-show="post.user.role === 'ROLE_ADMIN'"><i
+                          class='bx bxs-check-shield text-blue-500'></i></span>
+                    </div>
+                    <div class="flex gap-2">
+                      <h1 class="text-xs text-gray-500">{{ post.createdTime }} /</h1>
+                      <h1 class="text-xs text-gray-500">{{ post.createdDate }}</h1>
+                      <i class='bx bxs-planet text-xs text-gray-500'></i>
+                    </div>
                   </div>
-                  <div class="flex gap-2">
-                    <h1 class="text-xs text-gray-500">{{ post.createdTime }} /</h1>
-                    <h1 class="text-xs text-gray-500">{{ post.createdDate }}</h1>
-                    <i class='bx bxs-planet text-xs text-gray-500'></i>
+                </div>
+                <div class="py-5">
+                  <h1 class="mb-4 text-lg font-extrabold text-gray-700"><span
+                      class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
+                      {{ post.title }}</span></h1>
+                  <div class="text-base font-medium" v-html="post.content"></div>
+                </div>
+                <!-- Reaction -->
+                <div>
+                  <div class="flex gap-5">
+                    <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span
+                        class="text-gray-700 text-base">{{
+                          post.numLike
+                        }}</span>
+                    </h1>
+                    <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
+                        class="text-gray-700 text-base">{{
+                          post.numComment
+                        }}</span>
+                    </h1>
                   </div>
                 </div>
               </div>
-              <div class="py-5">
-                <h1 class="mb-4 text-lg font-extrabold text-gray-700"><span
-                    class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
-                    {{ post.title }}</span></h1>
-                <div class="text-base font-medium" v-html="post.content"></div>
-              </div>
-              <!-- Reaction -->
-              <div>
-                <div class="flex gap-5">
-                  <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span class="text-gray-700 text-base">{{
-                    post.numLike
-                      }}</span>
-                  </h1>
-                  <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
-                      class="text-gray-700 text-base">{{
-                        post.numComment
-                      }}</span>
-                  </h1>
-                </div>
-              </div>
-            </div>
 
-            <div class="bg-white p-1 shadow flex flex-row flex-wrap rounded-b-xl">
-              <button @click="increaseLike(post.id)" :class="{ 'text-green-600': statusLike }"
-                class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-green-600 font-semibold">
-                <i class='bx bxs-heart text-lg'></i> Like
-              </button>
+              <div class="bg-white p-1 shadow flex flex-row flex-wrap rounded-b-xl">
+                <button @click="increaseLike(post.id)" :class="{ 'text-green-600': statusLike }"
+                  class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-green-600 font-semibold">
+                  <i class='bx bxs-heart text-lg'></i> Like
+                </button>
 
-              <router-link :to="'/detail-post/' + post.id"
-                class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-blue-600 font-semibold">
-                <i class='bx bx bxs-message-square-dots text-lg'></i> Comment
-              </router-link>
-              <button @click="showMessage()"
-                class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-red-600 font-semibold">
-                <i class='bx bxs-share'></i> Share
-              </button>
+                <router-link :to="'/detail-post/' + post.id"
+                  class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-blue-600 font-semibold">
+                  <i class='bx bx bxs-message-square-dots text-lg'></i> Comment
+                </router-link>
+                <button @click="showMessage()"
+                  class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-red-600 font-semibold">
+                  <i class='bx bxs-share'></i> Share
+                </button>
+              </div>
             </div>
           </div>
+          <div v-if="posts.length" v-observe-visibility="handleScroll">
+          </div>
         </div>
+        <AsideRight />
       </div>
-      <AsideRight />
     </div>
   </div>
 
@@ -120,13 +126,21 @@ import 'vue3-toastify/dist/index.css';
 import AsideView from '@/components/AsideView.vue';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/storage';
+import { ObserveVisibility } from "vue3-observe-visibility";
+import { ref } from 'vue';
 export default {
+  directives: {
+    ObserveVisibility
+  },
   components: {
     AsideView
   },
   data() {
     return {
       statusLike: false,
+      progressUpload: 0,
+      loading: false,
+      currentPage: 1,
       comments: [],
       categoryOptions: [],
       createPost: {
@@ -138,13 +152,14 @@ export default {
         listCategoryId: []
       },
       isLoading: true,
-      posts: []
+      posts: ref([])
     }
   },
   computed: {
     user() {
       return this.$store.state.user
     },
+
   },
   mounted() {
     this.fetchCategory()
@@ -156,10 +171,14 @@ export default {
       })
   },
   methods: {
+    handleScroll(isVisible) {
+      if (!isVisible) { return }
+      this.currentPage++
+      this.fetchAllPostPub()
+    },
     async increaseLike(id) {
-      await likePost(id).then((res) => {
-        this.fetchAllPostPub()
-      })
+      await likePost(id)
+      await this.fetchAllPostPub()
     },
     setTitle(value) {
       this.createPost.title = value
@@ -178,7 +197,7 @@ export default {
       var storageRef = firebase.storage().ref('image/' + file.name)
       let uploadTask = storageRef.put(file)
       uploadTask.on('stage_changed', (snapshot) => {
-        console.log(snapshot)
+        this.progressUpload = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
       }, (error) => {
         console.log(error)
       }, () => {
@@ -214,8 +233,8 @@ export default {
     },
     async fetchAllPostPub() {
       try {
-        await getAllPostPublic().then((res) => {
-          this.posts = res.data.content
+        await getAllPostPublic(this.currentPage).then((res) => {
+          this.posts.push(...res.data.content)
         })
       } catch (err) {
         console.log(err)

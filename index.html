@@ -4,10 +4,13 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.ico" />
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FITA Forums</title>
   </head>
@@ -15,4 +18,19 @@
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
   </body>
+  <df-messenger
+    intent="WELCOME"
+    chat-title="Chatbot-VNUA"
+    agent-id="cd1771cc-f852-4d0d-b94d-c416eebf86f2"
+    language-code="vi"
+  ></df-messenger>
 </html>
+<style>
+  df-messenger {
+    --df-messenger-bot-message: #fff;
+    --df-messenger-button-titlebar-color: #057a55;
+    --df-messenger-chat-background-color: #fafafa;
+    --df-messenger-send-icon: #fff;
+    --df-messenger-user-message: #fff;
+  }
+</style>

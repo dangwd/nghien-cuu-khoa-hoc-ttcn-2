@@ -21,8 +21,9 @@
           <div class="flex items-center gap-4" v-if="post && post.user">
             <img class="w-10 h-10 rounded-full" :src="post.user.avatar" alt="">
             <div class="font-medium dark:text-white">
-              <div class="font-semibold">{{ post.user.fullName }} <span v-show="post.user.role === 'ROLE_ADMIN'"><i
-                    class='bx bxs-check-shield text-blue-500'></i></span></div>
+              <div class="text-base font-semibold">{{ post.user.fullName }} <span
+                  v-show="post.user.role === 'ROLE_ADMIN'"><i class='bx bxs-check-shield text-blue-500'></i></span>
+              </div>
               <div class="flex gap-2">
                 <h1 class="text-xs text-gray-500">{{ post.createdTime }} /</h1>
                 <h1 class="text-xs text-gray-500">{{ post.createdDate }}</h1>
@@ -46,7 +47,7 @@
             <div class="flex gap-5">
               <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span class="text-gray-700 text-base">{{
                 post.numLike
-                  }}</span>
+              }}</span>
               </h1>
               <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
                   class="text-gray-700 text-base">{{

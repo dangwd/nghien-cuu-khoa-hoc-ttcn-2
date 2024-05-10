@@ -5,7 +5,7 @@
       <label :for="labelField" class="block mb-2 text-sm font-semibold text-gray-700">{{ title
         }}</label>
       <select v-model="selected" :id="labelField" @select-change="$emit('select-change', selected)"
-        class="bg-gray-50 border border-gray-300 text-gray-700 text-base rounded-xl focus:ring-green-700 focus:border-green-700 block w-full p-1.5">
+        class="bg-gray-50 border border-gray-300 text-gray-700 text-base rounded-xl focus:ring-green-700 focus:border-green-700 block w-full p-1.5 transition ease-in-out duration-150">
         <option :value="opt.value" v-for="(opt, index) in options" :key="index">{{ opt.text }}</option>
       </select>
     </div>
@@ -56,7 +56,7 @@
       <label :for="labelField" class="block mb-2 text-sm font-semibold text-gray-700">{{ title }}</label>
       <input @input="inputChange" :placeholder="placeholder" v-model="valueText" :type="typeInput" :id="labelField"
         :disabled="disabled"
-        class="shadow-sm bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus:outline-none focus:ring-green-700 focus:border-green-700 focus:ring-1 block w-full p-2"
+        class="shadow-sm bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus:outline-none focus:ring-green-700 focus:border-green-700 transition ease-in-out duration-150 focus:ring-1 block w-full p-2"
         required />
     </div>
   </div>

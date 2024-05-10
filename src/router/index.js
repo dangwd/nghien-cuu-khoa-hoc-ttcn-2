@@ -93,6 +93,16 @@ const router = createRouter({
           component: () => import('../views/DetailCategory.vue')
         },
         {
+          name: 'detail-documents',
+          path: '/detail-documents/:id',
+          component: () => import('../views/DetailDocuments.vue')
+        },
+        {
+          name: 'detail-toptier',
+          path: '/detail-toptier/:id',
+          component: () => import('../views/PostTopTier.vue')
+        },
+        {
           name: 'introduce',
           path: '/introduce',
           component: () => import('../views/IntroduceView.vue')

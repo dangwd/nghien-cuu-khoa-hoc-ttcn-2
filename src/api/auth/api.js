@@ -68,7 +68,7 @@ export const createPost = (title, description, image, content, linkFiles, listCa
 })
 export const activePost = (postId) => api.post(`blog/blog-manager/active-or-unacative?blogId=${postId}`)
 // For User
-export const getAllPostPublic = () => api.get(`/blog/public/get-all-blog`)
+export const getAllPostPublic = (currentPage, query) => api.get(`/blog/public/get-all-blog?currentPage=${currentPage}&size=5&keywords=${query ? query : ""}`)
 
 export const getPostByCateId = (cateId) => api.get(`/blog/public/get-blog-by-category?categoryId=${cateId}`)
 // Get post by Id

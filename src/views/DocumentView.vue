@@ -70,15 +70,35 @@
           <i class='bx bx-chevron-left text-2xl font-semibold '></i>
         </button>
       </div>
+      <div class="pb-4 border-b-4 rounded-b-lg border-green-600 max-w-3xl">
+        <h1 class="p-2 text-base text-gray-700 font-semibold mb-2">Tài liệu được nhiều người quan tâm!</h1>
+        <div class="flex justify-between gap-4">
+          <router-link :to="'detail-documents/' + doc.id" v-for="(doc, index) in highDoc" :key="index"
+            class="card w-60 bg-base-100 shadow-xl hover:bg-gray-100 transition duration-150 ease-in-out hover:scale-105 hover:cursor-pointer">
+            <figure class="px-5 pt-5">
+              <img src="../../src/assets/img/document.jpg" class="rounded-xl" />
+            </figure>
+            <div class="card-body items-center text-center px-2">
+              <h2 class="card-title text-base">{{ doc.title }}</h2>
+              <div class="pt-2">
+                <p class="text-sm">Ngày đăng: {{ doc.date }}</p>
+                <p class="text-sm italic">Tác giả: {{ doc.author }}</p>
+              </div>
+            </div>
+          </router-link>
+        </div>
+      </div>
       <div class="p-2 flex items-center justify-between">
         <h1 class="text-base text-gray-700 font-semibold">Danh sách tài liệu</h1>
         <InputField placeholder="Tìm kiếm"></InputField>
       </div>
       <div class="grid grid-cols-3 gap-4">
-        <div v-for="(doc, index) in docList" :key="index"
-          class="card w-60 bg-base-100 shadow-xl hover:bg-gray-100 transition duration-150 ease-in-out hover:scale-105">
+        <router-link :to="'detail-documents/' + doc.id" v-for="(doc, index) in docList" :key="index"
+          class="card w-60 bg-base-100 shadow-xl hover:bg-gray-100 transition duration-150 ease-in-out hover:scale-105 hover:cursor-pointer">
+
           <figure class="px-5 pt-5">
-            <img src="../../src/assets/img/document.jpg" class="rounded-xl" />
+            <img src="https://nativex.edu.vn/wp-content/uploads/2023/11/tai-lieu-mien-phi-ielts-simon-thumbnail.jpg"
+              class="rounded-xl" />
           </figure>
           <div class="card-body items-center text-center px-2">
             <h2 class="card-title text-base">{{ doc.title }}</h2>
@@ -87,7 +107,8 @@
               <p class="text-sm italic">Tác giả: {{ doc.author }}</p>
             </div>
           </div>
-        </div>
+
+        </router-link>
       </div>
     </div>
     <AsideRight />
@@ -120,35 +141,61 @@ export default {
       subjectsList: [],
       docList: [
         {
+          id: 1,
           title: "Slide bài giảng ASP.NET ngày 8/5",
           date: "8/5/2024",
           author: "Nguyễn Minh Đăng"
         },
         {
+          id: 2,
           title: "Slide bài giảng ASP.NET ngày 8/5",
           date: "8/5/2024",
           author: "Nguyễn Minh Đăng"
         },
         {
+          id: 3,
           title: "Slide bài giảng ASP.NET ngày 8/5",
           date: "8/5/2024",
           author: "Nguyễn Minh Đăng"
         },
         {
+          id: 1,
           title: "Slide bài giảng ASP.NET ngày 8/5",
           date: "8/5/2024",
           author: "Nguyễn Minh Đăng"
         },
         {
+          id: 1,
           title: "Slide bài giảng ASP.NET ngày 8/5",
           date: "8/5/2024",
           author: "Nguyễn Minh Đăng"
         },
         {
+          id: 1,
           title: "Slide bài giảng ASP.NET ngày 8/5",
           date: "8/5/2024",
           author: "Nguyễn Minh Đăng"
         },
+        {
+          id: 1,
+          title: "Slide bài giảng ASP.NET ngày 8/5",
+          date: "8/5/2024",
+          author: "Nguyễn Minh Đăng"
+        },
+        {
+          id: 1,
+          title: "Slide bài giảng ASP.NET ngày 8/5",
+          date: "8/5/2024",
+          author: "Nguyễn Minh Đăng"
+        },
+        {
+          id: 1,
+          title: "Slide bài giảng ASP.NET ngày 8/5",
+          date: "8/5/2024",
+          author: "Nguyễn Minh Đăng"
+        },
+      ],
+      highDoc: [
         {
           title: "Slide bài giảng ASP.NET ngày 8/5",
           date: "8/5/2024",

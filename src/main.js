@@ -10,6 +10,7 @@ window.axios = axios
 import firebase from 'firebase/compat/app';
 import 'firebase/storage'
 import 'firebase/compat/database'
+import { ObserveVisibility } from "vue3-observe-visibility";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCHSxwRox6f2b8No6UWQUJPKis1W-De1sw",
@@ -39,6 +40,7 @@ import AsideView from './components/AsideView.vue'
 import AsideRight from './components/AsideRight.vue'
 const app = createApp(App)
 
+app.directive('ObserveVisibility', ObserveVisibility)
 app.use(store)
 app.use(CKEditor)
 app.use(Vue3Toastify)

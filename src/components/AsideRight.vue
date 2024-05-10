@@ -16,31 +16,30 @@
       </div>
       <div class="p-2 m-2 border-2 border-green-600 rounded-xl">
         <div class="p-2">
-          <h1 class="text-base font-semibold text-gray-700 pb-2">Có thể bạn sẽ thích!</h1>
+          <h1 class="text-base font-semibold text-gray-700 pb-2">Top bài viết trong tuần qua!</h1>
           <ul v-for="(item, index) in itemsSide" :key="index" class="space-y-2 font-medium">
             <li>
-              <a href="#"
+              <router-link @click="getPost(item.id)" :to="'/detail-toptier/' + item.id"
                 class="flex items-center p-2 text-gray-700 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                <span><i class='bx bx-message-square-dots text-sm font-semibold'></i></span>
+                <span class="badge text-xs font-semibold text-green-700"> {{ index + 1 }}</span>
                 <span class="flex-1 ms-3 whitespace-nowrap">{{ shortenText(item.title, 25) }}</span>
-              </a>
+              </router-link>
             </li>
           </ul>
         </div>
       </div>
-      <footer class="fixed bottom-2 right-4">
-        <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
-          <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2024 <a href=""
-              class="hover:underline">NMD™</a>. All Rights Reserved.
-          </span>
-        </div>
-      </footer>
+      <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
+        <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2024 <a href=""
+            class="hover:underline">NMD™</a>. All Rights Reserved.
+        </span>
+      </div>
     </div>
   </aside>
 </template>
 <script setup>
 import { getPostTopTier } from "@/api/auth/api";
 import { computed, onMounted, ref } from "vue";
+import store from '@/store';
 
 const shortenText = computed(() => {
   return (description, maxLength) => {
@@ -64,4 +63,8 @@ const fetchPostTopTiers = async () => {
     console.log(err)
   }
 }
+const getPost = (id) => {
+  store.dispatch('fetchPostTopTierById', id)
+}
+
 </script>

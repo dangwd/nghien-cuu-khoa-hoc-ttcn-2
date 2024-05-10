@@ -1,6 +1,6 @@
 import { createStore } from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
-import api from '../api/auth/api';
+import api, { getPostById } from '../api/auth/api';
 import { getPostByCateId } from '../api/auth/api';
 export default createStore({
   plugins: [createPersistedState()],
@@ -9,6 +9,7 @@ export default createStore({
     user: null,
     token: localStorage.getItem('token') || null,
     postData: [],
+    postTopTier: {}
   },
   mutations: {
     setUser(state, user) {
@@ -16,6 +17,9 @@ export default createStore({
     },
     setPostData(state, data) {
       state.postData = data
+    },
+    setPostTopTier(state, data) {
+      state.postTopTier = data
     },
     setToken(state, token) {
       state.token = token;
@@ -53,6 +57,14 @@ export default createStore({
       try {
         const res = await getPostByCateId(id)
         commit('setPostData', res)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+    async fetchPostTopTierById({ commit }, id) {
+      try {
+        const res = await getPostById(id)
+        commit('setPostTopTier', res)
       } catch (err) {
         console.error(err)
       }
