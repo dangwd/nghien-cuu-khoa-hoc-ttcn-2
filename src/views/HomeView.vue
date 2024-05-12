@@ -177,8 +177,12 @@ export default {
       this.fetchAllPostPub()
     },
     async increaseLike(id) {
-      await likePost(id)
-      await this.fetchAllPostPub()
+      try {
+        await likePost(id)
+        await this.fetchAllPostPub()
+      } catch (err) {
+        console.log(err)
+      }
     },
     setTitle(value) {
       this.createPost.title = value

@@ -1,6 +1,6 @@
 <template>
   <AsideView />
-  <div class="container mx-auto my-5 p-5 max-w-4xl ">
+  <div class=" mx-auto my-5 p-5 max-w-4xl ">
     <div class="w-full md:w-3/12 md:mx-2">
       <div class="bg-white p-3 border-t-4 border-green-500 rounded-lg">
         <div class="image overflow-hidden">

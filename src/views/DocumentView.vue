@@ -14,8 +14,39 @@
             class="w-full p-2 text-gray-700 border border-gray-200 rounded-full bg-gray-50 text-sm italic" disabled>
         </div>
         <div class="flex justify-end pt-3">
-          <ModalComp labelBtn="Đăng bài" modalIdProps="createPost" size="4xl"
-            customClass="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold">
+          <ModalComp labelBtn="Đăng tài liệu" modalIdProps="createPost" size="4xl"
+            customClass="bg-green-600 text-white p-2 rounded-lg text-sm font-semibold">
+            <template #header>
+              <div class="flex justify-center border-b">
+                <h1 class="text-lg font-semibold pb-2">Đăng tài liệu</h1>
+              </div>
+            </template>
+            <template #content>
+              <div class="flex items-center gap-4 pb-4">
+                <img class="w-10 h-10 rounded-full" :src="user.avatar" alt="">
+                <div class="font-medium dark:text-white">
+                  <div>{{ user.fullName }}</div>
+                  <span
+                    class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">{{
+                      formatStatus(user.role) }}</span>
+                </div>
+              </div>
+              <InputField @input-change="setTitle" labelField="title" title="Tiêu đề tài liệu"></InputField>
+              <InputField @input-change="setDesc" labelField="description" title="Mô tả tài liệu"></InputField>
+              <InputField @select-change="chooseDpt" type="select" title="Khoa" :options="departmentOpt"
+                labelField="dpt"></InputField>
+              <InputField @select-change="chooseMajor" type="select" title="Ngành" :options="majorOpt" labelField="mjr">
+              </InputField>
+              <InputField type="select" @select-change="chooseSubject" labelField="sbj" title="Bộ môn"
+                :options="subjectOpt"></InputField>
+              <progress class="progress progress-success w-full" max="100"></progress>
+              <InputField type="file-input"></InputField>
+            </template>
+            <template #footer>
+              <div class="flex justify-end">
+                <Button :config="{ label: 'Tạo', click: () => createDocument() }"></Button>
+              </div>
+            </template>
           </ModalComp>
         </div>
       </div>
@@ -26,17 +57,18 @@
             <InputField @select-change="chooseMajor" type="select" title="Ngành" :options="majorOpt">
             </InputField>
           </div>
-          <div class="flex justify-end">
-            <Button btnClass="bg-green-600 hover:bg-green-700 text-white mx-3 text-sm font-semibold mb-2"
-              :config="{ label: 'Xác nhận', click: () => fetchAllSubject() }"></Button>
-          </div>
         </div>
       </div>
       <div v-if="subjectsList.length > 0">
         <div class="pt-4 flex justify-between items-center">
           <h1 class="text-base font-semibold text-gray-700">Danh sách Bộ môn</h1>
           <div class="flex gap-2 items-center">
-            <InputField @input-change="setSearch" placeholder="Tìm kiếm..."></InputField>
+            <InputField :value="searchQuery" @input-change="setSearch" type="custom-input"
+              customClass="shadow-sm border border-gray-200 text-gray-700 text-sm rounded-xl focus:outline-none focus:ring-green-700 focus:border-green-700 focus:ring-1 transition ease-in-out duration-150 focus:text-green-700  block w-[300px] p-2 my-2"
+              placeholder="Tìm kiếm theo tên hoặc mã môn học">
+            </InputField>
+            <Button btnIcon="icon" iconBtnClass="bx bx-search" btnClass="bg-green-600 text-white hover:bg-green-700"
+              :config="{ click: () => search() }"></Button>
           </div>
         </div>
       </div>
@@ -134,6 +166,11 @@ export default {
       isLoading: true,
       state: "default",
       editor: ClassicEditor,
+      createDoc: {
+        title: "",
+        description: "",
+        subjectId: ""
+      },
       searchQuery: "",
       dptSelected: "",
       sbjSelected: "",
@@ -225,15 +262,23 @@ export default {
     })
   },
   methods: {
+    setTitle(value) {
+      this.createDoc.title = value
+    },
+    setDesc(value) {
+      this.createDoc.description = value
+    },
     chooseDpt(value) {
       this.dptSelected = value
       this.fetchAllMajor(value)
     },
     chooseMajor(value) {
       this.mjSelected = value
+      this.fetchAllSubject()
     },
     chooseSubject(value) {
       this.sbjSelected = value
+      this.createDoc.subjectId = value
     },
     setSearch(value) {
       this.searchQuery = value
@@ -275,6 +320,12 @@ export default {
         if (this.dptSelected != "" && this.mjSelected != "") {
           await getAllSubject(this.dptSelected, this.mjSelected).then((res) => {
             this.subjectsList = res.data.content
+            const data = res.data.content
+            data.forEach(item => {
+              item.text = item.nameSubject
+              item.value = item.id
+            })
+            this.subjectOpt = data
 
           })
         } else {
@@ -295,9 +346,20 @@ export default {
       this.state = 'details'
 
     },
+    createDocument() {
+      console.log(this.createDoc)
+    },
     back() {
       this.state = 'default'
-    }
+    },
+    formatStatus(value) {
+      switch (value) {
+        case 'ROLE_USER':
+          return 'Tài liệu chờ duyệt'
+        case 'ROLE_ADMIN':
+          return 'Đã duyệt'
+      }
+    },
   }
 }
 </script>

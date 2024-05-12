@@ -16,7 +16,6 @@
       </div>
     </div>
     <div class="navbar-end">
-
       <!-- User button -->
       <div class="dropdown dropdown-end">
         <label tabindex="0" class="btn btn-ghost btn-circle avatar">
@@ -24,17 +23,27 @@
             <img :src="avatar" />
           </div>
         </label>
-        <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-          <li class="py-2 text-lg items-center">{{ fullName }}</li>
-          <li>
-            <router-link to="/user-info">Tài khoản
+        <ul tabindex="0"
+          class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100 rounded-box w-72 border">
+          <li class="py-2 text-lg items-center border-b mb-2">
+            <router-link to="/user-info" class="w-full p-2 bg-gray-100 rounded-lg flex border-2">
+              <div>
+                <img class="w-10 rounded-full" :src="avatar" />
+              </div>
+              <h1 class="text-sm font-semibold text-gray-700">{{ fullName }}</h1>
             </router-link>
           </li>
           <li v-if="userRole == 'ROLE_ADMIN'">
-            <router-link to="/user-account">Dashboard
+            <router-link to="/user-account">
+              <h1 class="text-sm text-gray-700 font-semibold">Dashboard</h1>
             </router-link>
           </li>
-          <li><button @click="logout">Đăng xuất</button></li>
+          <li>
+            <router-link to="/saved-documents">
+              <h1 class="text-sm text-gray-700 font-semibold">Tài liệu đã lưu</h1>
+            </router-link>
+          </li>
+          <li><button class="text-sm text-gray-700 font-semibold" @click="logout">Đăng xuất</button></li>
         </ul>
       </div>
     </div>

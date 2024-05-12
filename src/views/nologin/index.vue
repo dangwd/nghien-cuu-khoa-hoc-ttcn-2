@@ -268,7 +268,7 @@ export default {
     },
     async fetchAllPostPub() {
       try {
-        await getAllPostPublic().then((res) => {
+        await getAllPostPublic(1).then((res) => {
           this.posts = res.data.content
         })
       } catch (err) {

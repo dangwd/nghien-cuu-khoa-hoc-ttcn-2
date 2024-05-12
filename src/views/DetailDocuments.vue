@@ -28,14 +28,18 @@
             </div>
           </div>
           <div class="px-2 pt-2 flex gap-3 items-center">
-            <Button :config="{ label: 'Lấy link tải', click: () => downloadResumePdf() }"></Button>
-            <a class="text-sm hover:text-green-700 underline" v-if="urlDownload" :href="urlDownload">Bấm vào đây để tải
-              xuống</a>
+            <div>
+              <button class="text-white border border-green-700 text-sm bg-green-700 p-2 rounded-lg"><a target="_blank"
+                  :href="urlDownload">Tải
+                  xuống</a></button>
+              <button
+                class="text-green-700 border mx-2 border-green-700 text-sm bg-white py-2 px-4 rounded-lg">Lưu</button>
+            </div>
           </div>
+
         </div>
       </div>
     </div>
-    <button></button>
   </div>
   <AsideRight></AsideRight>
 </template>
@@ -43,17 +47,32 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/storage';
 import { ref } from 'vue';
-const urlDownload = ref("")
-const urlFile = ref("")
-const downloadResumePdf = () => {
-  const resumeRef = firebase.storage()
-    .ref('documents/1.Nhung_van_de_co_ban_cua_QT.pdf');
-  resumeRef.getDownloadURL().then((url) => {
-    urlDownload.value = url
+const urlDownload = ref("https://firebasestorage.googleapis.com/v0/b/vnua-forums-upload.appspot.com/o/image%2F123.webp?alt=media&token=276894da-2b62-4c25-b8c1-42b9096cf8c4")
+const showCountdown = ref(true)
+const countdown = ref(10)
+// const urlFile = ref("")
+// const downloadResumePdf = () => {
+//   const resumeRef = firebase.storage()
+//     .ref('documents/TTCN2-NCKH-NguyenMinhDang.pptx');
+//   resumeRef.getDownloadURL().then((url) => {
+//     urlDownload.value = url
+//     startCountdown()
+//   }).catch((error) => {
+//     console.log(error)
+//   });
+// }
+// const startCountdown = () => {
+//   setTimeout(() => {
+//     showCountdown.value = false;
+//   }, countdown.value * 1000);
 
-  }).catch((error) => {
-    console.log(error)
-  });
-}
+//   // Bắt đầu đếm ngược
+//   let timer = setInterval(() => {
+//     countdown.value--;
+//     if (countdown.value <= 0) {
+//       clearInterval(timer);
+//     }
+//   }, 1000);
+// }
 </script>
 <style></style>

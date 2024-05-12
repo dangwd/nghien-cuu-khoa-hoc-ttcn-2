@@ -6,11 +6,11 @@
           <h1 class="text-base font-semibold text-gray-700">Trang web chính thức:</h1>
           <button
             class="text-sm border-2 mb-2 border-green-700 bg-green-600 text-white hover:bg-white hover:text-green-700 font-semibold p-2 rounded-lg w-full">
-            <a href="https://vnua.edu.vn/">VNUA</a>
+            <a target="_blank" href="https://vnua.edu.vn/">VNUA</a>
           </button>
           <button
             class="text-sm border-2 border-green-700 bg-white text-green-700 hover:bg-green-700 hover:text-white font-semibold p-2 rounded-lg w-full">
-            <a href="https://fita.vnua.edu.vn/">FITA</a>
+            <a target="_blank" href="https://fita.vnua.edu.vn/">FITA</a>
           </button>
         </div>
       </div>
@@ -40,7 +40,6 @@
 import { getPostTopTier } from "@/api/auth/api";
 import { computed, onMounted, ref } from "vue";
 import store from '@/store';
-
 const shortenText = computed(() => {
   return (description, maxLength) => {
     if (description.length <= maxLength) {

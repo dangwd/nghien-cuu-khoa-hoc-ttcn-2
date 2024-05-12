@@ -103,6 +103,11 @@ const router = createRouter({
           component: () => import('../views/PostTopTier.vue')
         },
         {
+          name: 'saved-documents',
+          path: '/saved-documents',
+          component: () => import('../views/SavedDoc.vue')
+        },
+        {
           name: 'introduce',
           path: '/introduce',
           component: () => import('../views/IntroduceView.vue')

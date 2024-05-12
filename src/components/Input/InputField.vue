@@ -13,7 +13,7 @@
       <label :for="labelField" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">{{ title
         }}</label>
       <select v-model="selected" :id="labelField" @select-change="$emit('select-change', selected)"
-        class="bg-gray-50 border border-gray-300 text-gray-700 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5">
+        class="bg-gray-50 border border-gray-300 text-gray-700 text-base rounded-lg focus:ring-green-700 focus:border-green-700 block w-full p-1.5 transition ease-in-out duration-150">
         <option :value="opt.id" v-for="(opt, index) in options" :key="index">{{ opt.name }}</option>
       </select>
     </div>
