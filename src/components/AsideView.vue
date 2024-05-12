@@ -100,7 +100,7 @@ export default {
     async fetchAllCategory() {
       try {
         await getAllCategory().then((res) => {
-          this.cateSide = res.data
+          this.cateSide = res.data.content
           console.log(this.cateSide)
         })
       } catch (err) {

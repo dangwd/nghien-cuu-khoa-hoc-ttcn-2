@@ -39,8 +39,8 @@
               </InputField>
               <InputField type="select" @select-change="chooseSubject" labelField="sbj" title="Bộ môn"
                 :options="subjectOpt"></InputField>
-              <progress class="progress progress-success w-full" max="100"></progress>
-              <InputField type="file-input"></InputField>
+              <progress class="progress progress-success w-full" :value="progressUpload" max="100"></progress>
+              <InputField @input-file="setFile" :value="createDoc.linkFile" type="file-input"></InputField>
             </template>
             <template #footer>
               <div class="flex justify-end">
@@ -108,7 +108,9 @@
           <router-link :to="'detail-documents/' + doc.id" v-for="(doc, index) in highDoc" :key="index"
             class="card w-60 bg-base-100 shadow-xl hover:bg-gray-100 transition duration-150 ease-in-out hover:scale-105 hover:cursor-pointer">
             <figure class="px-5 pt-5">
-              <img src="../../src/assets/img/document.jpg" class="rounded-xl" />
+              <img
+                src="https://firebasestorage.googleapis.com/v0/b/vnua-forums-upload.appspot.com/o/image%2Fthumbnail.jpg?alt=media&token=f6ebcd08-56af-42a3-9ddf-1372f5e95218"
+                class="rounded-xl" />
             </figure>
             <div class="card-body items-center text-center px-2">
               <h2 class="card-title text-base">{{ doc.title }}</h2>
@@ -129,14 +131,13 @@
           class="card w-60 bg-base-100 shadow-xl hover:bg-gray-100 transition duration-150 ease-in-out hover:scale-105 hover:cursor-pointer">
 
           <figure class="px-5 pt-5">
-            <img src="https://nativex.edu.vn/wp-content/uploads/2023/11/tai-lieu-mien-phi-ielts-simon-thumbnail.jpg"
-              class="rounded-xl" />
+            <img :src="doc.image" class="rounded-xl" />
           </figure>
           <div class="card-body items-center text-center px-2">
-            <h2 class="card-title text-base">{{ doc.title }}</h2>
+            <h2 class="card-title text-base">{{ doc.name }}</h2>
             <div class="pt-2">
-              <p class="text-sm">Ngày đăng: {{ doc.date }}</p>
-              <p class="text-sm italic">Tác giả: {{ doc.author }}</p>
+              <p class="text-sm">Ngày đăng: {{ doc.createdDate }}</p>
+              <p class="text-sm italic">Tác giả: {{ doc.user.fullName }}</p>
             </div>
           </div>
 
@@ -147,11 +148,13 @@
   </div>
 </template>
 <script>
-import { getAllDpt, getAllMajor, getAllSubject, getDocById } from '@/api/auth/api';
+import { getAllDpt, getAllMajor, getAllSubject, getDocById, createDocument } from '@/api/auth/api';
 import AsideView from '@/components/AsideView.vue';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/storage';
 export default {
   components: {
     AsideView,
@@ -164,11 +167,14 @@ export default {
   data() {
     return {
       isLoading: true,
+      progressUpload: 0,
       state: "default",
       editor: ClassicEditor,
       createDoc: {
         title: "",
+        image: "https://firebasestorage.googleapis.com/v0/b/vnua-forums-upload.appspot.com/o/image%2Fthumbnail.jpg?alt=media&token=f6ebcd08-56af-42a3-9ddf-1372f5e95218",
         description: "",
+        linkFile: "",
         subjectId: ""
       },
       searchQuery: "",
@@ -268,6 +274,21 @@ export default {
     setDesc(value) {
       this.createDoc.description = value
     },
+    setFile(file) {
+      this.createDoc.linkFile = file
+      var storageRef = firebase.storage().ref('documents/' + file.name)
+      let uploadTask = storageRef.put(file)
+      uploadTask.on('stage_changed', (snapshot) => {
+        this.progressUpload = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      }, (error) => {
+        console.log(error)
+      }, () => {
+        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+          this.createDoc.linkFile = downloadURL
+          console.log(downloadURL)
+        })
+      })
+    },
     chooseDpt(value) {
       this.dptSelected = value
       this.fetchAllMajor(value)
@@ -285,6 +306,14 @@ export default {
     },
     showError() {
       toast.error("Có lỗi xảy ra!")
+    },
+    showMessage() {
+      toast("Cảm ơn bạn đã đóng góp tài liệu, vui lòng chờ xét duyệt!", {
+        "theme": "colored",
+        "type": "info",
+        "limit": 3,
+        "dangerouslyHTMLString": true
+      })
     },
     async fetchAllDpt() {
       try {
@@ -338,7 +367,8 @@ export default {
     async detailsView(sbjId) {
       try {
         await getDocById(sbjId).then((res) => {
-          // this.docList = res
+          this.docList = res.data.content
+          console.log("doc", res.data.content)
         })
       } catch (err) {
         console.log(err)
@@ -346,8 +376,22 @@ export default {
       this.state = 'details'
 
     },
-    createDocument() {
-      console.log(this.createDoc)
+    async createDocument() {
+      try {
+        if (this.createDoc.subjectId != "") {
+          await createDocument(
+            this.createDoc.title,
+            this.createDoc.image,
+            this.createDoc.description,
+            this.createDoc.linkFile,
+            this.createDoc.subjectId
+          ).then((res) => {
+            this.showMessage()
+          })
+        }
+      } catch (err) {
+        console.log(err)
+      }
     },
     back() {
       this.state = 'default'

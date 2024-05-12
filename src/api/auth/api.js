@@ -43,7 +43,7 @@ export const remindPass = (mail) => api.post(`mail/send-mail?to=${mail}`)
 
 //=======================CATEGORY API=======================
 //All Category
-export const getAllCategory = () => api.get('/category/public/find-all-list')
+export const getAllCategory = () => api.get('/category/public/get-Top5-category')
 //Create Category
 export const createCategory = (name, image, categoryType) => api.post('/category/admin/saveOrUpdate', {
   name, image, categoryType
@@ -95,10 +95,13 @@ export const getPostByUser = (userId) => api.get(`blog/all/get-blog-by-user?user
 export const getAllDpt = () => api.get("/department/public/get-all-department")
 
 export const getAllMajor = (id) => api.get(`/specialize/public/get-specialize-by-department?departmentId=${id}`)
-
 export const getAllSubject = (dptId, mjId) => api.get(`/subject/public/get-subject-by-department-and-specialize?departmentId=${dptId}&specializeId=${mjId}`)
 
 export const getDocById = (sbjId) => api.get(`/document/public/get-document-by-subject?subjectId=${sbjId}`)
+
+export const createDocument = (name, image, description, linkFile, subjectId) => api.post(`/document/all/save`, {
+  name, image, description, linkFile, subjectId
+})
 //=======================INFOMATION API=======================
 //get all
 export const getAllNotification = () => api.get("notification/all/get-all-notification")

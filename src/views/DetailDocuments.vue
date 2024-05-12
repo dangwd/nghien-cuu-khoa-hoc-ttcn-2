@@ -27,13 +27,14 @@
               <p class="text-sm ">Tác giả: Nguyễn Minh Đăng</p>
             </div>
           </div>
-          <div class="px-2 pt-2 flex gap-3 items-center">
+          <div class="px-2 pt-2 flex justify-between gap-3 items-center">
             <div>
               <button class="text-white border border-green-700 text-sm bg-green-700 p-2 rounded-lg"><a target="_blank"
                   :href="urlDownload">Tải
                   xuống</a></button>
-              <button
-                class="text-green-700 border mx-2 border-green-700 text-sm bg-white py-2 px-4 rounded-lg">Lưu</button>
+            </div>
+            <div>
+              <i class='bx bx-bookmark'></i>
             </div>
           </div>
 
