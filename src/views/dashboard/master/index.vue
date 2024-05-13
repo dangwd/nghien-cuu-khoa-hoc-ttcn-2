@@ -1,9 +1,9 @@
 <template>
-  <nav class="w-full fixed top-0 mx-auto bg-green-700 border-b h-16 block">
+  <nav class="w-full fixed top-0 mx-auto bg-green-600 border-b h-16 block z-10">
 
   </nav>
   <div class="flex">
-    <div class=" flex justify-center h-full max-h-[100vh] fixed top-0 left-0 w-72">
+    <div class="z-50 flex justify-center h-full max-h-[100vh] fixed top-0 left-0 w-72">
       <Menu :model="items" class="w-full md:w-[15rem]">
         <template #start>
           <span class="inline-flex items-center gap-1 px-2 py-2 w-full sm:w-[15rem]">
@@ -12,7 +12,7 @@
                 src="https://upload.wikimedia.org/wikipedia/commons/0/06/13015673_10153943477900239_794210601335532414_nsdfsf.jpg"
                 alt="">
             </div>
-            <span class="text-green-700 font-semibold text-xl">VNUA Manager</span>
+            <span class="text-green-700 font-bold text-xl">VNUA Dashboard</span>
           </span>
         </template>
         <template #submenuheader="{ item }">
@@ -39,7 +39,7 @@
         </template>
       </Menu>
     </div>
-    <div class="h-screen ml-72 w-[1300px] mt-16">
+    <div class="h-screen ml-72 w-full mt-16">
       <router-view></router-view>
     </div>
   </div>
@@ -83,7 +83,7 @@ const items = ref([
       },
       {
         label: 'Prime Test',
-        icon: 'pi pi-list',
+        icon: 'pi pi-flag',
         url: 'prime-test'
       },
     ]
@@ -91,6 +91,11 @@ const items = ref([
   {
     label: 'Thông tin tài khoản',
     items: [
+      {
+        label: 'Trang chủ',
+        icon: 'pi pi-home',
+        url: "homepage"
+      },
       {
         label: 'Phản hồi',
         icon: 'pi pi-inbox',
