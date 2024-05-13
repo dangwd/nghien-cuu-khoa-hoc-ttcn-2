@@ -11,7 +11,6 @@ import firebase from 'firebase/compat/app';
 import 'firebase/storage'
 import 'firebase/compat/database'
 import { ObserveVisibility } from "vue3-observe-visibility";
-
 const firebaseConfig = {
   apiKey: "AIzaSyCHSxwRox6f2b8No6UWQUJPKis1W-De1sw",
   authDomain: "vnua-forums-upload.firebaseapp.com",
@@ -27,6 +26,9 @@ import Vue3Toastify from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import CKEditor from '@ckeditor/ckeditor5-vue';
 import store from './store'
+import PrimeVue from 'primevue/config';
+import Lara from '@/presets/lara';
+
 //Components
 import 'aos/dist/aos.css';
 import 'ant-design-vue/dist/reset.css';
@@ -38,14 +40,32 @@ import InputField from './components/Input/InputField.vue'
 import Pagination from './components/Pagination/Pagination.vue'
 import AsideView from './components/AsideView.vue'
 import AsideRight from './components/AsideRight.vue'
+import Ripple from 'primevue/ripple';
+import Tooltip from 'primevue/tooltip';
+import StyleClass from 'primevue/styleclass';
+import AnimateOnScroll from 'primevue/accordiontab'
+import BadgeDirective from 'primevue/badgedirective'
+import FocusTrap from 'primevue/focustrap'
+import Menu from 'primevue/menu'
 const app = createApp(App)
 
 app.directive('ObserveVisibility', ObserveVisibility)
+app.directive('tooltip', Tooltip);
+app.directive('badge', BadgeDirective);
+app.directive('ripple', Ripple);
+app.directive('styleclass', StyleClass);
+app.directive('focustrap', FocusTrap);
+app.directive('animateonscroll', AnimateOnScroll);
 app.use(store)
 app.use(CKEditor)
 app.use(Vue3Toastify)
 app.use(Antd)
+app.use(PrimeVue, {
+  unstyled: true,
+  pt: Lara
+});
 app.use(router)
+app.component('Menu', Menu)
 app.component('AsideRight', AsideRight)
 app.component('ModalComp', ModalComp)
 app.component('AsideView', AsideView)

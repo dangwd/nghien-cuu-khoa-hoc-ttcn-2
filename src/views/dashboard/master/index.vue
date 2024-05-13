@@ -1,31 +1,110 @@
 <template>
-  <a-layout class="layout">
-    <a-layout-header class="flex gap-28">
-      <div class="logo w-14 rounded-full flex my-2 items-center justify-center">
-        <img src="../../../assets/img/vnua-logo.jpg" alt="Logo" class="rounded-full" />
-      </div>
-      <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="horizontal" class="h-16 ml-20 w-full">
-        <a-menu-item key="1"><router-link to="/user-account">Quản lý tài khoản</router-link></a-menu-item>
-        <a-menu-item key="2"><router-link to="/document-manage">Quản lý tài liệu</router-link></a-menu-item>
-        <a-menu-item key="3"><router-link to="/post-manage">Quản lý bài viết</router-link></a-menu-item>
-        <a-menu-item key="4"><router-link to="/category">Quản lý danh mục</router-link></a-menu-item>
-        <a-menu-item key="5"><router-link to="/noti">Quản lý thông báo</router-link></a-menu-item>
-        <a-menu-item key="6"><router-link to="/">Trang người dùng</router-link></a-menu-item>
-      </a-menu>
-      <a-space>
-      </a-space>
+  <nav class="w-full fixed top-0 mx-auto bg-green-700 border-b h-16 block">
 
-    </a-layout-header>
-    <a-layout-content>
-      <div class=" px-24 py-10 h-screen">
-        <router-view />
-      </div>
-    </a-layout-content>
-
-  </a-layout>
+  </nav>
+  <div class="flex">
+    <div class=" flex justify-center h-full max-h-[100vh] fixed top-0 left-0 w-72">
+      <Menu :model="items" class="w-full md:w-[15rem]">
+        <template #start>
+          <span class="inline-flex items-center gap-1 px-2 py-2 w-full sm:w-[15rem]">
+            <div class="w-10 h-10">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/0/06/13015673_10153943477900239_794210601335532414_nsdfsf.jpg"
+                alt="">
+            </div>
+            <span class="text-green-700 font-semibold text-xl">VNUA Manager</span>
+          </span>
+        </template>
+        <template #submenuheader="{ item }">
+          <span class="text-green-700 font-bold leading-none">{{ item.label }}</span>
+        </template>
+        <template #item="{ item, props }">
+          <router-link :to="'/' + item.url" v-ripple class="flex items-center text-base font-semibold"
+            v-bind="props.action">
+            <span :class="item.icon" />
+            <span class="ml-2">{{ item.label }}</span>
+            <Badge v-if="item.badge" class="ml-auto" :value="item.badge" />
+          </router-link>
+        </template>
+        <template #end>
+          <button v-ripple
+            class="relative overflow-hidden w-full p-link flex items-center p-2 pl-3 text-surface-700 dark:text-surface-0/80 hover:bg-surface-200 dark:hover:bg-surface-600 rounded-none">
+            <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" class="mr-2"
+              shape="circle" />
+            <span class="inline-flex flex-col justify-start text-left">
+              <span class="font-bold">Nguyễn Minh Đăng</span>
+              <span class="text-sm">Admin</span>
+            </span>
+          </button>
+        </template>
+      </Menu>
+    </div>
+    <div class="h-screen ml-72 w-[1300px] mt-16">
+      <router-view></router-view>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-const selectedKeys = ref(['1']);
+import { ref } from "vue";
+import Avatar from "primevue/avatar";
+import Badge from "primevue/badge";
+const items = ref([
+  {
+    separator: true
+  },
+  {
+    label: 'Chức năng chính',
+    items: [
+      {
+        label: 'Quản lý tài khoản',
+        icon: 'pi pi-user',
+        url: 'user-account'
+      },
+      {
+        label: 'Quản lý bài viết',
+        icon: 'pi pi-file',
+        url: 'post-manage'
+      },
+      {
+        label: 'Quản lý tài liệu',
+        icon: 'pi pi-folder',
+        url: 'document-manage'
+      },
+      {
+        label: 'Quản lý thông báo',
+        icon: 'pi pi-bell',
+        url: 'noti'
+      },
+      {
+        label: 'Quản lý danh mục',
+        icon: 'pi pi-list',
+        url: 'category'
+      },
+      {
+        label: 'Prime Test',
+        icon: 'pi pi-list',
+        url: 'prime-test'
+      },
+    ]
+  },
+  {
+    label: 'Thông tin tài khoản',
+    items: [
+      {
+        label: 'Phản hồi',
+        icon: 'pi pi-inbox',
+        badge: 2
+      },
+      {
+        label: 'Đăng xuất',
+        icon: 'pi pi-sign-out',
+        shortcut: '⌘+Q'
+      }
+    ]
+  },
+  {
+    separator: true
+  }
+]);
 </script>

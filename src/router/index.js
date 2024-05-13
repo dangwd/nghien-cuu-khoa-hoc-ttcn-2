@@ -62,6 +62,11 @@ const router = createRouter({
           path: '/noti',
           component: () => import('../views/dashboard/noti/index.vue')
         },
+        {
+          name: 'Test',
+          path: '/prime-test',
+          component: () => import('../views/dashboard/primetest/index.vue')
+        },
       ]
     },
     {
