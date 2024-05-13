@@ -104,7 +104,7 @@ export default {
       default: ""
     },
     options: {
-      type: Array,
+      type: [Array, Object],
       required: false
     },
     customClass: {

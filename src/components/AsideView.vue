@@ -47,7 +47,7 @@
   </div>
 </template>
 <script>
-import { getAllCategory } from '@/api/auth/api';
+import { getTopCategory } from '@/api/auth/api';
 import store from '@/store';
 export default {
   data() {
@@ -99,7 +99,7 @@ export default {
     },
     async fetchAllCategory() {
       try {
-        await getAllCategory().then((res) => {
+        await getTopCategory().then((res) => {
           this.cateSide = res.data.content
           console.log(this.cateSide)
         })

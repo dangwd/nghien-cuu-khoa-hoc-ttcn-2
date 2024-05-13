@@ -83,52 +83,55 @@
             </div>
             <h1 class="italic text-base text-center pt-2">Chức năng đăng bài sẽ hiển thị khi bạn đăng nhập!</h1>
           </div>
-          <div v-for="(post, index) in posts" :key="index" class="mt-3 flex flex-col">
-            <div class="bg-white mt-3 rounded-lg">
-              <img class="border rounded-t-xl shadow-xl w-full" :src="post.image">
-              <div class="bg-white border-b border-1 shadow p-5 text-xl text-gray-700 font-semibold">
-                <div class="flex items-center gap-4">
-                  <img class="w-10 h-10 rounded-full" :src="post.user.avatar" alt="">
-                  <div class="font-medium">
-                    <div class="font-semibold text-base">{{ post.user.fullName }} <span
-                        v-show="post.user.role === 'ROLE_ADMIN'"><i
-                          class='bx bxs-check-shield text-blue-500'></i></span>
+          <div>
+            <div v-for="(post, index) in posts" :key="index" class="mt-3 flex flex-col">
+              <div class="bg-white mt-3 rounded-lg">
+                <img class="border rounded-t-xl shadow-xl w-full" :src="post.image">
+                <div class="bg-white border-b border-1 shadow p-5 text-xl text-gray-700 font-semibold">
+                  <div class="flex items-center gap-4">
+                    <img class="w-10 h-10 rounded-full" :src="post.user.avatar" alt="">
+                    <div class="font-medium">
+                      <div class="font-semibold text-base">{{ post.user.fullName }} <span
+                          v-show="post.user.role === 'ROLE_ADMIN'"><i
+                            class='bx bxs-check-shield text-blue-500'></i></span>
+                      </div>
+                      <div class="flex gap-2">
+                        <h1 class="text-xs text-gray-500">{{ post.createdTime }} /</h1>
+                        <h1 class="text-xs text-gray-500">{{ post.createdDate }}</h1>
+                        <i class='bx bxs-planet text-xs text-gray-500'></i>
+                      </div>
                     </div>
-                    <div class="flex gap-2">
-                      <h1 class="text-xs text-gray-500">{{ post.createdTime }} /</h1>
-                      <h1 class="text-xs text-gray-500">{{ post.createdDate }}</h1>
-                      <i class='bx bxs-planet text-xs text-gray-500'></i>
+                  </div>
+                  <div class="py-5">
+                    <h1 class="mb-4 text-lg font-extrabold text-gray-700"><span
+                        class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
+                        {{ post.title }}</span></h1>
+                    <div class="text-base font-medium" v-html="post.content"></div>
+                  </div>
+                  <!-- Reaction -->
+                  <div>
+                    <div class="flex gap-5">
+                      <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span
+                          class="text-gray-700 text-base">{{
+                            post.numLike
+                          }}</span>
+                      </h1>
+                      <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
+                          class="text-gray-700 text-base">{{
+                            post.numComment
+                          }}</span>
+                      </h1>
                     </div>
                   </div>
                 </div>
-                <div class="py-5">
-                  <h1 class="mb-4 text-lg font-extrabold text-gray-700"><span
-                      class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
-                      {{ post.title }}</span></h1>
-                  <div class="text-base font-medium" v-html="post.content"></div>
+                <div class="bg-white p-1 shadow flex rounded-b-xl justify-center">
+                  <h1 class="text-sm text-center font-medium italic">Bạn cần đăng nhập để tương tác!</h1>
                 </div>
-                <!-- Reaction -->
-                <div>
-                  <div class="flex gap-5">
-                    <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span
-                        class="text-gray-700 text-base">{{
-                          post.numLike
-                        }}</span>
-                    </h1>
-                    <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
-                        class="text-gray-700 text-base">{{
-                          post.numComment
-                        }}</span>
-                    </h1>
-                  </div>
-                </div>
-              </div>
-              <div class="bg-white p-1 shadow flex rounded-b-xl justify-center">
-                <h1 class="text-sm text-center font-medium italic">Bạn cần đăng nhập để tương tác!</h1>
-
               </div>
             </div>
+            <div v-if="posts.length" v-observe-visibility="handleScroll"></div>
           </div>
+
         </div>
         <aside class="bg-white border-l shadow-lg z-10 fixed h-full right-0 top-16 w-80">
           <div class="pt-2">
@@ -175,7 +178,6 @@ import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import AsideView from '@/components/AsideView.vue';
 import 'firebase/compat/storage';
-import AsideRight from '@/components/AsideRight.vue';
 export default {
   components: {
     AsideView
@@ -183,6 +185,7 @@ export default {
   data() {
     return {
       statusLike: false,
+      currentPage: 0,
       comments: [],
       isLoading: true,
       posts: [],
@@ -193,19 +196,19 @@ export default {
           url: "/no-login",
           icon: "bx bx-home-alt-2 text-lg font-semibold"
         },
-        {
-          name: "Thông tin tuyển sinh",
-          url: "/admissions",
-          icon: "bx bx-file text-lg font-semibold"
-        },
-        {
-          name: "Thông tin quảng bá ",
-          url: "/admissions",
-          icon: "bx bx-file text-lg font-semibold"
-        },
+        // {
+        //   name: "Thông tin tuyển sinh",
+        //   url: "/admissions",
+        //   icon: "bx bx-file text-lg font-semibold"
+        // },
+        // {
+        //   name: "Thông tin quảng bá ",
+        //   url: "/admissions",
+        //   icon: "bx bx-file text-lg font-semibold"
+        // },
         {
           name: "Giới thiệu chung",
-          url: "introduce",
+          url: "/introduce",
           icon: "bx bx-news text-lg font-semibold"
         }
       ],
@@ -233,6 +236,11 @@ export default {
   methods: {
     toggleSidebar() {
       this.isSidebarOpen = !this.isSidebarOpen;
+    },
+    handleScroll(isVisible) {
+      if (!isVisible) { return }
+      this.currentPage++
+      this.fetchAllPostPub()
     },
     formatStatus(value) {
       switch (value) {
@@ -268,8 +276,8 @@ export default {
     },
     async fetchAllPostPub() {
       try {
-        await getAllPostPublic(1).then((res) => {
-          this.posts = res.data.content
+        await getAllPostPublic(this.currentPage).then((res) => {
+          this.posts.push(...res.data.content)
         })
       } catch (err) {
         console.log(err)

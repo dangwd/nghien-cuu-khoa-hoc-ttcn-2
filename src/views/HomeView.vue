@@ -120,7 +120,7 @@
 
 </template>
 <script>
-import { getAllPostPublic, createPost, likePost, getAllCategory } from '@/api/auth/api'
+import { getAllPostPublic, createPost, likePost, getTopCategory } from '@/api/auth/api'
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import AsideView from '@/components/AsideView.vue';
@@ -140,7 +140,7 @@ export default {
       statusLike: false,
       progressUpload: 0,
       loading: false,
-      currentPage: 1,
+      currentPage: 0,
       comments: [],
       categoryOptions: [],
       createPost: {
@@ -179,7 +179,11 @@ export default {
     async increaseLike(id) {
       try {
         await likePost(id)
-        await this.fetchAllPostPub()
+        const res = await getAllPostPublic(this.currentPage);
+        this.posts = []
+        res.data.content.forEach(post => {
+          this.posts.push(post);
+        });
       } catch (err) {
         console.log(err)
       }
@@ -238,7 +242,9 @@ export default {
     async fetchAllPostPub() {
       try {
         await getAllPostPublic(this.currentPage).then((res) => {
-          this.posts.push(...res.data.content)
+          res.data.content.forEach(post => {
+            this.posts.push(post);
+          });
         })
       } catch (err) {
         console.log(err)
@@ -246,7 +252,7 @@ export default {
     },
     async fetchCategory() {
       try {
-        await getAllCategory().then((res) => {
+        await getTopCategory().then((res) => {
           this.categoryOptions = res.data
         })
       } catch (err) {

@@ -68,7 +68,7 @@
               placeholder="Tìm kiếm theo tên hoặc mã môn học">
             </InputField>
             <Button btnIcon="icon" iconBtnClass="bx bx-search" btnClass="bg-green-600 text-white hover:bg-green-700"
-              :config="{ click: () => search() }"></Button>
+              :config="{ click: () => fetchAllSubject() }"></Button>
           </div>
         </div>
       </div>
@@ -108,15 +108,14 @@
           <router-link :to="'detail-documents/' + doc.id" v-for="(doc, index) in highDoc" :key="index"
             class="card w-60 bg-base-100 shadow-xl hover:bg-gray-100 transition duration-150 ease-in-out hover:scale-105 hover:cursor-pointer">
             <figure class="px-5 pt-5">
-              <img
-                src="https://firebasestorage.googleapis.com/v0/b/vnua-forums-upload.appspot.com/o/image%2Fthumbnail.jpg?alt=media&token=f6ebcd08-56af-42a3-9ddf-1372f5e95218"
-                class="rounded-xl" />
+              <img :src="doc.image" class="rounded-xl" />
             </figure>
-            <div class="card-body items-center text-center px-2">
-              <h2 class="card-title text-base">{{ doc.title }}</h2>
+            <div class="card-body items-center text-left">
+              <h2 class="card-title text-base">{{ doc.name }}</h2>
               <div class="pt-2">
-                <p class="text-sm">Ngày đăng: {{ doc.date }}</p>
-                <p class="text-sm italic">Tác giả: {{ doc.author }}</p>
+                <p class="text-sm">Người đăng: <span class="italic">{{ doc.user.fullName }}</span></p>
+                <p class="text-sm">Ngày đăng: {{ doc.createdDate }}</p>
+                <p class="text-sm">Lượt xem: {{ doc.numView }}</p>
               </div>
             </div>
           </router-link>
@@ -133,11 +132,12 @@
           <figure class="px-5 pt-5">
             <img :src="doc.image" class="rounded-xl" />
           </figure>
-          <div class="card-body items-center text-center px-2">
+          <div class="card-body items-center text-left">
             <h2 class="card-title text-base">{{ doc.name }}</h2>
             <div class="pt-2">
+              <p class="text-sm">Người đăng: <span class="italic">{{ doc.user.fullName }}</span></p>
               <p class="text-sm">Ngày đăng: {{ doc.createdDate }}</p>
-              <p class="text-sm italic">Tác giả: {{ doc.user.fullName }}</p>
+              <p class="text-sm">Lượt xem: {{ doc.numView }}</p>
             </div>
           </div>
 
@@ -148,7 +148,7 @@
   </div>
 </template>
 <script>
-import { getAllDpt, getAllMajor, getAllSubject, getDocById, createDocument } from '@/api/auth/api';
+import { getAllDpt, getAllMajor, getAllSubject, getSbjById, createDocument, getThreeDoc } from '@/api/auth/api';
 import AsideView from '@/components/AsideView.vue';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { toast } from 'vue3-toastify';
@@ -261,6 +261,7 @@ export default {
     }
   },
   mounted() {
+    this.fetchThreeDoc()
     this.fetchAllDpt().then(() => {
       setTimeout(() => {
         this.isLoading = false
@@ -347,7 +348,7 @@ export default {
     async fetchAllSubject() {
       try {
         if (this.dptSelected != "" && this.mjSelected != "") {
-          await getAllSubject(this.dptSelected, this.mjSelected).then((res) => {
+          await getAllSubject(this.dptSelected, this.mjSelected, this.searchQuery).then((res) => {
             this.subjectsList = res.data.content
             const data = res.data.content
             data.forEach(item => {
@@ -364,11 +365,19 @@ export default {
         console.log(err)
       }
     },
+    async fetchThreeDoc() {
+      try {
+        await getThreeDoc("/document/public/get-top5-document").then((res) => {
+          this.highDoc = res.data.content
+        })
+      } catch (err) {
+        console.log(err)
+      }
+    },
     async detailsView(sbjId) {
       try {
-        await getDocById(sbjId).then((res) => {
+        await getSbjById(sbjId).then((res) => {
           this.docList = res.data.content
-          console.log("doc", res.data.content)
         })
       } catch (err) {
         console.log(err)

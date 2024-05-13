@@ -40,7 +40,7 @@
                 <div class="flex gap-5">
                   <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span class="text-gray-700 text-base">{{
                     post.numLike
-                      }}</span>
+                  }}</span>
                   </h1>
                   <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
                       class="text-gray-700 text-base">{{
@@ -103,9 +103,12 @@ const handleScroll = () => {
   fetchData()
 }
 const increaseLike = async (id) => {
-  await likePost(id).then((res) => {
-    fetchData()
-  })
+  await likePost(id)
+  const res = await getAllPostPublic(currentPage.value);
+  posts.value = []
+  res.data.content.forEach(post => {
+    posts.value.push(post);
+  });
 }
 </script>
 <style></style>

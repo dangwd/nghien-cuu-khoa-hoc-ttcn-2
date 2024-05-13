@@ -17,7 +17,7 @@
         <div class="flex p-3 gap-2">
           <div>
             <img class="w-60 h-auto rounded-lg"
-              src="https://nativex.edu.vn/wp-content/uploads/2023/11/tai-lieu-mien-phi-ielts-simon-thumbnail.jpg">
+              src="https://firebasestorage.googleapis.com/v0/b/vnua-forums-upload.appspot.com/o/image%2Fthumbnail.jpg?alt=media&token=f6ebcd08-56af-42a3-9ddf-1372f5e95218">
           </div>
           <div>
             <div class="text-left px-2">
@@ -65,6 +65,4 @@ const docSaved = ref([
   }
 ])
 </script>
-<style>
-
-</style>
+<style></style>

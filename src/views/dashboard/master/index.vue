@@ -17,7 +17,7 @@
 
     </a-layout-header>
     <a-layout-content>
-      <div class=" px-24 py-10">
+      <div class=" px-24 py-10 h-screen">
         <router-view />
       </div>
     </a-layout-content>

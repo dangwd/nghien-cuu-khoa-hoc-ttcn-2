@@ -42,9 +42,10 @@ export const getUserById = (id) => api.get(`/all/find-user-by-id?id=${id}`)
 export const remindPass = (mail) => api.post(`mail/send-mail?to=${mail}`)
 
 //=======================CATEGORY API=======================
-//All Category
-export const getAllCategory = () => api.get('/category/public/get-Top5-category')
+//Top Category
+export const getTopCategory = () => api.get('/category/public/get-Top5-category?size=5')
 //Create Category
+export const getAllCategory = (page, query) => api.get(`/category/public/get-all-and-search-category?name=${query ? query : ""}&page=${page}&size=10`)
 export const createCategory = (name, image, categoryType) => api.post('/category/admin/saveOrUpdate', {
   name, image, categoryType
 })
@@ -59,7 +60,7 @@ export const deleteCategory = (id) => api.delete(`/category/admin/delete?id=${id
 //=======================POSTS API=======================
 
 //For Admin
-export const getAllPost = (pageNum) => api.get(`/blog/blog-manager/find-all?page=${pageNum}&size=10`)
+export const getAllPost = (pageNum) => api.get(`/blog/blog-manager/admin-find-all-blog?keywords&page=${pageNum}&size=10`)
 
 export const getPostUnactive = (pageNum) => api.get(`/blog/public/get-all-blog-unactived?page=${pageNum}&size=10`)
 
@@ -68,7 +69,7 @@ export const createPost = (title, description, image, content, linkFiles, listCa
 })
 export const activePost = (postId) => api.post(`blog/blog-manager/active-or-unacative?blogId=${postId}`)
 // For User
-export const getAllPostPublic = (currentPage, query) => api.get(`/blog/public/get-all-blog?currentPage=${currentPage}&size=5&keywords=${query ? query : ""}`)
+export const getAllPostPublic = (currentPage, query) => api.get(`/blog/public/get-all-blog?page=${currentPage}&size=5&keywords=${query ? query : ""}`)
 
 export const getPostByCateId = (cateId) => api.get(`/blog/public/get-blog-by-category?categoryId=${cateId}`)
 // Get post by Id
@@ -95,9 +96,13 @@ export const getPostByUser = (userId) => api.get(`blog/all/get-blog-by-user?user
 export const getAllDpt = () => api.get("/department/public/get-all-department")
 
 export const getAllMajor = (id) => api.get(`/specialize/public/get-specialize-by-department?departmentId=${id}`)
-export const getAllSubject = (dptId, mjId) => api.get(`/subject/public/get-subject-by-department-and-specialize?departmentId=${dptId}&specializeId=${mjId}`)
+export const getAllSubject = (dptId, mjId, query) => api.get(`/subject/public/get-all-subject?keywords=${query}&departmentId=${dptId}&specializeId=${mjId}`)
 
-export const getDocById = (sbjId) => api.get(`/document/public/get-document-by-subject?subjectId=${sbjId}`)
+export const getSbjById = (sbjId) => api.get(`/document/public/get-document-by-subject?subjectId=${sbjId}`)
+
+export const getDocById = (id) => api.get(`/document/public/findbyid?id=${id}`)
+
+export const getThreeDoc = (url) => api.get(url + '?size=3')
 
 export const createDocument = (name, image, description, linkFile, subjectId) => api.post(`/document/all/save`, {
   name, image, description, linkFile, subjectId

@@ -165,7 +165,7 @@ export default {
     async fetchAllCategory() {
       try {
         const res = await getAllCategory();
-        this.dataTable.data = res.data
+        this.dataTable.data = res.data.content
       } catch (err) {
         console.log(err)
       }
