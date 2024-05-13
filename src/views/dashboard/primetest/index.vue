@@ -193,9 +193,7 @@ const createAccount = async () => {
         password: password.value,
         fullName: fullName.value,
         avatar: "",
-        actived: true,
         role: "ROLE_USER",
-        keyActived: true
       }).then(() => {
         fetchAllUser()
         createModal.value = false
