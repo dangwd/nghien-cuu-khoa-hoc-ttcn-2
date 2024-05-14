@@ -120,7 +120,7 @@
 
 </template>
 <script>
-import { getAllPostPublic, createPost, likePost, getTopCategory } from '@/api/auth/api'
+import { getAllPostPublic, createPost, likePost, getTopCategory, getAllCategory } from '@/api/auth/api'
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import AsideView from '@/components/AsideView.vue';
@@ -252,8 +252,8 @@ export default {
     },
     async fetchCategory() {
       try {
-        await getTopCategory().then((res) => {
-          this.categoryOptions = res.data
+        await getAllCategory().then((res) => {
+          this.categoryOptions = res.data.content
         })
       } catch (err) {
         console.log(err);
@@ -267,12 +267,16 @@ export default {
             this.createPost.description,
             this.createPost.image,
             this.createPost.content,
-            this.createPost.linkFiles,
             this.createPost.listCategoryId
           ).then(() => {
-            this.fetchAllPostPub()
+
             this.showSuccess()
           })
+          const res = await getAllPostPublic(this.currentPage);
+          this.posts = []
+          res.data.content.forEach(post => {
+            this.posts.push(post);
+          });
         }
       } catch (err) {
         console.log(err)
