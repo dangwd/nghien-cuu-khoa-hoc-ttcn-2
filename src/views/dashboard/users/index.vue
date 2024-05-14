@@ -44,7 +44,7 @@
           <div class="flex gap-2">
             <Button text rounded icon="pi pi-eye" @click="viewDetail(slotProps.data.id)"></Button>
             <Button text rounded :icon="slotProps.data.actived ? 'pi pi-lock-open' : 'pi pi-lock'" severity="warning"
-              @click="deteleUser(slotProps.data.id)"></Button>
+              @click="lockUser(slotProps.data.id)"></Button>
           </div>
         </template>
       </Column>
@@ -76,8 +76,8 @@
         </div>
         <div>
           <label class="text-sm font-semibold" for="username">Trạng thái</label>
-          <Dropdown v-model="selectedStatus" :options="statusOpt" optionLabel="name" placeholder="Trạng thái"
-            class="w-full md:w-[14rem] rounded-xl text-sm" />
+          <Dropdown v-model="selectedStatus" @change="chooseStatus" :options="statusOpt" optionLabel="name"
+            placeholder="Trạng thái" class="w-full md:w-[14rem] rounded-xl text-sm" />
         </div>
       </div>
       <div class="pt-4 flex justify-end">
@@ -95,7 +95,6 @@
         </div>
         <div class="flex gap-2">
           <div class="flex flex-col gap-2 w-full">
-
             <label class="text-sm font-semibold" for="username">Tên người dùng</label>
             <InputText v-model="fullNameView" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
               size="small" placeholder="Nguyen Van A" />
@@ -117,8 +116,13 @@
             size="small" placeholder="**********" />
         </div>
         <div>
+          <label class="text-sm font-semibold" for="username">Vai trò</label>
+          <Dropdown v-model="roleView" @change="chooseRole" :options="roleOpt" optionLabel="name"
+            :placeholder="formatRole(roleView)" class="w-full md:w-[14rem] rounded-xl text-sm" />
+        </div>
+        <div>
           <label class="text-sm font-semibold" for="username">Trạng thái</label>
-          <Dropdown v-model="statusView" :options="statusOpt" optionLabel="name" placeholder="Trạng thái"
+          <Dropdown v-model="statusView" @change="chooseStatus" :options="statusOpt" optionLabel="name" placeholder="Mở"
             class="w-full md:w-[14rem] rounded-xl text-sm" />
         </div>
       </div>
@@ -137,19 +141,16 @@
 
 <script setup>
 import { onMounted, ref, } from 'vue';
-import DataTable from 'primevue/datatable';
-import InputText from 'primevue/inputtext';
-import Column from 'primevue/column';
-import Button from 'primevue/button';
-import Dialog from 'primevue/dialog';
-import Dropdown from 'primevue/dropdown'
-import { getAllUser, createUser, getUserById, deleteUser } from '@/api/auth/api';
 
-const selectedStatus = ref(true)
+import Button from 'primevue/button';
+import { sendGetApi, sendPostApi, sendDeleteApi, sendPutApi } from '@/api/auth/api';
+
+const selectedStatus = ref("")
 const createModal = ref(false)
 const viewModal = ref(false)
 const deleteModal = ref(false)
 const searchQuery = ref("")
+const userId = ref("")
 const username = ref("")
 const password = ref("")
 const passCheck = ref("")
@@ -159,11 +160,26 @@ const usernameView = ref("")
 const passwordView = ref("")
 const passCheckView = ref("")
 const fullNameView = ref("")
+const roleView = ref("")
 const statusView = ref(false)
 const statusOpt = ref([
   {
-    name: 'Mở',
-    code: true,
+    name: 'Mở tài khoản',
+    value: true
+  },
+  {
+    name: 'Khóa tài khoản',
+    value: false
+  }
+])
+const roleOpt = ref([
+  {
+    name: 'Quản trị viên',
+    value: 'ROLE_ADMIN'
+  },
+  {
+    name: 'Người dùng',
+    value: 'ROLE_USER'
   }
 ])
 const openDialog = () => {
@@ -171,15 +187,13 @@ const openDialog = () => {
 }
 const Users = ref([])
 
-
 onMounted(() => {
   fetchAllUser()
 })
 const fetchAllUser = async () => {
   try {
-    await getAllUser(`/admin/get-all-user?page=0&size=20`).then((res) => {
+    await sendGetApi(`/admin/get-all-user?page=0&size=20`).then((res) => {
       Users.value = res.data.content
-      console.log(Users.value)
     })
   } catch (err) {
     console.log(err)
@@ -188,7 +202,7 @@ const fetchAllUser = async () => {
 const createAccount = async () => {
   try {
     if (passCheck.value == password.value) {
-      const res = await createUser("/admin/create-by-admin", {
+      const res = await sendPostApi("/admin/create-by-admin", {
         username: username.value,
         password: password.value,
         fullName: fullName.value,
@@ -207,21 +221,38 @@ const createAccount = async () => {
 }
 const viewDetail = async (id) => {
   viewModal.value = true
+  userId.value = id
   try {
-    const res = await getUserById(`/all/find-user-by-id?id=${id}`).then((res) => {
+    const res = await sendGetApi(`/all/find-user-by-id?id=${id}`).then((res) => {
       console.log(res)
       usernameView.value = res.data.username
       fullNameView.value = res.data.fullName
       statusView.value = res.data.actived
+      roleView.value = res.data.role
       imageView.value = res.data.avatar
     })
   } catch (err) {
     console.log(err)
   }
 }
-const deteleUser = async (id) => {
+const updateAccount = async () => {
   try {
-    const res = await deleteUser(`/admin/lock-user?id=${id}`).then((res) => {
+    const res = await sendPutApi("/admin/update-by-admin", {
+      id: userId.value,
+      username: usernameView.value,
+      password: passwordView.value,
+      fullName: fullNameView.value,
+      actived: true,
+      avatar: imageView.value,
+      role: "ROLE_USER",
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+const lockUser = async (id) => {
+  try {
+    const res = await sendDeleteApi(`/admin/lock-user?id=${id}`).then((res) => {
       console.log(res)
       fetchAllUser()
     })
@@ -236,6 +267,12 @@ const formatRole = (role) => {
     case 'ROLE_USER':
       return 'Người dùng'
   }
+}
+const chooseStatus = (data) => {
+  statusView.value = data.value.value
+}
+const chooseRole = (data) => {
+  roleView.value = data.value.value
 }
 const formatStatus = (value) => {
   switch (value) {

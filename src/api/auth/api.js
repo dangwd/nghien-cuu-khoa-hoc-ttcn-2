@@ -30,21 +30,18 @@ export const login = (username, password) => api.post('api/login', {
 export const signup = (username, password, fullName) => api.post('/regis', {
   username, password, fullName
 })
-//All user
-export const getAllUser = (url) => api.get(url)
 //Edit user
 export const editUser = (id, username, fullName, avatar, password) => api.post('/update-infor', {
   id, username, fullName, avatar, password
 })
 //create
-export const createUser = (url, data) => api.post(url, { data })
+export const sendPostApi = (url, data) => api.post(url, { data })
 //Get by id
-export const getUserById = (url) => api.get(url)
-//Quen mk
-export const deleteUser = (url) => api.get(url)
+export const sendGetApi = (url) => api.get(url)
 
-export const remindPass = (mail) => api.post(`mail/send-mail?to=${mail}`)
+export const sendDeleteApi = (url) => api.get(url)
 
+export const sendPutApi = (url, data) => api.put(url, { data })
 //=======================CATEGORY API=======================
 //Top Category
 export const getTopCategory = () => api.get('/category/public/get-Top5-category?size=5')
@@ -71,7 +68,7 @@ export const getPostUnactive = (pageNum) => api.get(`/blog/public/get-all-blog-u
 export const createPost = (title, description, image, content, linkFiles, listCategoryId) => api.post('/blog/all/save', {
   title, description, image, content, linkFiles, listCategoryId
 })
-export const activePost = (postId) => api.post(`blog/blog-manager/active-or-unacative?blogId=${postId}`)
+export const activePost = (postId) => api.post(``)
 // For User
 export const getAllPostPublic = (currentPage, query) => api.get(`/blog/public/get-all-blog?page=${currentPage}&size=5&keywords=${query ? query : ""}`)
 

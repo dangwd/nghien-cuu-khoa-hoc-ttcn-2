@@ -60,7 +60,7 @@ const items = ref([
       {
         label: 'Quản lý tài khoản',
         icon: 'pi pi-user',
-        url: 'user-account'
+        url: 'users-manager'
       },
       {
         label: 'Quản lý bài viết',
@@ -82,11 +82,7 @@ const items = ref([
         icon: 'pi pi-list',
         url: 'category'
       },
-      {
-        label: 'Prime Test',
-        icon: 'pi pi-flag',
-        url: 'prime-test'
-      },
+
     ]
   },
   {

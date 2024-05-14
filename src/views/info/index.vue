@@ -23,7 +23,7 @@
             <span class="text-sm font-semibold">Trạng thái tài khoản</span>
             <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm font-semibold">{{
               formatStatus(userInfo.actived)
-                }}</span></span>
+            }}</span></span>
           </li>
           <li class="flex items-center py-3">
             <span class="text-sm font-semibold">Vai trò</span>
@@ -165,7 +165,7 @@
                 <div class="flex gap-5">
                   <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span class="text-gray-700 text-base">{{
                     post.numLike
-                      }}</span>
+                  }}</span>
                   </h1>
                   <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
                       class="text-gray-700 text-base">{{
@@ -210,7 +210,7 @@
   <AsideRight />
 </template>
 <script>
-import { editUser, getPostByUser, getUserById, likePost } from '@/api/auth/api'
+import { editUser, getPostByUser, sendGetApi, likePost } from '@/api/auth/api'
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import firebase from 'firebase/compat/app';
@@ -304,7 +304,7 @@ export default {
     },
     async fetchUserById() {
       const id = this.user.id
-      await getUserById(id).then((res) => {
+      await sendGetApi(`/all/find-user-by-id?id=${id}`).then((res) => {
         this.userInfo = res.data
         this.userParam.username = res.data.username
         this.userParam.fullname = res.data.fullName

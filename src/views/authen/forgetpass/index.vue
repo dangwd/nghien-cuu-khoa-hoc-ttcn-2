@@ -39,7 +39,7 @@
   </section>
 </template>
 <script>
-import { remindPass } from '@/api/auth/api'
+import { sendPostApi } from '@/api/auth/api'
 
 export default {
   data() {
@@ -51,7 +51,7 @@ export default {
     async sendMail() {
       try {
         if (this.email !== "") {
-          await remindPass(this.email).then((res) => {
+          await sendPostApi(`mail/send-mail?to=${this.mail}`, {}).then((res) => {
             console.log(res)
           })
         } else {
