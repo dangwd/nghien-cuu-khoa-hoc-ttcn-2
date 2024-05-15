@@ -33,8 +33,8 @@
               image="https://firebasestorage.googleapis.com/v0/b/vnua-forums-upload.appspot.com/o/avatar%2Fdemo.jpg?alt=media&token=b72ed018-3d9b-4a84-9c68-d10306ad3a86"
               class="mr-2" shape="circle" />
             <span class="inline-flex flex-col justify-start text-left">
-              <span class="font-bold">Nguyễn Minh Đăng</span>
-              <span class="text-sm">Admin</span>
+              <span class="font-bold">{{ user.fullName }}</span>
+              <span class="text-sm">{{ formatRole(user.role) }}</span>
             </span>
           </button>
         </template>
@@ -47,7 +47,8 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import store from "@/store";
 import Avatar from "primevue/avatar";
 import Badge from "primevue/badge";
 const items = ref([
@@ -101,7 +102,6 @@ const items = ref([
       {
         label: 'Đăng xuất',
         icon: 'pi pi-sign-out',
-        shortcut: '⌘+Q'
       }
     ]
   },
@@ -109,4 +109,18 @@ const items = ref([
     separator: true
   }
 ]);
+const user = computed(() => {
+  return store.state.user
+})
+const formatRole = (role) => {
+  switch (role) {
+    case 'ROLE_ADMIN':
+      return 'Quản trị viên'
+    case 'ROLE_USER':
+      return 'Người dùng'
+  }
+}
+const logOut = () => {
+  
+}
 </script>

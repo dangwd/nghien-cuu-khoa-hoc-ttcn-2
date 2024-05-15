@@ -32,6 +32,11 @@ const router = createRouter({
       component: () => import('../views/nologin/index.vue')
     },
     {
+      path: '/undefined',
+      name: 'Undefine',
+      component: () => import('../views/UndefineView.vue')
+    },
+    {
       path: '/dashboard',
       name: 'Dashboard',
       component: () => import('../views/dashboard/master/index.vue'),

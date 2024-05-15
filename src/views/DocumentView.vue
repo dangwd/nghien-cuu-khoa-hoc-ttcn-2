@@ -148,7 +148,7 @@
   </div>
 </template>
 <script>
-import { getAllDpt, getAllMajor, getAllSubject, getSbjById, createDocument, getThreeDoc } from '@/api/auth/api';
+import { getAllDpt, getAllMajor, getAllSubject, getSbjById, createDocument, sendGetApi } from '@/api/auth/api';
 import AsideView from '@/components/AsideView.vue';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { toast } from 'vue3-toastify';
@@ -367,7 +367,7 @@ export default {
     },
     async fetchThreeDoc() {
       try {
-        await getThreeDoc("/document/public/get-top5-document").then((res) => {
+        await sendGetApi("/document/public/get-top5-document?size=3").then((res) => {
           this.highDoc = res.data.content
         })
       } catch (err) {

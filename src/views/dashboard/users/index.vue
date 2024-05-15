@@ -252,7 +252,7 @@ const updateAccount = async () => {
 }
 const lockUser = async (id) => {
   try {
-    const res = await sendDeleteApi(`/admin/lock-user?id=${id}`).then((res) => {
+    const res = await sendGetApi(`/admin/lock-user?id=${id}`).then((res) => {
       console.log(res)
       fetchAllUser()
     })
