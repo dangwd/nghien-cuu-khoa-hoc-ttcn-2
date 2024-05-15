@@ -260,15 +260,16 @@ export default {
       }
     },
     async create() {
+      const data = {
+        title: this.createPost.title,
+        description: this.createPost.description,
+        image: this.createPost.image,
+        content: this.createPost.content,
+        listCategoryId: this.createPost.listCategoryId
+      }
       try {
         if (this.createPost.title !== "" && this.createPost.description !== "" && this.createPost.content !== "") {
-          await sendPostApi("/blog/all/save-update", {
-            title: this.createPost.title,
-            description: this.createPost.description,
-            image: this.createPost.image,
-            content: this.createPost.content,
-            listCategoryId: this.createPost.listCategoryId
-          }).then(() => {
+          await sendPostApi("/blog/all/save-update", data).then(() => {
             this.showSuccess()
           })
           const res = await sendGetApi(`blog/public/get-all-active?page=${this.currentPage}&size=5&keywords=${""}`);

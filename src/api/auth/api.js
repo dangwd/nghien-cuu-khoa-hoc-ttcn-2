@@ -35,13 +35,13 @@ export const editUser = (id, username, fullName, avatar, password) => api.post('
   id, username, fullName, avatar, password
 })
 
-export const sendPostApi = (url, data) => api.post(url, { data })
+export const sendPostApi = (url, data) => api.post(url, data)
 
 export const sendGetApi = (url) => api.get(url)
 
 export const sendDeleteApi = (url) => api.delete(url)
 
-export const sendPutApi = (url, data) => api.put(url, { data })
+export const sendPutApi = (url, data) => api.put(url, data)
 //=======================CATEGORY API=======================
 //Top Category
 export const getTopCategory = () => api.get('/category/public/get-Top5-category?size=5')

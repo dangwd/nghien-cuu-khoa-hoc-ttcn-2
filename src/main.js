@@ -52,6 +52,8 @@ import InputText from 'primevue/inputtext';
 import Column from 'primevue/column';
 import Dialog from 'primevue/dialog';
 import Dropdown from 'primevue/dropdown'
+import Image from 'primevue/image';
+import Password from 'primevue/password';
 const app = createApp(App)
 
 app.directive('ObserveVisibility', ObserveVisibility)
@@ -71,8 +73,10 @@ app.use(PrimeVue, {
 });
 app.use(router)
 app.component('Menu', Menu)
+app.component('Image', Image)
 app.component('InputText', InputText)
 app.component('DataTable', DataTable)
+app.component('Password', Password)
 app.component('Column', Column)
 app.component('Dialog', Dialog)
 app.component('Dropdown', Dropdown)

@@ -76,13 +76,13 @@
   </div>
 </template>
 <script setup>
-import { getAllPostPublic, likePost } from '@/api/auth/api';
+import { getAllPostPublic, likePost, sendGetApi } from '@/api/auth/api';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const isLoading = ref(false)
 const posts = ref([])
-const currentPage = ref(1)
+const currentPage = ref(0)
 const route = useRoute()
 
 onMounted(() => {
@@ -90,7 +90,7 @@ onMounted(() => {
 })
 const fetchData = async () => {
   try {
-    await getAllPostPublic(currentPage.value, route.query.q).then((res) => {
+    await sendGetApi(`blog/public/get-all-active?page=${currentPage.value}&size=5&keywords=${route.query.q}`).then((res) => {
       posts.value.push(...res.data.content)
     })
   } catch (err) {

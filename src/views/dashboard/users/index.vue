@@ -11,8 +11,8 @@
       <Button icon="pi pi-plus" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
         label="Tạo mới tài khoản" @click="openDialog" />
     </div>
-    <DataTable class="text-sm" size="small" showGridlines :value="Users" paginator :rows="5"
-      :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem">
+    <DataTable scrollable scrollHeight="80vh" class="text-sm" size="small" showGridlines :value="Users" paginator
+      :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem">
       <Column field="name" header="STT" style="width: 5rem">
         <template #body="{ index }">
           {{ index + 1 }}
@@ -122,8 +122,8 @@
         </div>
         <div>
           <label class="text-sm font-semibold" for="username">Trạng thái</label>
-          <Dropdown v-model="statusView" @change="chooseStatus" :options="statusOpt" optionLabel="name" placeholder="Mở"
-            class="w-full md:w-[14rem] rounded-xl text-sm" />
+          <Dropdown v-model="statusView" @change="chooseStatus" :options="statusOpt" optionLabel="name"
+            :placeholder="formatStatus(statusView)" class="w-full md:w-[14rem] rounded-xl text-sm" />
         </div>
       </div>
       <div class="pt-4 flex justify-end">
@@ -224,7 +224,6 @@ const viewDetail = async (id) => {
   userId.value = id
   try {
     const res = await sendGetApi(`/all/find-user-by-id?id=${id}`).then((res) => {
-      console.log(res)
       usernameView.value = res.data.username
       fullNameView.value = res.data.fullName
       statusView.value = res.data.actived
@@ -242,9 +241,12 @@ const updateAccount = async () => {
       username: usernameView.value,
       password: passwordView.value,
       fullName: fullNameView.value,
-      actived: true,
+      actived: statusView.value,
       avatar: imageView.value,
-      role: "ROLE_USER",
+      role: roleView.value,
+    }).then((res) => {
+      fetchAllUser()
+      viewModal.value = false
     })
   } catch (err) {
     console.log(err)
@@ -253,7 +255,6 @@ const updateAccount = async () => {
 const lockUser = async (id) => {
   try {
     const res = await sendGetApi(`/admin/lock-user?id=${id}`).then((res) => {
-      console.log(res)
       fetchAllUser()
     })
   } catch (err) {
@@ -273,6 +274,7 @@ const chooseStatus = (data) => {
 }
 const chooseRole = (data) => {
   roleView.value = data.value.value
+
 }
 const formatStatus = (value) => {
   switch (value) {

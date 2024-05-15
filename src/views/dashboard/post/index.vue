@@ -10,7 +10,7 @@
       </div>
       <div class="flex gap-2">
         <Button icon="pi pi-clock" class="text-white bg-blue-600 hover:bg-blue-700 text-sm border-none"
-          label="Bài viết chờ duyệt" @click="checkedDialog" />
+          label="Bài viết chờ duyệt" :badge="CheckedPosts.length + ''" @click="checkedDialog" />
         <Button icon="pi pi-plus" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
           label="Viết bài" @click="openDialog" />
       </div>
@@ -51,22 +51,44 @@
     </DataTable>
     <!-- Create -->
     <Dialog v-model:visible="createModal" modal header="Viết bài" :style="{ width: '1094px' }">
-      <div>
-        <div>
-
+      <div class="grid">
+        <div class="grid grid-cols-2 gap-2">
+          <div class="flex flex-col gap-2 w-full">
+            <label class="text-sm font-semibold" for="username">Tiêu đề bài viết</label>
+            <InputText v-model="title" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+              size="small" />
+          </div>
+          <div class="flex flex-col gap-2 w-full">
+            <label class="text-sm font-semibold" for="username">Mô tả</label>
+            <InputText v-model="description" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+              size="small" />
+          </div>
         </div>
+        <div class="grid gap-2 pt-2">
+          <div class="flex flex-col gap-2 w-full">
+            <InputField @input-file="setImage" :value="image" title="Ảnh" type="file-input"></InputField>
+            <progress class="progress progress-success w-full" :value="progressUpload" max="100"></progress>
+          </div>
+          <div class="flex flex-col gap-2 w-full">
+            <label class="text-sm font-semibold" for="username">Danh mục</label>
+            <Dropdown v-model="categoryId" @change="chooseCategory" :options="categoryOpt" optionLabel="name"
+              :placeholder="categoryView" class="w-full md:w-[14rem] rounded-xl text-sm" />
+          </div>
+          <div class="flex flex-col gap-2 w-full">
+            <label class="text-sm font-semibold" for="username">Nội dung</label>
+            <InputField @input-change="setContent" :value="content" type="ckeditor"></InputField>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end pt-2">
+        <Button class="text-white bg-green-600 hover:bg-green-700 text-sm border-none" label="Viết bài"
+          @click="createPost()" />
       </div>
     </Dialog>
     <!-- View -->
     <Dialog v-model:visible="viewModal" modal header="Chi tiết" :style="{ width: '1094px' }">
-      <!-- <div>
-        <InputField :value="contentView" type="ckeditor"></InputField>
-      </div> -->
       <div class="w-full">
-        <div class="flex gap-4 pt-3">
-          <img class="rounded-lg h-64 w-auto" :src="imageView" alt="">
-          <div class="p-2" v-html="contentView"></div>
-        </div>
+        <Image class="mb-2 rounded-lg" :src="imageView" alt="Image" preview />
         <div class="flex flex-col gap-2 w-full">
           <label class="text-sm font-semibold" for="username">Tiêu đề bài viết</label>
           <InputText v-model="titleView" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
@@ -85,7 +107,11 @@
         <div class="flex flex-col gap-2 w-full">
           <label class="text-sm font-semibold" for="status">Trạng thái</label>
           <Dropdown v-model="statusView" @change="chooseStatus" :options="statusOpt" optionLabel="name"
-            :placeholder="formatStatus(statusView)" class="w-full md:w-[14rem] rounded-xl text-sm" />
+            :placeholder="formatStatus(statusView)" class="w-full md:w-[14rem] rounded-xl text-sm" disabled />
+        </div>
+        <div class="w-full">
+          <label class="text-sm font-semibold" for="contentView">Nội dung</label>
+          <InputField @input-change="setContentView" :value="contentView" type="ckeditor"></InputField>
         </div>
       </div>
       <div class="pt-4 flex justify-end">
@@ -148,7 +174,8 @@
 
 <script setup>
 import { onMounted, ref, } from 'vue';
-
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/storage';
 import Button from 'primevue/button';
 import { sendGetApi, sendPostApi, sendDeleteApi, sendPutApi } from '@/api/auth/api';
 
@@ -156,6 +183,11 @@ const createModal = ref(false)
 const viewModal = ref(false)
 const checkedModal = ref(false)
 const searchQuery = ref("")
+const progressUpload = ref(0)
+const title = ref("")
+const content = ref("")
+const image = ref("")
+const description = ref("")
 const imageView = ref("")
 const titleView = ref("")
 const descriptionView = ref("")
@@ -176,16 +208,18 @@ const statusOpt = ref([
   }])
 const categoryOpt = ref([])
 const checkedDialog = () => {
-  fetchCheckedPosts()
+
   checkedModal.value = true
 }
 const openDialog = () => {
   createModal.value = true
+  fetchCategory()
 }
 const Posts = ref([])
 const CheckedPosts = ref([])
 onMounted(() => {
   fetchAllPosts()
+  fetchCheckedPosts()
 })
 const chooseCategory = (data) => {
   categoryView.value = data.value.name
@@ -193,6 +227,27 @@ const chooseCategory = (data) => {
 }
 const chooseStatus = (data) => {
   statusView.value = data.value
+}
+const setImage = (file) => {
+  image.value = file
+  var storageRef = firebase.storage().ref('image/' + file.name)
+  let uploadTask = storageRef.put(file)
+  uploadTask.on('stage_changed', (snapshot) => {
+    progressUpload.value = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+  }, (error) => {
+    console.log(error)
+  }, () => {
+    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+      image.value = downloadURL
+      console.log(downloadURL)
+    })
+  })
+}
+const setContent = (value) => {
+  content.value = value
+}
+const setContentView = (value) => {
+  contentView.value = value
 }
 const fetchAllPosts = async () => {
   try {
@@ -223,7 +278,8 @@ const viewDetail = async (id) => {
       descriptionView.value = res.data.description
       statusView.value = res.data.actived
       contentView.value = res.data.content
-      categoryView.value = res.data.blogCategories[0].id
+      categoryView.value = res.data.blogCategories[0].category.name
+      categoryId.value = res.data.blogCategories[0].category.id
       imageView.value = res.data.image
     })
     fetchCategory()
@@ -244,8 +300,10 @@ const removePost = async (id) => {
 }
 const approvePost = async () => {
   try {
-    const res = await sendPostApi(`blog/blog-manager/active-or-unacative?blogId=${postId.value}`).then((res) => {
+    const res = await sendPostApi(`blog/blog-manager/active-or-unactive?blogId=${postId.value}`).then((res) => {
+      fetchAllPosts()
       viewDetail.value = false
+      checkedModal.value = false
     })
   } catch (err) {
     console.log(err)
@@ -260,6 +318,22 @@ const fetchCategory = async () => {
     console.log(err)
   }
 }
+const createPost = async () => {
+  try {
+    await sendPostApi("/blog/all/save-update", {
+      title: title.value,
+      description: description.value,
+      image: image.value,
+      content: content.value,
+      listCategoryId: [categoryId.value]
+    }).then((res) => {
+      fetchAllPosts()
+      createModal.value = false
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
 const updatePost = async () => {
   try {
     const res = await sendPostApi("/blog/all/save-update", {
@@ -269,6 +343,9 @@ const updatePost = async () => {
       image: imageView.value,
       content: contentView.value,
       listCategoryId: [categoryId.value]
+    }).then((res) => {
+      fetchAllPosts()
+      viewModal.value = false
     })
   } catch (err) {
     console.log(err)
