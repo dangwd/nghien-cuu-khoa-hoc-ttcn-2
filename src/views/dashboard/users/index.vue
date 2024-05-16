@@ -18,7 +18,8 @@
           {{ index + 1 }}
         </template>
       </Column>
-      <Column class="text-sm" field="username" header="Tài khoản" style="width: 25%"></Column>
+      <Column class="text-sm" field="username" header="Tài khoản" style="width: 25%">
+      </Column>
       <Column class="text-sm" field="fullName" header="Chủ sở hữu" style="width: 20rem">
       </Column>
       <Column class="text-sm" field="avatar" header="Ảnh đại diện" style="width: 17rem">
@@ -87,7 +88,8 @@
     </Dialog>
 
     <!-- View -->
-    <Dialog v-model:visible="viewModal" modal header="Chi tiết" :style="{ width: '700px' }">
+    <Dialog v-model:visible="viewModal" modal :header="'Chi tiết tài khoản ' + fullNameView"
+      :style="{ width: '700px' }">
       <div class="grid gap-4">
         <div class="flex items-center justify-center">
           <img class="w-24 h-24 rounded-full"

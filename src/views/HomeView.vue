@@ -252,7 +252,7 @@ export default {
     },
     async fetchCategory() {
       try {
-        await sendGetApi().then((res) => {
+        await sendGetApi(`/category/public/get-all-and-search-category?name=${""}`).then((res) => {
           this.categoryOptions = res.data.content
         })
       } catch (err) {

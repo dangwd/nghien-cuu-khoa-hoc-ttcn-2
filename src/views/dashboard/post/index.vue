@@ -9,6 +9,8 @@
           @click="fetchAllPosts()" />
       </div>
       <div class="flex gap-2">
+        <Button icon="pi pi-filter" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
+          label="Bộ lọc" @click="openDialog" />
         <Button icon="pi pi-clock" class="text-white bg-blue-600 hover:bg-blue-700 text-sm border-none"
           label="Bài viết chờ duyệt" :badge="CheckedPosts.length + ''" @click="checkedDialog" />
         <Button icon="pi pi-plus" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
@@ -44,7 +46,7 @@
         <template #body="slotProps">
           <div class="flex gap-2">
             <Button text rounded icon="pi pi-eye" @click="viewDetail(slotProps.data.id)"></Button>
-            <Button text rounded icon="pi pi-trash" severity="warning" @click="removePost(slotProps.data.id)"></Button>
+            <Button text rounded icon="pi pi-trash" severity="warning" @click="deletePost(slotProps.data.id)"></Button>
           </div>
         </template>
       </Column>
@@ -86,7 +88,7 @@
       </div>
     </Dialog>
     <!-- View -->
-    <Dialog v-model:visible="viewModal" modal header="Chi tiết" :style="{ width: '1094px' }">
+    <Dialog v-model:visible="viewModal" modal :header="'Chi tiết bài viết ' + titleView" :style="{ width: '1094px' }">
       <div class="w-full">
         <Image class="mb-2 rounded-lg" :src="imageView" alt="Image" preview />
         <div class="flex flex-col gap-2 w-full">
@@ -121,7 +123,7 @@
           <Button class="text-white bg-blue-600 hover:bg-blue-700 p-1 text-sm border-none" label="Duyệt bài"
             @click="approvePost()" />
           <Button class="text-white bg-red-600 hover:bg-red-700 p-1 text-sm border-none" label="Xóa"
-            @click="deletePost()" />
+            @click="removePost()" />
         </div>
       </div>
     </Dialog>
@@ -169,6 +171,14 @@
         <h1 class="text-base font-semibold text-center">Hiện không có bài viết cần duyệt!</h1>
       </div>
     </Dialog>
+    <!-- Xoa bai viet -->
+    <Dialog v-model:visible="deleteModal" modal :header="'Xóa '" :style="{ width: '500px' }">
+      <h1 class="text-sm font-semibold text-red-600">Sau khi xóa sẽ không thể khôi phục ?</h1>
+      <div class="flex justify-end">
+        <Button class="text-white bg-red-600 hover:bg-red-700 text-sm border-none" label="Xóa"
+          @click="removePost(postId)" />
+      </div>
+    </Dialog>
   </div>
 </template>
 
@@ -181,6 +191,7 @@ import { sendGetApi, sendPostApi, sendDeleteApi, sendPutApi } from '@/api/auth/a
 
 const createModal = ref(false)
 const viewModal = ref(false)
+const deleteModal = ref(false)
 const checkedModal = ref(false)
 const searchQuery = ref("")
 const progressUpload = ref(0)
@@ -288,11 +299,16 @@ const viewDetail = async (id) => {
   }
   viewModal.value = true
 }
+const deletePost = (id) => {
+  postId.value = id
+  deleteModal.value = true
+}
 const removePost = async (id) => {
   try {
     const res = await sendDeleteApi(`/blog/all/delete?blogId=${id}`).then((res) => {
-      console.log(res)
       fetchAllPosts()
+      checkedDialog.value = false
+      deleteModal.value = false
     })
   } catch (err) {
     console.log(err)
@@ -303,7 +319,7 @@ const approvePost = async () => {
     const res = await sendPostApi(`blog/blog-manager/active-or-unactive?blogId=${postId.value}`).then((res) => {
       fetchAllPosts()
       viewDetail.value = false
-      checkedModal.value = false
+
     })
   } catch (err) {
     console.log(err)
