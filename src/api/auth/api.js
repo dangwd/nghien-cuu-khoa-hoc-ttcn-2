@@ -30,31 +30,21 @@ export const login = (username, password) => api.post('api/login', {
 export const signup = (username, password, fullName) => api.post('/regis', {
   username, password, fullName
 })
-//All user
-export const getAllUser = (pageNum) => api.get(`/admin/get-all-user?page=${pageNum}&size=10`)
 //Edit user
 export const editUser = (id, username, fullName, avatar, password) => api.post('/update-infor', {
   id, username, fullName, avatar, password
 })
-//Get by id
-export const getUserById = (id) => api.get(`/all/find-user-by-id?id=${id}`)
-//Quen mk
-export const remindPass = (mail) => api.post(`mail/send-mail?to=${mail}`)
 
+export const sendPostApi = (url, data) => api.post(url, data)
+
+export const sendGetApi = (url) => api.get(url)
+
+export const sendDeleteApi = (url) => api.delete(url)
+
+export const sendPutApi = (url, data) => api.put(url, data)
 //=======================CATEGORY API=======================
 //Top Category
 export const getTopCategory = () => api.get('/category/public/get-Top5-category?size=5')
-//Create Category
-export const getAllCategory = (page, query) => api.get(`/category/public/get-all-and-search-category?name=${query ? query : ""}&page=${page}&size=10`)
-export const createCategory = (name, image, categoryType) => api.post('/category/admin/saveOrUpdate', {
-  name, image, categoryType
-})
-// Edit Category
-export const editCategory = (id, name, image, categoryType) => api.post('/category/admin/saveOrUpdate', {
-  id, name, image, categoryType
-})
-// Delete Category
-export const deleteCategory = (id) => api.delete(`/category/admin/delete?id=${id}`)
 
 
 //=======================POSTS API=======================
@@ -64,12 +54,8 @@ export const getAllPost = (pageNum) => api.get(`/blog/blog-manager/admin-find-al
 
 export const getPostUnactive = (pageNum) => api.get(`/blog/public/get-all-blog-unactived?page=${pageNum}&size=10`)
 
-export const createPost = (title, description, image, content, linkFiles, listCategoryId) => api.post('/blog/all/save', {
-  title, description, image, content, linkFiles, listCategoryId
-})
-export const activePost = (postId) => api.post(`blog/blog-manager/active-or-unacative?blogId=${postId}`)
 // For User
-export const getAllPostPublic = (currentPage, query) => api.get(`/blog/public/get-all-blog?page=${currentPage}&size=5&keywords=${query ? query : ""}`)
+export const getAllPostPublic = (currentPage, query) => api.get(`/blog/public/get-all-blog`)
 
 export const getPostByCateId = (cateId) => api.get(`/blog/public/get-blog-by-category?categoryId=${cateId}`)
 // Get post by Id
@@ -102,17 +88,12 @@ export const getSbjById = (sbjId) => api.get(`/document/public/get-document-by-s
 
 export const getDocById = (id) => api.get(`/document/public/findbyid?id=${id}`)
 
-export const getThreeDoc = (url) => api.get(url + '?size=3')
 
 export const createDocument = (name, image, description, linkFile, subjectId) => api.post(`/document/all/save`, {
   name, image, description, linkFile, subjectId
 })
-//=======================INFOMATION API=======================
-//get all
-export const getAllNotification = () => api.get("notification/all/get-all-notification")
 
-//get by id
-export const getNotiById = (id) => api.get(`/notification/all/get-notification-by-id?id=${id}`)
+
 
 //create
 export const createNoti = (title, content, image, linkFiles) => api.post("/notification/admin/add-and-update-notification", { title, content, image, linkFiles })

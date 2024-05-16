@@ -32,15 +32,20 @@ const router = createRouter({
       component: () => import('../views/nologin/index.vue')
     },
     {
+      path: '/undefined',
+      name: 'Undefine',
+      component: () => import('../views/UndefineView.vue')
+    },
+    {
       path: '/dashboard',
       name: 'Dashboard',
       component: () => import('../views/dashboard/master/index.vue'),
       meta: { requiresAuth: true, role: 'ROLE_ADMIN' },
       children: [
         {
-          name: 'User',
-          path: '/user-account',
-          component: () => import('../views/dashboard/user/index.vue')
+          name: 'Test',
+          path: '/users-manager',
+          component: () => import('../views/dashboard/users/index.vue')
         },
         {
           name: 'Document',
@@ -50,7 +55,7 @@ const router = createRouter({
         {
           name: 'Post',
           path: '/post-manage',
-          component: () => import('../views/dashboard/posts/index.vue')
+          component: () => import('../views/dashboard/post/index.vue')
         },
         {
           name: 'Category',
@@ -62,6 +67,7 @@ const router = createRouter({
           path: '/noti',
           component: () => import('../views/dashboard/noti/index.vue')
         },
+
       ]
     },
     {

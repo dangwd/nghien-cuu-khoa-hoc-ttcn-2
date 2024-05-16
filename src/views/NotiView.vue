@@ -47,7 +47,7 @@
 </template>
 <script setup>
 import { onMounted, ref } from 'vue';
-import { getAllNotification, getNotiById } from '@/api/auth/api';
+import { sendGetApi } from '@/api/auth/api';
 const listInfos = ref([])
 const notiDetail = ref({})
 const isLoading = ref(true)
@@ -62,7 +62,7 @@ onMounted(() => {
 })
 const fetchAllNoti = async () => {
   try {
-    await getAllNotification().then((res) => {
+    await sendGetApi("notification/all/get-all-notification").then((res) => {
       listInfos.value = res.data.content
     })
   } catch (err) {
@@ -73,7 +73,7 @@ const fetchAllNoti = async () => {
 const viewDetail = async (value) => {
   state.value = "detail"
   try {
-    await getNotiById(value).then((res) => {
+    await sendGetApi(`/notification/all/get-notification-by-id?id=${value}`).then((res) => {
       notiDetail.value = res.data
 
     })

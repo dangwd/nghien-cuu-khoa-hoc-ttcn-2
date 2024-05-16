@@ -25,6 +25,7 @@
     "jwt-decode": "^4.0.0",
     "moment": "^2.30.1",
     "normalize.css": "^8.0.1",
+    "primeicons": "^7.0.0",
     "primevue": "^3.52.0",
     "vue": "^3.4.15",
     "vue-router": "^4.2.5",

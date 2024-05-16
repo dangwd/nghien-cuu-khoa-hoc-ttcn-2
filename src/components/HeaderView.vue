@@ -34,7 +34,7 @@
             </router-link>
           </li>
           <li v-if="userRole == 'ROLE_ADMIN'">
-            <router-link to="/user-account">
+            <router-link to="/users-manager">
               <h1 class="text-sm text-gray-700 font-semibold">Dashboard</h1>
             </router-link>
           </li>

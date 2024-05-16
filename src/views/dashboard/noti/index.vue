@@ -1,197 +1,212 @@
 <template>
-  <div v-if="isLoading">
-    <div class="flex items-center justify-center h-screen">
-      <div class="rounded-md h-12 w-12 border-4 border-t-4 border-green-500 animate-spin absolute"></div>
+  <div class="card py-2">
+    <div class="flex justify-between mb-2">
+      <div class="flex">
+        <InputText v-model="searchQuery" placeholder="Tìm kiếm" size="small" class="border-gray-300 rounded-none">
+        </InputText>
+        <Button icon="pi pi-search"
+          class="text-white bg-green-600 hover:bg-green-700 text-sm border-none rounded-none rounded-r-lg"
+          @click="fetchAllNoti()" />
+      </div>
+      <Button icon="pi pi-plus" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
+        label="Viết thông báo" @click="openDialog" />
     </div>
-  </div>
-  <div v-else>
-    <div v-if="state == 'default'">
-      <div class="flex justify-between pb-10">
-        <h1 class="p-3 font-bold text-xl">Thông báo</h1>
+    <DataTable class="text-sm" size="small" showGridlines :value="Notifications" paginator :rows="5"
+      :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem">
+      <Column field="name" header="STT" style="width: 5rem">
+        <template #body="{ index }">
+          {{ index + 1 }}
+        </template>
+      </Column>
+      <Column class="text-sm" field="title" header="Tiêu đề" style="width: 25%"></Column>
+      <Column class="text-sm" field="content" header="ND báo cáo" style="width: 25%">
+        <template #body="slotProps">
+          <div v-html="slotProps.data.content"></div>
+        </template>
+      </Column>
+      <Column class="text-sm" field="image" header="Ảnh" style="width: 17rem">
+        <template #body="slotProps">
+          <img class="w-24 h-auto" :src="slotProps.data.image" alt="">
+        </template>
+      </Column>
+      <Column class="text-sm" field="createdDate" header="Ngày tạo" style="width: 25%"></Column>
+      <Column class="text-sm" field="" header="Thao tác" style="width: 15rem">
+        <template #body="slotProps">
+          <div class="flex gap-2">
+            <Button text rounded icon="pi pi-eye" @click="viewDetail(slotProps.data.id)"></Button>
+            <Button text rounded :icon="slotProps.data.actived ? 'pi pi-lock-open' : 'pi pi-lock'" severity="warning"
+              @click="removeNoti(slotProps.data.id)"></Button>
+          </div>
+        </template>
+      </Column>
+    </DataTable>
+    <!-- Create -->
+    <Dialog v-model:visible="createModal" modal header="Tạo mới tài khoản" :style="{ width: '700px' }">
+      <div class="grid gap-4">
+        <div class="flex gap-2">
+          <div class="flex flex-col gap-2 w-full">
+            <label class="text-sm font-semibold" for="username">Tên người dùng</label>
+            <InputText v-model="fullName" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+              size="small" placeholder="Nguyen Van A" />
+          </div>
+          <div class="flex flex-col gap-2 w-full">
+            <label class="text-sm font-semibold" for="username">Tài khoản</label>
+            <InputText v-model="username" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+              size="small" placeholder="abc@gmail.com" />
+          </div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-semibold" for="username">Mật khẩu</label>
+          <InputText v-model="passCheck" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+            size="small" placeholder="**********" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-semibold" for="username">Nhập lại mật khẩu</label>
+          <InputText v-model="password" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text" size="small"
+            placeholder="**********" />
+        </div>
         <div>
-          <Button :config="{ label: 'Tạo', click: () => create() }">Tạo</Button>
+          <label class="text-sm font-semibold" for="username">Trạng thái</label>
+          <Dropdown v-model="selectedStatus" @change="chooseStatus" :options="statusOpt" optionLabel="name"
+            placeholder="Trạng thái" class="w-full md:w-[14rem] rounded-xl text-sm" />
         </div>
       </div>
-      <div class="mx-auto">
-        <div class="pt-5 pb-2 flex justify-end">
-          <Pagination :currentPage="paginationData.currentPage" :totalPages="paginationData.totalPages"
-            @update:currentPage="fetchAllUser($event)"></Pagination>
-        </div>
-        <TableComp :headers="dataTable.headers">
-          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-            v-for="(row, index) in dataTable.data" :key="index">
-            <th scope="col" class="py-4 px-3 w-4">
-              {{ row.id }}
-            </th>
-            <td>{{ shortenText(row.title, 25) }}</td>
-            <td>{{ shortenText(row.content, 25) }}</td>
-            <td class="w-3 py-2 px-3">
-              <img class="w-10" :src="row.image" alt="">
-            </td>
-            <td class="w-3 py-2 px-3">{{ row.createdDate }}</td>
-            <td class="w-3 py-2 px-3">
-              <div class="flex">
-                <div>
-                  <Button btnIcon="icon" btnClass="bg-none text-blue-500 hover:underline"
-                    :config="{ label: 'Cấu hình', click: () => edit(row) }"></Button>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </TableComp>
+      <div class="pt-4 flex justify-end">
+        <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Tạo mới"
+          @click="createAccount()" />
+      </div>
+    </Dialog>
 
-      </div>
-    </div>
-    <div v-if="state == 'create'">
-      <div class="flex justify-between pb-10">
-        <h1 class="p-3 font-bold text-xl">Viết thông báo</h1>
-        <div>
-          <Button :config="{ label: 'Trờ lại', click: () => back() }">Trở lại</Button>
+    <!-- View -->
+    <Dialog v-model:visible="viewModal" modal header="Chi tiết" :style="{ width: '700px' }">
+      <div class="grid">
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Tiêu đề</label>
+          <InputText v-model="titleView" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+            size="small" />
+        </div>
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Nội dung</label>
+          <InputText v-model="contentView" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+            size="small" />
+          <div v-html="contentView"></div>
+        </div>
+        <div class="flex flex-col gap-2 w-full">
+          <img :src="imageView" alt="">
         </div>
       </div>
-      <div class=" p-6 mx-auto bg-white border max-w-2xl border-gray-200 rounded-xl shadow grid gap-8">
-        <InputField @input-change="setTitle" :value="createParam.username" labelField="title" typeInput="text"
-          title="Tiêu đề"></InputField>
-        <InputField @input-file="setImage" :value="createParam.image" type="file-input" title="Ảnh">
-        </InputField>
-        <InputField styleClass="py-2" @input-change="setContent" :value="createParam.content" type="ckeditor">
-        </InputField>
-
-        <Button :config="{ label: 'Tạo', click: () => createNoti() }">Trở lại</Button>
-
-      </div>
-    </div>
-    <div v-if="state == 'edit'">
-      <div class="flex justify-between pb-10">
-        <h1 class="p-3 font-bold text-xl">Cấu hình thông báo</h1>
-        <div>
-          <Button :config="{ label: 'Trờ lại', click: () => back() }">Trở lại</Button>
-        </div>
-      </div>
-    </div>
+    </Dialog>
   </div>
 </template>
-<script>
-import TableComp from '@/components/Table/TableComp.vue'
-import { createNoti, getAllNotification, signup } from '@/api/auth/api'
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/storage';
-import { toast } from 'vue3-toastify';
-import 'vue3-toastify/dist/index.css';
-export default {
-  components: {
-    TableComp
-  },
-  mounted() {
-    this.fetchAllNoti()
-      .then(() => {
-        setTimeout(() => {
-          this.isLoading = false;
-        }, 700)
+
+<script setup>
+import { onMounted, ref, } from 'vue';
+
+import Button from 'primevue/button';
+import { sendGetApi, sendPostApi, sendDeleteApi, sendPutApi } from '@/api/auth/api';
+
+const selectedStatus = ref("")
+const createModal = ref(false)
+const viewModal = ref(false)
+const deleteModal = ref(false)
+const searchQuery = ref("")
+const titleView = ref("")
+const contentView = ref("")
+const imageView = ref("")
+const openDialog = () => {
+  createModal.value = true
+}
+const Notifications = ref([])
+
+onMounted(() => {
+  fetchAllNoti()
+})
+const fetchAllNoti = async () => {
+  try {
+    await sendGetApi(`notification/all/get-all-notification`).then((res) => {
+      Notifications.value = res.data.content
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+const createAccount = async () => {
+  try {
+    if (passCheck.value == password.value) {
+      const res = await sendPostApi("/admin/create-by-admin", {
+        username: username.value,
+        password: password.value,
+        fullName: fullName.value,
+        avatar: "",
+        role: "ROLE_USER",
+      }).then(() => {
+        fetchAllNoti()
+        createModal.value = false
       })
-  },
-  data() {
-    return {
-      isLoading: true,
-      state: 'default',
-      paginationData: {
-        currentPage: 1,
-        totalPages: 0
-      },
-      createParam: {
-        title: "",
-        content: "",
-        image: ""
-      },
-      dataTable: {
-        headers: ['ID', 'Tiêu đề bài viết', 'Nội dung', 'Ảnh', 'Ngày tạo', 'Thao tác'],
-        data: [],
-        param: {
-          id: "",
-          username: "",
-          password: "",
-          fullName: "",
-          actived: true,
-          avatar: "",
-          role: ""
-        }
-      }
+    } else {
+      console.log("Pass sai!")
     }
-  },
-  methods: {
-    setTitle(value) {
-      this.createParam.title = value
-    },
-    setContent(value) {
-      this.createParam.content = value
-    },
-    setImage(file) {
-      this.createParam.image = file
-      var storageRef = firebase.storage().ref('image/' + file.name)
-      let uploadTask = storageRef.put(file)
-      uploadTask.on('stage_changed', (snapshot) => {
-        console.log(snapshot)
-      }, (error) => {
-        console.log(error)
-      }, () => {
-        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-          this.createParam.image = downloadURL
-          console.log(downloadURL)
-        })
-      })
-    },
-    showSuccess() {
-      toast.success("Tạo tài khoản thành công!");
-    },
-    showError() {
-      toast.error("Có lỗi xảy ra, vui lòng kiểm tra lại!");
-    },
-    back() {
-      this.state = 'default'
-    },
-    create() {
-      this.state = 'create'
-    },
-    edit(noti) {
-      this.state = 'edit'
-      console.log(noti)
-    },
-    async fetchAllNoti(page) {
-      try {
-        await getAllNotification(page).then((res) => {
-          this.dataTable.data = res.data.content
-          this.paginationData.totalPages = res.data.totalPages
-        })
-      } catch (err) {
-        console.log(err)
-      }
-    },
-    async createNoti() {
-      try {
-        await createNoti(
-          this.createParam.title, this.createParam.content, this.createParam.image
-        ).then((res) => {
-          console.log(res)
-          this.fetchAllNoti()
-          this.state = 'default'
-          this.showSuccess()
-        })
-      } catch (err) {
-        console.log(err)
-      }
-    }
-  },
-  computed: {
-    shortenText() {
-      return (description, maxLength) => {
-        if (description.length <= maxLength) {
-          return description;
-        } else {
-          return description.slice(0, maxLength) + "...";
-        }
-      };
-    }
+  } catch (err) {
+    console.log(err)
+  }
+}
+const viewDetail = async (id) => {
+  viewModal.value = true
+  try {
+    const res = await sendGetApi(`/notification/all/get-notification-by-id?id=${id}`).then((res) => {
+      titleView.value = res.data.title
+      contentView.value = res.data.content
+      imageView.value = res.data.image
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+const updateAccount = async () => {
+  try {
+    const res = await sendPutApi("/admin/update-by-admin", {
+      id: userId.value,
+      username: usernameView.value,
+      password: passwordView.value,
+      fullName: fullNameView.value,
+      actived: true,
+      avatar: imageView.value,
+      role: "ROLE_USER",
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+const removeNoti = async (id) => {
+  try {
+    const res = await sendDeleteApi(`/notification/admin/delete-notification?notificationId=${id}`).then((res) => {
+      console.log(res)
+      fetchAllNoti()
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+const formatRole = (role) => {
+  switch (role) {
+    case 'ROLE_ADMIN':
+      return 'Quản trị viên'
+    case 'ROLE_USER':
+      return 'Người dùng'
+  }
+}
+const chooseStatus = (data) => {
+  statusView.value = data.value.value
+}
+const chooseRole = (data) => {
+  roleView.value = data.value.value
+}
+const formatStatus = (value) => {
+  switch (value) {
+    case true:
+      return 'Đã kích hoạt'
+    case false:
+      return 'Đã khóa'
   }
 }
 </script>
-<style></style>

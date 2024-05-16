@@ -81,7 +81,7 @@
 </template>
 <script>
 import TableComp from '@/components/Table/TableComp.vue'
-import { getAllUser, signup } from '@/api/auth/api'
+import { sendGetApi, signup } from '@/api/auth/api'
 
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
@@ -157,7 +157,7 @@ export default {
     },
     async fetchAllUser(page) {
       try {
-        await getAllUser(page).then((res) => {
+        await sendGetApi(page).then((res) => {
           this.dataTable.data = res.data.content
           this.paginationData.totalPages = res.data.totalPages
         })
