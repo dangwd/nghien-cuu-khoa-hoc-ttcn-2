@@ -28,7 +28,7 @@
         </template>
         <template #end>
           <button v-ripple
-            class="relative overflow-hidden w-full p-link flex items-center p-2 pl-3 text-surface-700 dark:text-surface-0/80 hover:bg-surface-200 dark:hover:bg-surface-600 rounded-none">
+            class="relative overflow-hidden w-full p-link flex items-center p-2 pl-3 text-surface-700 dark:text-surface-0/80 hover:bg-surface-200 rounded-none">
             <Avatar :image="user.avatar" class="mr-2" shape="circle" />
             <span class="inline-flex flex-col justify-start text-left">
               <span class="font-bold">{{ user.fullName }}</span>

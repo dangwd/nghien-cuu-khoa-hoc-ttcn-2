@@ -1,5 +1,5 @@
 <template>
-  <div v-if="btnIcon == 'default'">
+  <div v-ripple v-if="btnIcon == 'default'">
     <button @click="config.click()" class="rounded-lg text-sm px-4 py-2" :class="btnClass">
       <span :class="config.labelClass">{{ config.label }}</span>
     </button>

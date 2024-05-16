@@ -54,6 +54,7 @@ import Dialog from 'primevue/dialog';
 import Dropdown from 'primevue/dropdown'
 import Image from 'primevue/image';
 import Password from 'primevue/password';
+import Skeleton from 'primevue/skeleton';
 const app = createApp(App)
 
 app.directive('ObserveVisibility', ObserveVisibility)
@@ -69,9 +70,12 @@ app.use(Vue3Toastify)
 app.use(Antd)
 app.use(PrimeVue, {
   unstyled: true,
-  pt: Lara
+  pt: Lara,
+  ripple: true
 });
 app.use(router)
+app.component('Skeleton', Skeleton)
+
 app.component('Menu', Menu)
 app.component('Image', Image)
 app.component('InputText', InputText)
