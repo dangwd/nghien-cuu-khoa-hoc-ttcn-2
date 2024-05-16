@@ -120,7 +120,7 @@
 
 </template>
 <script>
-import { getAllPostPublic, createPost, likePost, getTopCategory, getAllCategory } from '@/api/auth/api'
+import { likePost, sendGetApi, sendPostApi } from '@/api/auth/api'
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import AsideView from '@/components/AsideView.vue';
@@ -148,7 +148,6 @@ export default {
         description: "",
         content: "",
         image: null,
-        linkFiles: [],
         listCategoryId: []
       },
       isLoading: true,
@@ -179,7 +178,7 @@ export default {
     async increaseLike(id) {
       try {
         await likePost(id)
-        const res = await getAllPostPublic(this.currentPage);
+        const res = await sendGetApi(`blog/public/get-all-active?page=${this.currentPage}&size=5&keywords=${""}`);
         this.posts = []
         res.data.content.forEach(post => {
           this.posts.push(post);
@@ -199,6 +198,7 @@ export default {
     },
     setCategory(value) {
       this.createPost.listCategoryId = [value]
+      console.log(value)
     },
     setImage(file) {
       this.createPost.image = file
@@ -241,7 +241,7 @@ export default {
     },
     async fetchAllPostPub() {
       try {
-        await getAllPostPublic(this.currentPage).then((res) => {
+        await sendGetApi(`blog/public/get-all-active?page=${this.currentPage}&size=5&keywords=${""}`).then((res) => {
           res.data.content.forEach(post => {
             this.posts.push(post);
           });
@@ -252,7 +252,7 @@ export default {
     },
     async fetchCategory() {
       try {
-        await getAllCategory().then((res) => {
+        await sendGetApi().then((res) => {
           this.categoryOptions = res.data.content
         })
       } catch (err) {
@@ -260,22 +260,19 @@ export default {
       }
     },
     async create() {
+      const data = {
+        title: this.createPost.title,
+        description: this.createPost.description,
+        image: this.createPost.image,
+        content: this.createPost.content,
+        listCategoryId: this.createPost.listCategoryId
+      }
       try {
         if (this.createPost.title !== "" && this.createPost.description !== "" && this.createPost.content !== "") {
-          await createPost(
-            this.createPost.title,
-            this.createPost.description,
-            this.createPost.image,
-            this.createPost.content,
-            this.createPost.listCategoryId
-          ).then(() => {
-            this.posts = []
-            res.data.content.forEach(post => {
-              this.posts.push(post);
-            });
+          await sendPostApi("/blog/all/save-update", data).then(() => {
             this.showSuccess()
           })
-          const res = await getAllPostPublic(this.currentPage);
+          const res = await sendGetApi(`blog/public/get-all-active?page=${this.currentPage}&size=5&keywords=${""}`);
           this.posts = []
           res.data.content.forEach(post => {
             this.posts.push(post);
