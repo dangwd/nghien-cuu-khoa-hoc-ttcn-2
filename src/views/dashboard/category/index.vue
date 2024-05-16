@@ -1,227 +1,197 @@
 <template>
-  <div v-if="isLoading">
-    <div class="flex items-center justify-center h-screen">
-      <div class="rounded-md h-12 w-12 border-4 border-t-4 border-green-500 animate-spin absolute"></div>
+  <div class="card py-2">
+    <div class="flex justify-between mb-2">
+      <div class="flex">
+        <InputText v-model="searchQuery" placeholder="Tìm kiếm" size="small" class="border-gray-300 rounded-none">
+        </InputText>
+        <Button icon="pi pi-search"
+          class="text-white bg-green-600 hover:bg-green-700 text-sm border-none rounded-none rounded-r-lg"
+          @click="fetchAllCategory()" />
+      </div>
+      <Button icon="pi pi-plus" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
+        label="Tạo danh mục" @click="openDialog" />
     </div>
-  </div>
-  <div v-else>
-    <div v-if="state == 'default'">
-      <div class="flex justify-between pb-10">
-        <h1 class="p-3 font-bold text-xl">Quản lý danh mục bài viết</h1>
+    <DataTable scrollable scrollHeight="80vh" class="text-sm" size="small" showGridlines :value="Categories" paginator
+      :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem">
+      <Column field="name" header="STT" style="width: 5rem">
+        <template #body="{ index }">
+          {{ index + 1 }}
+        </template>
+      </Column>
+      <Column class="text-sm" field="id" header="ID" style="width: 15rem"></Column>
+      <Column class="text-sm" field="name" header="Danh mục" style="width: 25%"></Column>
+      <Column class="text-sm" field="categoryType" header="Kiểu danh mục" style="width: 15%">
+        <template #body="slotProps">
+          {{ formatCateType(slotProps.data.categoryType) }}
+        </template>
+      </Column>
+      <Column class="text-sm" field="numBlog" header="Số bài viết liên quan" style="width: 25%"></Column>
+      <Column class="text-sm" field="" header="Thao tác" style="width: 25%">
+        <template #body="slotProps">
+          <div class="flex gap-2">
+            <Button text rounded icon="pi pi-eye" @click="viewDetail(slotProps.data.id)"></Button>
+            <Button text rounded icon="pi pi-trash" severity="warning" @click="deleteCate(slotProps.data.id)"></Button>
+          </div>
+        </template>
+      </Column>
+    </DataTable>
+    <!-- Create -->
+    <Dialog v-model:visible="createModal" modal header="Tạo danh mục" :style="{ width: '700px' }">
+      <div class="grid grid-cols-1 gap-2">
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Tên danh mục</label>
+          <InputText v-model="categoryName" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+            size="small" placeholder="VD: Cơ hội học bổng..." />
+        </div>
         <div>
-          <Button btnIcon="icon" iconBtnClass="bx bxs-edit-alt"
-            :config="{ label: 'Tạo', click: () => create() }">Tạo</Button>
+          <label class="text-sm font-semibold" for="username">Kiểu danh mục</label>
+          <Dropdown v-model="selectedCate" @change="chooseCate" :options="categoryOpt" optionLabel="name"
+            placeholder="Chọn kiểu danh mục" class="w-full md:w-[14rem] rounded-xl text-sm" />
         </div>
       </div>
-      <div class="mx-auto">
-        <TableComp :headers="dataTable.headers">
-          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-            v-for="(row, index) in dataTable.data" :key="index">
-            <th scope="col" class="py-4 px-3 w-4">
-              {{ index + 1 }}
-            </th>
-            <td class="w-3 py-2 px-3">{{ row.name }}</td>
-            <td class="w-3 py-2 px-3">{{ row.categoryType }}</td>
-            <td class="w-3 py-2 px-3">
-              <div class="flex">
-                <div>
-                  <Button btnIcon="icon" btnClass="bg-none text-blue-500 hover:underline"
-                    :config="{ label: 'Cấu hình', click: () => edit(row) }"></Button>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </TableComp>
+      <div class="pt-4 flex justify-end">
+        <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Tạo mới"
+          @click="createCate()" />
+      </div>
+    </Dialog>
 
-      </div>
-    </div>
-    <div v-if="state == 'create'">
-      <div class="flex justify-between pb-10">
-        <h1 class="p-3 font-bold text-xl">Tạo danh mục bài viết</h1>
+    <!-- View -->
+    <Dialog v-model:visible="viewModal" modal header="Chi tiết" :style="{ width: '700px' }">
+      <div class="grid grid-cols-1 gap-2">
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Tên danh mục</label>
+          <InputText v-model="categoryNameView" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+            size="small" />
+        </div>
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Bài viết liên quan</label>
+          <InputText v-model="numBlog" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text" size="small"
+            disabled />
+        </div>
         <div>
-          <Button btnIcon="icon" iconBtnClass="bx bx-arrow-back"
-            :config="{ label: 'Trờ lại', click: () => back() }"></Button>
+          <label class="text-sm font-semibold" for="username">Kiểu danh mục</label>
+          <Dropdown v-model="selectedCateView" @change="chooseCate" :options="categoryOpt" optionLabel="name"
+            :placeholder="formatCateType(selectedCateView)" class="w-full md:w-[14rem] rounded-xl text-sm" />
         </div>
       </div>
-      <div class=" p-6 mx-auto bg-white border max-w-2xl border-gray-200 rounded-xl shadow grid gap-8">
-        <InputField @input-change="setName" :value="createParam.name" labelField="name" typeInput="text"
-          title="Tên danh mục"></InputField>
-        <InputField @select-change="setCategoryType" :options="dataTable.options" type="select"
-          labelField="categoryType" title="Kiểu danh mục">
-        </InputField>
-        <Button :config="{ label: 'Tạo danh mục', click: () => createCategory() }"></Button>
+      <div class="pt-4 flex justify-end">
+        <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Cập nhật"
+          @click="updateCate()" />
       </div>
-    </div>
-    <div v-if="state == 'edit'">
-      <div class="flex justify-between pb-10">
-        <h1 class="p-3 font-bold text-xl">Cấu hình danh mục</h1>
-        <div>
-          <Button btnIcon="icon" iconBtnClass="bx bx-arrow-back" :config="{ label: 'Trờ lại', click: () => back() }">Trở
-            lại</Button>
-        </div>
-      </div>
-      <div class=" p-6 mx-auto bg-white border max-w-2xl border-gray-200 rounded-xl shadow grid gap-8">
-        <InputField @input-change="setNameEdit" :value="dataTable.param.name" labelField="name" typeInput="text"
-          title="Tên danh mục"></InputField>
-        <InputField @select-change="setCategoryTypeEdit" :options="dataTable.options" type="select"
-          labelField="categoryType" title="Kiểu danh mục">
-        </InputField>
-        <div class="flex items-center gap-2">
-          <Button :config="{ label: 'Sửa', click: () => editCategory() }"></Button>
-          <ModalComp labelBtn="Xóa" :modalIdProps="'deleteCategory'"
-            customClass="px-4 py-2 text-sm bg-red-700 text-white rounded-lg" :size="'xl'"
-            :modalTitleClass="'font-bold text-sm'">
-            <template #header>
-              <h1 class=" text-left text-lg font-bold">Bạn muốn xóa danh mục này ?</h1>
-            </template>
-            <template #content>
-              <h1 class="text-red-700 text-center text-lg font-bold">Sau khi xóa sẽ không thể phục hồi!</h1>
-            </template>
-            <template #footer>
-              <div class="flex justify-end gap-2">
-                <Button btnClass="bg-red-700 text-white"
-                  :config="{ label: 'Xóa', click: () => deleteCategory() }"></Button>
-              </div>
-            </template>
-          </ModalComp>
-        </div>
-      </div>
-    </div>
+    </Dialog>
   </div>
 </template>
-<script>
-import TableComp from '@/components/Table/TableComp.vue'
-import { getAllCategory, createCategory, editCategory, deleteCategory } from '@/api/auth/api'
-import { toast } from 'vue3-toastify';
-import 'vue3-toastify/dist/index.css';
 
-export default {
-  components: {
-    TableComp
+<script setup>
+import { onMounted, ref, } from 'vue';
+
+import Button from 'primevue/button';
+import { sendGetApi, sendPostApi, sendDeleteApi } from '@/api/auth/api';
+const currentPage = ref(0)
+const createModal = ref(false)
+const viewModal = ref(false)
+const searchQuery = ref("")
+const categoryName = ref("")
+const categoryNameView = ref("")
+const numBlog = ref("")
+const selectedCateView = ref("")
+const selectedCate = ref("")
+const selectedCateValue = ref("")
+const cateId = ref("")
+const categoryOpt = ref([
+  {
+    name: "Danh mục bài viết",
+    value: "BLOG"
   },
-  mounted() {
-    this.fetchAllCategory().then(() => {
-      setTimeout(() => {
-        this.isLoading = false;
-      }, 700)
+  {
+    name: "Danh mục tài liệu",
+    value: "DOCUMENT"
+  },
+])
+const openDialog = () => {
+  createModal.value = true
+}
+const Categories = ref([])
+
+onMounted(() => {
+  fetchAllCategory()
+})
+const chooseCate = (data) => {
+  selectedCateValue.value = data.value.value
+}
+const fetchAllCategory = async () => {
+  try {
+    await sendGetApi(`/category/public/get-all-and-search-category?name=${searchQuery.value ? searchQuery.value : ""}&page=${currentPage.value}&size=10`).then((res) => {
+      Categories.value = res.data.content
     })
-  },
-  data() {
-    return {
-      isLoading: true,
-      state: 'default',
-      createParam: {
-        name: "",
-        image: "",
-        categoryType: "",
-      },
-      dataTable: {
-        headers: ['STT', 'Tên danh mục', 'Kiểu danh mục', 'Thao tác'],
-        data: [],
-        param: {
-          id: "",
-          name: "",
-          image: "",
-          categoryType: ""
-        },
-        options: [
-          { text: 'DOCUMENT', value: 'DOCUMENT' },
-          { text: 'BLOG', value: 'BLOG' },
-        ]
-      }
-    }
-  },
-  methods: {
-    setName(value) {
-      this.createParam.name = value
-    },
-    setCategoryType(value) {
-      this.createParam.categoryType = value
-    },
-    setNameEdit(value) {
-      this.dataTable.param.name = value
-    },
-    setCategoryTypeEdit(value) {
-      this.dataTable.param.categoryType = value
-    },
-    showSuccess() {
-      toast.success("Thao tác thành công!");
-    },
-    showError() {
-      toast.error("Có lỗi xảy ra, vui lòng kiểm tra lại!");
-    },
-    back() {
-      this.state = 'default'
-    },
-    create() {
-      this.state = 'create'
-    },
-    edit(category) {
-      this.state = 'edit'
-      this.dataTable.param.name = category.name
-      this.dataTable.param.id = category.id
-      this.dataTable.param.categoryType = category.categoryType
-    },
-    async fetchAllCategory() {
-      try {
-        const res = await getAllCategory();
-        this.dataTable.data = res.data.content
-      } catch (err) {
-        console.log(err)
-      }
-    },
-    async createCategory() {
-      if (this.createParam.name !== "" && this.createParam.categoryType !== "") {
-        try {
-          await createCategory(
-            this.createParam.name, this.createParam.image, this.createParam.categoryType
-          ).then(() => {
-            this.showSuccess(),
-              this.fetchAllCategory(),
-              this.state = 'default';
-          }
-          )
-
-        } catch (err) {
-          console.log(err)
-        }
-      } else {
-        this.showError()
-      }
-    },
-    async editCategory() {
-      if (this.dataTable.param.name !== "" && this.dataTable.param.categoryType !== "") {
-        try {
-          await editCategory(
-            this.dataTable.param.id,
-            this.dataTable.param.name,
-            this.dataTable.param.image,
-            this.dataTable.param.categoryType
-          ).then(() => {
-            this.showSuccess(),
-              this.fetchAllCategory(),
-              this.state = 'default';
-          }
-          )
-
-        } catch (err) {
-          console.log(err)
-        }
-      } else {
-        this.showError()
-      }
-    },
-    async deleteCategory() {
-      if (this.dataTable.param.name !== "" && this.dataTable.param.categoryType !== "") {
-        await deleteCategory(this.dataTable.param.id).then(() => {
-          this.showSuccess(),
-            this.fetchAllCategory(),
-            this.state = 'default'
-        })
-      }
-    }
-
+  } catch (err) {
+    console.log(err)
   }
 }
+const createCate = async () => {
+  try {
+    if (categoryName.value !== "") {
+      const res = await sendPostApi("/category/admin/saveOrUpdate", {
+        name: categoryName.value,
+        image: "",
+        numBlog: 0,
+        categoryType: selectedCateValue.value
+      }).then(() => {
+        fetchAllCategory()
+        createModal.value = false
+      })
+    } else {
+      console.log("trường rỗng!")
+    }
+  } catch (err) {
+    console.log(err)
+  }
+}
+const viewDetail = async (id) => {
+  viewModal.value = true
+  cateId.value = id
+  try {
+    const res = await sendGetApi(`category/public/find-by-id?id=${id}`).then((res) => {
+      categoryNameView.value = res.data.name
+      numBlog.value = res.data.numBlog
+      selectedCateView.value = res.data.categoryType
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+const updateCate = async () => {
+  try {
+    const res = await sendPostApi("/category/admin/saveOrUpdate", {
+      id: cateId.value,
+      name: categoryNameView.value,
+      numBlog: numBlog.value,
+      categoryType: selectedCateView.value
+    }).then((res) => {
+      fetchAllCategory()
+      viewModal.value = false
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+const deleteCate = async (id) => {
+  try {
+    const res = await sendDeleteApi(`/category/admin/delete?id=${id}`).then((res) => {
+      fetchAllCategory()
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+const formatCateType = (value) => {
+  switch (value) {
+    case 'BLOG':
+      return 'Danh mục bài viết'
+    case 'DOCUMENT':
+      return 'Danh mục tài liệu'
+  }
+}
+
+
 </script>
-<style></style>

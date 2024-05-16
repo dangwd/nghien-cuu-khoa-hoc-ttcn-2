@@ -120,7 +120,7 @@
 
 </template>
 <script>
-import { likePost, getAllCategory, sendGetApi, sendPostApi } from '@/api/auth/api'
+import { likePost, sendGetApi, sendPostApi } from '@/api/auth/api'
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import AsideView from '@/components/AsideView.vue';
@@ -252,7 +252,7 @@ export default {
     },
     async fetchCategory() {
       try {
-        await getAllCategory().then((res) => {
+        await sendGetApi().then((res) => {
           this.categoryOptions = res.data.content
         })
       } catch (err) {

@@ -29,9 +29,7 @@
         <template #end>
           <button v-ripple
             class="relative overflow-hidden w-full p-link flex items-center p-2 pl-3 text-surface-700 dark:text-surface-0/80 hover:bg-surface-200 dark:hover:bg-surface-600 rounded-none">
-            <Avatar
-              image="https://firebasestorage.googleapis.com/v0/b/vnua-forums-upload.appspot.com/o/avatar%2Fdemo.jpg?alt=media&token=b72ed018-3d9b-4a84-9c68-d10306ad3a86"
-              class="mr-2" shape="circle" />
+            <Avatar :image="user.avatar" class="mr-2" shape="circle" />
             <span class="inline-flex flex-col justify-start text-left">
               <span class="font-bold">{{ user.fullName }}</span>
               <span class="text-sm">{{ formatRole(user.role) }}</span>
@@ -121,6 +119,6 @@ const formatRole = (role) => {
   }
 }
 const logOut = () => {
-  
+
 }
 </script>

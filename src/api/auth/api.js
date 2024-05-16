@@ -45,17 +45,6 @@ export const sendPutApi = (url, data) => api.put(url, data)
 //=======================CATEGORY API=======================
 //Top Category
 export const getTopCategory = () => api.get('/category/public/get-Top5-category?size=5')
-//Create Category
-export const getAllCategory = (page, query) => api.get(`/category/public/get-all-and-search-category?name=${query ? query : ""}&page=${page}&size=10`)
-export const createCategory = (name, image, categoryType) => api.post('/category/admin/saveOrUpdate', {
-  name, image, categoryType
-})
-// Edit Category
-export const editCategory = (id, name, image, categoryType) => api.post('/category/admin/saveOrUpdate', {
-  id, name, image, categoryType
-})
-// Delete Category
-export const deleteCategory = (id) => api.delete(`/category/admin/delete?id=${id}`)
 
 
 //=======================POSTS API=======================
