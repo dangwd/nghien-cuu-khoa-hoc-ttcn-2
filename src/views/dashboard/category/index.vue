@@ -13,7 +13,8 @@
         label="Tạo danh mục" @click="openDialog" />
     </div>
     <DataTable scrollable scrollHeight="80vh" class="text-sm" size="small" showGridlines :value="Categories" paginator
-      :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem">
+      :rows="rows" :page="page" @page="onPageChange($event)" lazy :totalRecords="totalRecords"
+      :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem">
       <Column field="name" header="STT" style="width: 5rem">
         <template #body="{ index }">
           {{ index + 1 }}
@@ -83,7 +84,7 @@
     <Dialog v-model:visible="deleteDialog" modal header="Xóa" :style="{ width: '700px' }">
       <div class="text-base font-semibold text-red-600 text-center flex">
         <p>Bạn muốn xóa danh mục {{ categoryNameView }}? Danh mục này hiện có {{ numBlog }} bài viết. Sau khi xóa sẽ xóa
-          toàn bộ bài viết liên quan!</p>
+          bài viết liên quan sẽ mất danh mục!</p>
       </div>
       <div class="pt-4 flex justify-end">
         <Button class="text-white bg-red-600 hover:bg-red-700 p-1 text-sm border-none" label="Xóa"
@@ -99,8 +100,11 @@ import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 import Button from 'primevue/button';
 import { sendGetApi, sendPostApi, sendDeleteApi } from '@/api/auth/api';
+
+const rows = ref(5)
+const page = ref(0)
+const totalRecords = ref()
 const toast = useToast()
-const currentPage = ref(0)
 const createModal = ref(false)
 const deleteDialog = ref(false)
 const viewModal = ref(false)
@@ -122,6 +126,11 @@ const categoryOpt = ref([
     value: "DOCUMENT"
   },
 ])
+const onPageChange = (event) => {
+  page.value = event.page
+  rows.value = event.rows
+  fetchAllCategory()
+}
 const openDialog = () => {
   createModal.value = true
 }
@@ -154,8 +163,9 @@ const chooseCate = (data) => {
 }
 const fetchAllCategory = async () => {
   try {
-    await sendGetApi(`/category/public/get-all-and-search-category?name=${searchQuery.value ? searchQuery.value : ""}&page=${currentPage.value}&size=10`).then((res) => {
+    await sendGetApi(`/category/public/get-all-and-search-category?name=${searchQuery.value ? searchQuery.value : ""}&page=${page.value}&size=${rows.value}`).then((res) => {
       Categories.value = res.data.content
+      totalRecords.value = res.data.totalElements
     })
   } catch (err) {
     console.log(err)

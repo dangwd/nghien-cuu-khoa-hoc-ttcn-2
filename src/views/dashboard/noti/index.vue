@@ -41,7 +41,7 @@
       </Column>
     </DataTable>
     <!-- Create -->
-    <Dialog v-model:visible="createModal" modal header="Tạo mới tài khoản" :style="{ width: '700px' }">
+    <Dialog v-model:visible="createModal" modal header="Viết thông báo" :style="{ width: '700px' }">
       <div class="grid">
         <div class="flex flex-col gap-2 w-full">
           <label class="text-sm font-semibold" for="username">Tiêu đề</label>
@@ -81,6 +81,10 @@
           <!-- <img :src="imageView" alt=""> -->
         </div>
       </div>
+      <div class="pt-4 flex justify-end">
+        <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Cập nhật"
+          @click="updateNoti()" />
+      </div>
     </Dialog>
   </div>
 </template>
@@ -98,6 +102,7 @@ const toast = useToast()
 const createModal = ref(false)
 const viewModal = ref(false)
 const progressUpload = ref(0)
+const notiId = ref("")
 const title = ref("")
 const image = ref("")
 const content = ref("")
@@ -167,6 +172,7 @@ const createNoti = async () => {
 }
 const viewDetail = async (id) => {
   viewModal.value = true
+  notiId.value = id
   try {
     const res = await sendGetApi(`/notification/all/get-notification-by-id?id=${id}`).then((res) => {
       titleView.value = res.data.title
@@ -179,8 +185,16 @@ const viewDetail = async (id) => {
 }
 const updateNoti = async () => {
   try {
-    const res = await sendPutApi("/admin/update-by-admin", {
-
+    const res = await sendPostApi("/notification/admin/add-and-update-notification", {
+      id: notiId.value,
+      title: titleView.value,
+      image: imageView.value,
+      content: contentView.value,
+      linkFiles: []
+    }).then((res) => {
+      showSuccess("Cập nhật " + res.data.title + " thành công!")
+      fetchAllNoti()
+      viewModal.value = false
     })
   } catch (err) {
     console.log(err)

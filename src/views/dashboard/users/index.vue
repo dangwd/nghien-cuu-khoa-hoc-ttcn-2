@@ -12,8 +12,9 @@
       <Button icon="pi pi-plus" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
         label="Tạo mới tài khoản" @click="openDialog" />
     </div>
-    <DataTable scrollable scrollHeight="80vh" class="text-sm" size="small" showGridlines :value="Users" paginator
-      :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem">
+    <DataTable scrollable scrollHeight="80vh" class="text-sm" lazy size="small" showGridlines :value="Users" paginator
+      :rows="rows" :totalRecords="totalRecords" :page="page" @page="onPageChange($event)"
+      :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem">
       <Column field="name" header="STT" style="width: 5rem">
         <template #body="{ index }">
           {{ index + 1 }}
@@ -150,6 +151,9 @@ import Button from 'primevue/button';
 import { sendGetApi, sendPostApi, sendDeleteApi, sendPutApi } from '@/api/auth/api';
 
 
+const rows = ref(5)
+const page = ref(0)
+const totalRecords = ref()
 const toast = useToast()
 const selectedStatus = ref("")
 const createModal = ref(false)
@@ -199,10 +203,16 @@ const Users = ref([])
 onMounted(() => {
   fetchAllUser()
 })
+const onPageChange = (event) => {
+  page.value = event.page
+  rows.value = event.rows
+  fetchAllUser()
+}
 const fetchAllUser = async () => {
   try {
-    await sendGetApi(`/admin/get-all-user?page=0&size=20`).then((res) => {
+    await sendGetApi(`/admin/get-all-user?page=${page.value}&size=${rows.value}`).then((res) => {
       Users.value = res.data.content
+      totalRecords.value = res.data.totalElements
     })
   } catch (err) {
     console.log(err)

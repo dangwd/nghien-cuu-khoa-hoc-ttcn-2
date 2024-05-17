@@ -18,8 +18,9 @@
           label="Viết bài" @click="openDialog" />
       </div>
     </div>
-    <DataTable class="text-sm" size="small" showGridlines :value="Posts" paginator :rows="5"
-      :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem">
+    <DataTable class="text-sm" size="small" showGridlines :value="Posts" paginator lazy :rows="rows" :page="page"
+      @page="onPageChange($event)" :totalRecords="totalRecords" :rowsPerPageOptions="[5, 10, 20, 50]"
+      tableStyle="min-width: 50rem">
       <Column field="name" header="STT" style="width: 5rem">
         <template #body="{ index }">
           {{ index + 1 }}
@@ -192,7 +193,9 @@ import { useToast } from 'primevue/usetoast';
 import Button from 'primevue/button';
 import { sendGetApi, sendPostApi, sendDeleteApi, sendPutApi } from '@/api/auth/api';
 
-
+const rows = ref(5)
+const page = ref(0)
+const totalRecords = ref()
 const toast = useToast()
 const createModal = ref(false)
 const viewModal = ref(false)
@@ -237,6 +240,11 @@ onMounted(() => {
   fetchAllPosts()
   fetchCheckedPosts()
 })
+const onPageChange = (event) => {
+  page.value = event.page
+  rows.value = event.rows
+  fetchAllPosts()
+}
 const chooseCategory = (data) => {
   categoryView.value = data.value.name
   categoryId.value = data.value.id
@@ -273,8 +281,9 @@ const setContentView = (value) => {
 }
 const fetchAllPosts = async () => {
   try {
-    await sendGetApi(`blog/public/get-all-active?&size=20&keywords=${searchQuery.value}`).then((res) => {
+    await sendGetApi(`blog/public/get-all-active?page=${page.value}&size=${rows.value}&keywords=${searchQuery.value}`).then((res) => {
       Posts.value = res.data.content
+      totalRecords.value = res.data.totalElements
     })
   } catch (err) {
     console.log(err)
