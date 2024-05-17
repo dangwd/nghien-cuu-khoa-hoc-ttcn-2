@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <div class="card py-2">
     <div class="flex justify-between mb-2">
       <div class="flex">
@@ -30,7 +31,7 @@
         <template #body="slotProps">
           <div class="flex gap-2">
             <Button text rounded icon="pi pi-eye" @click="viewDetail(slotProps.data.id)"></Button>
-            <Button text rounded icon="pi pi-trash" severity="warning" @click="deleteCate(slotProps.data.id)"></Button>
+            <Button text rounded icon="pi pi-trash" severity="warning" @click="deleteModal(slotProps.data.id)"></Button>
           </div>
         </template>
       </Column>
@@ -79,16 +80,29 @@
           @click="updateCate()" />
       </div>
     </Dialog>
+    <Dialog v-model:visible="deleteDialog" modal header="Xóa" :style="{ width: '700px' }">
+      <div class="text-base font-semibold text-red-600 text-center flex">
+        <p>Bạn muốn xóa danh mục {{ categoryNameView }}? Danh mục này hiện có {{ numBlog }} bài viết. Sau khi xóa sẽ xóa
+          toàn bộ bài viết liên quan!</p>
+      </div>
+      <div class="pt-4 flex justify-end">
+        <Button class="text-white bg-red-600 hover:bg-red-700 p-1 text-sm border-none" label="Xóa"
+          @click="deleteCate(cateId)" />
+      </div>
+    </Dialog>
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref, } from 'vue';
-
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
 import Button from 'primevue/button';
 import { sendGetApi, sendPostApi, sendDeleteApi } from '@/api/auth/api';
+const toast = useToast()
 const currentPage = ref(0)
 const createModal = ref(false)
+const deleteDialog = ref(false)
 const viewModal = ref(false)
 const searchQuery = ref("")
 const categoryName = ref("")
@@ -111,8 +125,27 @@ const categoryOpt = ref([
 const openDialog = () => {
   createModal.value = true
 }
+const deleteModal = async (id) => {
+  deleteDialog.value = true
+  cateId.value = id
+  try {
+    const res = await sendGetApi(`category/public/find-by-id?id=${id}`).then((res) => {
+      categoryNameView.value = res.data.name
+      numBlog.value = res.data.numBlog
+    }).catch((err) => {
+      showError(err)
+    })
+  } catch (err) {
+    showError(err)
+  }
+}
 const Categories = ref([])
-
+const showError = (e) => {
+  toast.add({ severity: 'error', summary: 'Error!', detail: e || 'Có lỗi xảy ra', life: 3000 });
+};
+const showSuccess = (res) => {
+  toast.add({ severity: 'success', summary: 'Success!', detail: res || 'Thao tác thành công', life: 3000 });
+};
 onMounted(() => {
   fetchAllCategory()
 })
@@ -136,15 +169,22 @@ const createCate = async () => {
         image: "",
         numBlog: 0,
         categoryType: selectedCateValue.value
-      }).then(() => {
+      }).then((res) => {
+        showSuccess("Tạo thành công danh mục " + res.data.name)
         fetchAllCategory()
         createModal.value = false
+        categoryName.value = ""
+        selectedCate.value = ""
+        selectedCateValue.value = ""
+      }).catch((err) => {
+        showError(err)
       })
     } else {
-      console.log("trường rỗng!")
+      console.log("Loi")
     }
   } catch (err) {
-    console.log(err)
+    showError(err)
+
   }
 }
 const viewDetail = async (id) => {
@@ -157,7 +197,8 @@ const viewDetail = async (id) => {
       selectedCateView.value = res.data.categoryType
     })
   } catch (err) {
-    console.log(err)
+    showError(err)
+
   }
 }
 const updateCate = async () => {
@@ -168,6 +209,7 @@ const updateCate = async () => {
       numBlog: numBlog.value,
       categoryType: selectedCateView.value
     }).then((res) => {
+      showSuccess("Cập nhật thành công " + res.data.name)
       fetchAllCategory()
       viewModal.value = false
     })
@@ -178,7 +220,10 @@ const updateCate = async () => {
 const deleteCate = async (id) => {
   try {
     const res = await sendDeleteApi(`/category/admin/delete?id=${id}`).then((res) => {
+      deleteDialog.value = false
+      showSuccess(res.data)
       fetchAllCategory()
+
     })
   } catch (err) {
     console.log(err)

@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <div class="card py-2">
     <div class="flex justify-between mb-2">
       <div class="flex">
@@ -34,46 +35,31 @@
         <template #body="slotProps">
           <div class="flex gap-2">
             <Button text rounded icon="pi pi-eye" @click="viewDetail(slotProps.data.id)"></Button>
-            <Button text rounded :icon="slotProps.data.actived ? 'pi pi-lock-open' : 'pi pi-lock'" severity="warning"
-              @click="removeNoti(slotProps.data.id)"></Button>
+            <Button text rounded icon="pi pi-trash" severity="warning" @click="removeNoti(slotProps.data.id)"></Button>
           </div>
         </template>
       </Column>
     </DataTable>
     <!-- Create -->
     <Dialog v-model:visible="createModal" modal header="Tạo mới tài khoản" :style="{ width: '700px' }">
-      <div class="grid gap-4">
-        <div class="flex gap-2">
-          <div class="flex flex-col gap-2 w-full">
-            <label class="text-sm font-semibold" for="username">Tên người dùng</label>
-            <InputText v-model="fullName" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
-              size="small" placeholder="Nguyen Van A" />
-          </div>
-          <div class="flex flex-col gap-2 w-full">
-            <label class="text-sm font-semibold" for="username">Tài khoản</label>
-            <InputText v-model="username" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
-              size="small" placeholder="abc@gmail.com" />
-          </div>
+      <div class="grid">
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Tiêu đề</label>
+          <InputText v-model="title" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text" size="small" />
         </div>
-        <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold" for="username">Mật khẩu</label>
-          <InputText v-model="passCheck" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
-            size="small" placeholder="**********" />
+        <div class="flex flex-col gap-2 w-full mt-2">
+          <progress class="progress progress-success w-full" :value="progressUpload" max="100"></progress>
+          <InputField :value="image" @input-file="setImage" type="file-input"></InputField>
         </div>
-        <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold" for="username">Nhập lại mật khẩu</label>
-          <InputText v-model="password" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text" size="small"
-            placeholder="**********" />
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Nội dung</label>
+          <InputField @input-change="setContent" :value="content" type="ckeditor"></InputField>
         </div>
-        <div>
-          <label class="text-sm font-semibold" for="username">Trạng thái</label>
-          <Dropdown v-model="selectedStatus" @change="chooseStatus" :options="statusOpt" optionLabel="name"
-            placeholder="Trạng thái" class="w-full md:w-[14rem] rounded-xl text-sm" />
-        </div>
+
       </div>
       <div class="pt-4 flex justify-end">
         <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Tạo mới"
-          @click="createAccount()" />
+          @click="createNoti()" />
       </div>
     </Dialog>
 
@@ -101,14 +87,20 @@
 
 <script setup>
 import { onMounted, ref, } from 'vue';
-
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/storage';
 import Button from 'primevue/button';
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
 import { sendGetApi, sendPostApi, sendDeleteApi, sendPutApi } from '@/api/auth/api';
 
-const selectedStatus = ref("")
+const toast = useToast()
 const createModal = ref(false)
 const viewModal = ref(false)
-const deleteModal = ref(false)
+const progressUpload = ref(0)
+const title = ref("")
+const image = ref("")
+const content = ref("")
 const searchQuery = ref("")
 const titleView = ref("")
 const contentView = ref("")
@@ -121,6 +113,30 @@ const Notifications = ref([])
 onMounted(() => {
   fetchAllNoti()
 })
+const showSuccess = (res) => {
+  toast.add({ severity: 'success', summary: 'Sucess!', detail: res || 'Thao tác thành công', life: 3000 });
+};
+const showError = (e) => {
+  toast.add({ severity: 'error', summary: 'Error!', detail: e || 'Có lỗi xảy ra', life: 3000 });
+};
+const setContent = (value) => {
+  content.value = value
+}
+const setImage = (file) => {
+  image.value = file
+  var storageRef = firebase.storage().ref('image/' + file.name)
+  let uploadTask = storageRef.put(file)
+  uploadTask.on('stage_changed', (snapshot) => {
+    progressUpload.value = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+  }, (error) => {
+    console.log(error)
+  }, () => {
+    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+      image.value = downloadURL
+      console.log(downloadURL)
+    })
+  })
+}
 const fetchAllNoti = async () => {
   try {
     await sendGetApi(`notification/all/get-all-notification`).then((res) => {
@@ -130,22 +146,18 @@ const fetchAllNoti = async () => {
     console.log(err)
   }
 }
-const createAccount = async () => {
+const createNoti = async () => {
   try {
-    if (passCheck.value == password.value) {
-      const res = await sendPostApi("/admin/create-by-admin", {
-        username: username.value,
-        password: password.value,
-        fullName: fullName.value,
-        avatar: "",
-        role: "ROLE_USER",
-      }).then(() => {
-        fetchAllNoti()
-        createModal.value = false
-      })
-    } else {
-      console.log("Pass sai!")
-    }
+    const res = await sendPostApi("/notification/admin/add-and-update-notification", {
+      title: title.value,
+      image: image.value,
+      content: content.value,
+      linkFiles: []
+    }).then((res) => {
+      showSuccess("Tạo thành công thông báo " + res.data.title)
+      fetchAllNoti()
+      createModal.value = false
+    })
   } catch (err) {
     console.log(err)
   }
@@ -162,16 +174,10 @@ const viewDetail = async (id) => {
     console.log(err)
   }
 }
-const updateAccount = async () => {
+const updateNoti = async () => {
   try {
     const res = await sendPutApi("/admin/update-by-admin", {
-      id: userId.value,
-      username: usernameView.value,
-      password: passwordView.value,
-      fullName: fullNameView.value,
-      actived: true,
-      avatar: imageView.value,
-      role: "ROLE_USER",
+
     })
   } catch (err) {
     console.log(err)
@@ -180,7 +186,7 @@ const updateAccount = async () => {
 const removeNoti = async (id) => {
   try {
     const res = await sendDeleteApi(`/notification/admin/delete-notification?notificationId=${id}`).then((res) => {
-      console.log(res)
+      showSuccess(res.data)
       fetchAllNoti()
     })
   } catch (err) {

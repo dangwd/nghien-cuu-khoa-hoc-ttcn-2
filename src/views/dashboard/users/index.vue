@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <div class="card py-2">
     <div class="flex justify-between mb-2">
       <div class="flex">
@@ -143,10 +144,13 @@
 
 <script setup>
 import { onMounted, ref, } from 'vue';
-
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
 import Button from 'primevue/button';
 import { sendGetApi, sendPostApi, sendDeleteApi, sendPutApi } from '@/api/auth/api';
 
+
+const toast = useToast()
 const selectedStatus = ref("")
 const createModal = ref(false)
 const viewModal = ref(false)
@@ -164,6 +168,9 @@ const passCheckView = ref("")
 const fullNameView = ref("")
 const roleView = ref("")
 const statusView = ref(false)
+const showSuccess = (res) => {
+  toast.add({ severity: 'success', summary: 'Sucess!', detail: res || 'Thao tác thành công', life: 3000 });
+};
 const statusOpt = ref([
   {
     name: 'Mở tài khoản',
@@ -247,6 +254,7 @@ const updateAccount = async () => {
       avatar: imageView.value,
       role: roleView.value,
     }).then((res) => {
+      showSuccess()
       fetchAllUser()
       viewModal.value = false
     })
@@ -258,6 +266,7 @@ const lockUser = async (id) => {
   try {
     const res = await sendGetApi(`/admin/lock-user?id=${id}`).then((res) => {
       fetchAllUser()
+      showSuccess(res.data)
     })
   } catch (err) {
     console.log(err)
