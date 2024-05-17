@@ -73,12 +73,12 @@
         </div>
         <div class="flex flex-col gap-2 w-full">
           <label class="text-sm font-semibold" for="username">Nội dung</label>
-          <InputText v-model="contentView" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
-            size="small" />
+          <InputField :value="contentView" @input-change="setContentChange" type="ckeditor"></InputField>
           <div v-html="contentView"></div>
         </div>
-        <div class="flex flex-col gap-2 w-full">
-          <img :src="imageView" alt="">
+        <div class="flex flex-col gap-2 items-center">
+          <Image :src="imageView" alt="Image" width="350" preview />
+          <!-- <img :src="imageView" alt=""> -->
         </div>
       </div>
     </Dialog>
@@ -121,6 +121,9 @@ const showError = (e) => {
 };
 const setContent = (value) => {
   content.value = value
+}
+const setContentChange = (value) => {
+  contentView.value = value
 }
 const setImage = (file) => {
   image.value = file

@@ -328,6 +328,7 @@ const removePost = async (id) => {
 const approvePost = async () => {
   try {
     const res = await sendPostApi(`blog/blog-manager/active-or-unactive?blogId=${postId.value}`).then((res) => {
+      showSuccess("Duyệt thành công")
       fetchAllPosts()
       viewDetail.value = false
 
@@ -378,6 +379,7 @@ const updatePost = async () => {
       listCategoryId: [categoryId.value]
     }).then((res) => {
       fetchAllPosts()
+      showSuccess("Cập nhật thành công!")
       viewModal.value = false
     })
   } catch (err) {

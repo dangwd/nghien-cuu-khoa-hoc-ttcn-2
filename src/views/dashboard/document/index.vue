@@ -57,7 +57,7 @@
             <a target="_blank" class="text-sm text-blue-600 hover:text-blue-700 underline"
               :href="slotProps.data.linkFile">Tải xuống</a>
           </template>
-        </Column>
+      </Column>
         <Column class="text-sm" field="" header="Thao tác" style="width: 15rem">
           <template #body="slotProps">
             <div class="flex gap-2">

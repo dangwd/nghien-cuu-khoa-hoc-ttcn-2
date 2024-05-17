@@ -169,7 +169,7 @@ const fullNameView = ref("")
 const roleView = ref("")
 const statusView = ref(false)
 const showSuccess = (res) => {
-  toast.add({ severity: 'success', summary: 'Sucess!', detail: res || 'Thao tác thành công', life: 3000 });
+  toast.add({ severity: 'success', summary: 'Success!', detail: res || 'Thao tác thành công', life: 3000 });
 };
 const statusOpt = ref([
   {

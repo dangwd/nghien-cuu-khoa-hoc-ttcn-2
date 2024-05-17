@@ -56,6 +56,7 @@ import Image from 'primevue/image';
 import Password from 'primevue/password';
 import Skeleton from 'primevue/skeleton';
 import ToastService from 'primevue/toastservice';
+import Tag from 'primevue/tag';
 const app = createApp(App)
 
 app.directive('ObserveVisibility', ObserveVisibility)
@@ -77,7 +78,7 @@ app.use(PrimeVue, {
 });
 app.use(router)
 app.component('Skeleton', Skeleton)
-
+app.component('Tag', Tag)
 app.component('Menu', Menu)
 app.component('Image', Image)
 app.component('InputText', InputText)
