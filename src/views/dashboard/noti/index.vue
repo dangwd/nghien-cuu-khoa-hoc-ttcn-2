@@ -162,7 +162,7 @@ const createNoti = async () => {
       content: content.value,
       linkFiles: []
     }).then((res) => {
-      showSuccess("Tạo thành công thông báo " + res.data.title)
+      showSuccess(`Tạo thành công thông báo ${res.data.title}`)
       fetchAllNoti()
       createModal.value = false
     })
@@ -192,7 +192,7 @@ const updateNoti = async () => {
       content: contentView.value,
       linkFiles: []
     }).then((res) => {
-      showSuccess("Cập nhật " + res.data.title + " thành công!")
+      showSuccess(`Cập nhật ${res.data.title} thành công!`)
       fetchAllNoti()
       viewModal.value = false
     })
@@ -210,26 +210,5 @@ const removeNoti = async (id) => {
     console.log(err)
   }
 }
-const formatRole = (role) => {
-  switch (role) {
-    case 'ROLE_ADMIN':
-      return 'Quản trị viên'
-    case 'ROLE_USER':
-      return 'Người dùng'
-  }
-}
-const chooseStatus = (data) => {
-  statusView.value = data.value.value
-}
-const chooseRole = (data) => {
-  roleView.value = data.value.value
-}
-const formatStatus = (value) => {
-  switch (value) {
-    case true:
-      return 'Đã kích hoạt'
-    case false:
-      return 'Đã khóa'
-  }
-}
+
 </script>
