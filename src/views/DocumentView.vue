@@ -322,6 +322,7 @@ export default {
         "dangerouslyHTMLString": true
       })
     },
+
     async fetchAllDpt() {
       try {
         await getAllDpt().then((res) => {
@@ -376,7 +377,7 @@ export default {
     },
     async detailsView(sbjId) {
       try {
-        await sendGetApi(`/document/public/get-all-active?keyword=${""}&userId=${""}&id=${sbjId}`).then((res) => {
+        await sendGetApi(`/document/public/get-all-active?keywords=${""}&subjectId=${sbjId}&userId=${""}&page=0`).then((res) => {
           this.docList = res.data.content
         })
       } catch (err) {

@@ -35,7 +35,8 @@
         <template #body="slotProps">
           <div class="flex gap-2">
             <Button text rounded icon="pi pi-eye" @click="viewDetail(slotProps.data.id)"></Button>
-            <Button text rounded icon="pi pi-trash" severity="warning" @click="removeNoti(slotProps.data.id)"></Button>
+            <Button text rounded icon="pi pi-trash" severity="warning"
+              @click="openDeleteDialog(slotProps.data.id)"></Button>
           </div>
         </template>
       </Column>
@@ -78,12 +79,20 @@
         </div>
         <div class="flex flex-col gap-2 items-center">
           <Image :src="imageView" alt="Image" width="350" preview />
-          <!-- <img :src="imageView" alt=""> -->
         </div>
       </div>
       <div class="pt-4 flex justify-end">
         <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Cập nhật"
           @click="updateNoti()" />
+      </div>
+    </Dialog>
+
+    <!-- Delete -->
+    <Dialog v-model:visible="deleteModal" modal :header="'Xóa '" :style="{ width: '500px' }">
+      <h1 class="text-sm font-semibold text-red-600">Sau khi xóa sẽ không thể khôi phục ?</h1>
+      <div class="flex justify-end">
+        <Button class="text-white bg-red-600 hover:bg-red-700 text-sm border-none" label="Xóa"
+          @click="removeNoti(notiId)" />
       </div>
     </Dialog>
   </div>
@@ -101,6 +110,7 @@ import { sendGetApi, sendPostApi, sendDeleteApi, sendPutApi } from '@/api/auth/a
 const toast = useToast()
 const createModal = ref(false)
 const viewModal = ref(false)
+const deleteModal = ref(false)
 const progressUpload = ref(0)
 const notiId = ref("")
 const title = ref("")
@@ -118,6 +128,10 @@ const Notifications = ref([])
 onMounted(() => {
   fetchAllNoti()
 })
+const openDeleteDialog = (id) => {
+  deleteModal.value = true
+  notiId.value = id
+}
 const showSuccess = (res) => {
   toast.add({ severity: 'success', summary: 'Sucess!', detail: res || 'Thao tác thành công', life: 3000 });
 };
@@ -200,10 +214,10 @@ const updateNoti = async () => {
     console.log(err)
   }
 }
-const removeNoti = async (id) => {
+const removeNoti = async () => {
   try {
-    const res = await sendDeleteApi(`/notification/admin/delete-notification?notificationId=${id}`).then((res) => {
-      showSuccess(res.data)
+    const res = await sendDeleteApi(`/notification/admin/delete-notification?notificationId=${notiId.value}`).then((res) => {
+      showSuccess(`Xóa thành công ${res.data}`)
       fetchAllNoti()
     })
   } catch (err) {

@@ -22,7 +22,7 @@
       <div class="w-full  bg-white shadow rounded-xl">
         <div class="flex p-3 gap-2">
           <div>
-            <img class="w-60 h-auto rounded-lg"
+            <img class="w-48 h-auto rounded-lg"
               src="https://firebasestorage.googleapis.com/v0/b/vnua-forums-upload.appspot.com/o/image%2Fthumbnail.jpg?alt=media&token=f6ebcd08-56af-42a3-9ddf-1372f5e95218">
           </div>
           <div>
@@ -34,15 +34,15 @@
                 <p class="text-sm">Ngày đăng: {{ documentItem.createdDate }}</p>
               </div>
             </div>
-            <div class="px-2 pt-2 flex justify-between gap-3 items-center">
+            <div class="px-2 pt-4 flex gap-3 items-center">
               <div>
                 <button class="text-white border border-green-700 text-sm bg-green-700 p-1.5 rounded-lg"><a
                     target="_blank" :href="documentItem.linkFile">Tải
                     xuống</a></button>
               </div>
               <div>
-                <i class='bx bx-bookmark text-xl font-semibold hover:text-green-700'></i>
-                <!-- <i class='bx bxs-bookmark text-xl font-semibold text-green-700'></i> -->
+                <button @click="saveDoc(documentItem.id)"><i
+                    class='bx bx-bookmark text-xl font-semibold hover:text-green-700'></i></button>
               </div>
             </div>
           </div>
@@ -53,8 +53,10 @@
   </div>
 </template>
 <script setup>
-import { getDocById } from '@/api/auth/api';
+import { sendGetApi, sendPostApi } from '@/api/auth/api';
 import 'firebase/compat/storage';
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 import { useRoute } from 'vue-router';
 const route = useRoute()
 const isLoading = ref(true)
@@ -68,9 +70,17 @@ onMounted(() => {
     }, 700)
   })
 })
+const showSuccess = (res) => {
+  toast(res ? res : "Thao tác thành công!", {
+    "theme": "colored",
+    "type": "success",
+    "limit": 3,
+    "dangerouslyHTMLString": true
+  })
+}
 const fetchDetailDoc = async () => {
   try {
-    await getDocById(route.params.id).then((res) => {
+    await sendGetApi(`/document/public/findbyid?id=${route.params.id}`).then((res) => {
       documentItem.value = res.data
       username.value = res.data.user.fullName
     })
@@ -78,6 +88,14 @@ const fetchDetailDoc = async () => {
     console.log(err)
   }
 }
-
+const saveDoc = async (id) => {
+  try {
+    const res = await sendPostApi(`/document/all/save-or-unsave-document?documentId=${id}`).then((res) => {
+      showSuccess(res.data)
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
 </script>
 <style></style>
