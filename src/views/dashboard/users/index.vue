@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <div class="card py-2">
     <div class="flex justify-between mb-2">
       <div class="flex">
@@ -8,11 +9,16 @@
           class="text-white bg-green-600 hover:bg-green-700 text-sm border-none rounded-none rounded-r-lg"
           @click="fetchAllUser()" />
       </div>
-      <Button icon="pi pi-plus" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
-        label="Tạo mới tài khoản" @click="openDialog" />
+      <div class="flex gap-2">
+        <Button icon="pi pi-filter" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
+          label="Bộ lọc" @click="openFilter" />
+        <Button icon="pi pi-plus" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
+          label="Tạo mới tài khoản" @click="openDialog" />
+      </div>
     </div>
-    <DataTable scrollable scrollHeight="80vh" class="text-sm" size="small" showGridlines :value="Users" paginator
-      :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem">
+    <DataTable scrollable scrollHeight="80vh" class="text-sm" lazy size="small" showGridlines :value="Users" paginator
+      :rows="rows" :totalRecords="totalRecords" :page="page" @page="onPageChange($event)"
+      :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem">
       <Column field="name" header="STT" style="width: 5rem">
         <template #body="{ index }">
           {{ index + 1 }}
@@ -88,7 +94,7 @@
     </Dialog>
 
     <!-- View -->
-    <Dialog v-model:visible="viewModal" modal :header="'Chi tiết tài khoản ' + fullNameView"
+    <Dialog v-model:visible="viewModal" modal :header="`Chi tiết tài khoản ${fullNameView}`"
       :style="{ width: '700px' }">
       <div class="grid gap-4">
         <div class="flex items-center justify-center">
@@ -133,9 +139,22 @@
           @click="updateAccount()" />
       </div>
     </Dialog>
-    <Dialog v-model:visible="deleteModal" modal header="Khóa tài khoản" :style="{ width: '700px' }">
+    <Dialog v-model:visible="filterModal" modal header="Tìm kiếm theo" :style="{ width: '700px' }">
       <div>
-        <h1>Khóa tài khoản ?</h1>
+        <div>
+          <label class="text-sm font-semibold" for="username">Trạng thái tài khoản</label>
+          <Dropdown v-model="selectedStatusFilter" @change="chooseStatusFilter" :options="statusOptFilter"
+            optionLabel="name" placeholder="Trạng thái" class="w-full md:w-[14rem] rounded-xl text-sm" />
+        </div>
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Tài khoản</label>
+          <InputText v-model="userNameFilter" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+            size="small" />
+        </div>
+        <div class="pt-4 flex justify-end">
+          <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Lọc"
+            @click="fetchAllUser()" />
+        </div>
       </div>
     </Dialog>
   </div>
@@ -143,14 +162,20 @@
 
 <script setup>
 import { onMounted, ref, } from 'vue';
-
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
 import Button from 'primevue/button';
-import { sendGetApi, sendPostApi, sendDeleteApi, sendPutApi } from '@/api/auth/api';
+import { sendGetApi, sendPostApi, } from '@/api/auth/api';
 
+
+const rows = ref(5)
+const page = ref(0)
+const totalRecords = ref()
+const toast = useToast()
 const selectedStatus = ref("")
 const createModal = ref(false)
+const filterModal = ref(false)
 const viewModal = ref(false)
-const deleteModal = ref(false)
 const searchQuery = ref("")
 const userId = ref("")
 const username = ref("")
@@ -164,6 +189,26 @@ const passCheckView = ref("")
 const fullNameView = ref("")
 const roleView = ref("")
 const statusView = ref(false)
+const selectedStatusFilter = ref("")
+const userNameFilter = ref("")
+const statusOptFilter = ref([
+
+  {
+    name: "Tất cả",
+    value: "",
+  },
+  {
+    name: "Đã kích hoạt",
+    value: true,
+  },
+  {
+    name: "Đã khóa",
+    value: false,
+  },
+])
+const showSuccess = (res) => {
+  toast.add({ severity: 'success', summary: 'Success!', detail: res || 'Thao tác thành công', life: 3000 });
+};
 const statusOpt = ref([
   {
     name: 'Mở tài khoản',
@@ -187,15 +232,29 @@ const roleOpt = ref([
 const openDialog = () => {
   createModal.value = true
 }
+const openFilter = () => {
+  filterModal.value = true
+}
 const Users = ref([])
 
 onMounted(() => {
   fetchAllUser()
 })
+const onPageChange = (event) => {
+  page.value = event.page
+  rows.value = event.rows
+  fetchAllUser()
+}
+const chooseStatusFilter = (data) => {
+  selectedStatusFilter.value = data.value.value
+  console.log(selectedStatusFilter.value)
+}
 const fetchAllUser = async () => {
   try {
-    await sendGetApi(`/admin/get-all-user?page=0&size=20`).then((res) => {
+    await sendGetApi(`/admin/get-all-user?page=${page.value}&size=${rows.value}&active=${selectedStatusFilter.value}&userName=${userNameFilter.value ? userNameFilter.value : ""}`).then((res) => {
       Users.value = res.data.content
+      totalRecords.value = res.data.totalElements
+      filterModal.value = false
     })
   } catch (err) {
     console.log(err)
@@ -238,7 +297,7 @@ const viewDetail = async (id) => {
 }
 const updateAccount = async () => {
   try {
-    const res = await sendPutApi("/admin/update-by-admin", {
+    const res = await sendPostApi("/admin/create-update", {
       id: userId.value,
       username: usernameView.value,
       password: passwordView.value,
@@ -247,6 +306,7 @@ const updateAccount = async () => {
       avatar: imageView.value,
       role: roleView.value,
     }).then((res) => {
+      showSuccess()
       fetchAllUser()
       viewModal.value = false
     })
@@ -258,6 +318,7 @@ const lockUser = async (id) => {
   try {
     const res = await sendGetApi(`/admin/lock-user?id=${id}`).then((res) => {
       fetchAllUser()
+      showSuccess(res.data)
     })
   } catch (err) {
     console.log(err)

@@ -55,6 +55,8 @@ import Dropdown from 'primevue/dropdown'
 import Image from 'primevue/image';
 import Password from 'primevue/password';
 import Skeleton from 'primevue/skeleton';
+import ToastService from 'primevue/toastservice';
+import Tag from 'primevue/tag';
 const app = createApp(App)
 
 app.directive('ObserveVisibility', ObserveVisibility)
@@ -67,6 +69,7 @@ app.directive('animateonscroll', AnimateOnScroll);
 app.use(store)
 app.use(CKEditor)
 app.use(Vue3Toastify)
+app.use(ToastService);
 app.use(Antd)
 app.use(PrimeVue, {
   unstyled: true,
@@ -75,7 +78,7 @@ app.use(PrimeVue, {
 });
 app.use(router)
 app.component('Skeleton', Skeleton)
-
+app.component('Tag', Tag)
 app.component('Menu', Menu)
 app.component('Image', Image)
 app.component('InputText', InputText)

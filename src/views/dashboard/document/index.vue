@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <div class="card py-2">
     <div class="flex justify-between mb-2">
       <div class="flex">
@@ -63,7 +64,7 @@
             <div class="flex gap-2">
               <Button text rounded icon="pi pi-eye" @click="viewDetail(slotProps.data.id)"></Button>
               <Button text rounded icon="pi pi-trash" severity="warning"
-                @click="removePost(slotProps.data.id)"></Button>
+                @click="openDeleteDialog(slotProps.data.id)"></Button>
             </div>
           </template>
         </Column>
@@ -74,15 +75,68 @@
     </div>
     <!-- Create -->
     <Dialog v-model:visible="createModal" modal header="Viết bài" :style="{ width: '1094px' }">
-
+      <div class="grid">
+        <div class="grid grid-cols-2 gap-2">
+          <div class="flex flex-col gap-2 w-full">
+            <label class="text-sm font-semibold" for="username">Tên tài liệu</label>
+            <InputText v-model="title" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+              size="small" />
+          </div>
+          <div class="flex flex-col gap-2 w-full">
+            <label class="text-sm font-semibold" for="username">Mô tả</label>
+            <InputText v-model="description" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+              size="small" />
+          </div>
+        </div>
+        <div class="grid grid-cols-1 gap-2 w-full pt-2">
+          <Dropdown filter v-model="selectedDpt" @change="chooseDpt" :options="dptOpt" optionLabel="nameDepartment"
+            placeholder="Khoa" class=" rounded-xl text-sm" />
+          <Dropdown filter v-model="selectedMjr" @change="chooseMjr" :options="mjrOpt" optionLabel="nameSpecialize"
+            placeholder="Ngành" class=" rounded-xl text-sm" />
+          <Dropdown filter v-model="selectedSbj" @change="chooserSbj" :options="sbjOpt" optionLabel="nameSubject"
+            placeholder="Bộ môn" class=" rounded-xl text-sm" />
+        </div>
+        <div class="grid gap-2 pt-2">
+          <div class="flex flex-col gap-2 w-full">
+            <InputField @input-file="setDocument" :value="docLink" title="File" type="file-input"></InputField>
+            <progress class="progress progress-success w-full" :value="progressUpload" max="100"></progress>
+          </div>
+        </div>
+      </div>
       <div class="flex justify-end pt-2">
-        <Button class="text-white bg-green-600 hover:bg-green-700 text-sm border-none" label="Viết bài"
+        <Button class="text-white bg-green-600 hover:bg-green-700 text-sm border-none" label="Đăng tải"
           @click="createPost()" />
       </div>
     </Dialog>
     <!-- View -->
     <Dialog v-model:visible="viewModal" modal header="Chi tiết" :style="{ width: '1094px' }">
-
+      <div class="grid">
+        <div class="grid grid-cols-2 gap-2">
+          <div class="flex flex-col gap-2 w-full">
+            <label class="text-sm font-semibold" for="username">Tên tài liệu</label>
+            <InputText v-model="titleView" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+              size="small" />
+          </div>
+          <div class="flex flex-col gap-2 w-full">
+            <label class="text-sm font-semibold" for="username">Mô tả</label>
+            <InputText v-model="descriptionView" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+              size="small" />
+          </div>
+        </div>
+        <div class="grid grid-cols-1 gap-2 w-full pt-2">
+          <Dropdown filter v-model="selectedDpt" @change="chooseDpt" :options="dptOpt" optionLabel="nameDepartment"
+            placeholder="Khoa" class=" rounded-xl text-sm" />
+          <Dropdown filter v-model="selectedMjr" @change="chooseMjr" :options="mjrOpt" optionLabel="nameSpecialize"
+            placeholder="Ngành" class=" rounded-xl text-sm" />
+          <Dropdown filter v-model="selectedSbjView" @change="chooserSbj" :options="sbjOpt" optionLabel="nameSubject"
+            :placeholder="selectedSbjView" class=" rounded-xl text-sm" />
+        </div>
+        <div class="grid gap-2 pt-2">
+          <label class="text-sm font-semibold" for="username">Tài liệu</label>
+          <a :href="linkFileView"><span class="text-sm text-blue-600 font-semibold underline hover:text-blue-700">Xem
+              truớc</span></a>
+        </div>
+      </div>
       <div class="pt-4 flex justify-end">
         <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Cập nhật"
           @click="updatePost()" />
@@ -128,7 +182,7 @@
               <div class="flex gap-2">
                 <Button text rounded icon="pi pi-eye" @click="viewDetail(slotProps.data.id)"></Button>
                 <Button text rounded icon="pi pi-trash" severity="warning"
-                  @click="removePost(slotProps.data.id)"></Button>
+                  @click="removeDoc(slotProps.data.id)"></Button>
               </div>
             </template>
           </Column>
@@ -136,6 +190,13 @@
       </div>
       <div v-else>
         <h1 class="text-base font-semibold text-center">Hiện không có bài viết cần duyệt!</h1>
+      </div>
+    </Dialog>
+    <Dialog v-model:visible="deleteModal" modal :header="'Xóa '" :style="{ width: '500px' }">
+      <h1 class="text-sm font-semibold text-red-600">Sau khi xóa sẽ không thể khôi phục ?</h1>
+      <div class="flex justify-end">
+        <Button class="text-white bg-red-600 hover:bg-red-700 text-sm border-none" label="Xóa"
+          @click="removeDoc(docId)" />
       </div>
     </Dialog>
   </div>
@@ -146,17 +207,26 @@ import { onMounted, ref, } from 'vue';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/storage';
 import Button from 'primevue/button';
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
 import { sendGetApi, sendPostApi, sendDeleteApi } from '@/api/auth/api';
-
+const toast = useToast()
 const createModal = ref(false)
 const viewModal = ref(false)
+const deleteModal = ref(false)
 const checkedModal = ref(false)
 const searchQuery = ref("")
 const progressUpload = ref(0)
-
-const content = ref("")
-const image = ref("")
-
+const title = ref("")
+const description = ref("")
+const docLink = ref("")
+const titleView = ref("")
+const descriptionView = ref("")
+const selectedSbjView = ref("")
+const selectedSbjIdView = ref("")
+const linkFileView = ref("")
+const docId = ref("")
+const statusView = ref("")
 const statusOpt = ref([
   {
     name: 'Đã duyệt',
@@ -183,6 +253,7 @@ const chooseMjr = (data) => {
 }
 const chooserSbj = (data) => {
   selectedSbj.value = data.value.id
+  selectedSbjIdView.value = data.value.id
   fetchAllDocuments()
 }
 const checkedDialog = () => {
@@ -190,18 +261,25 @@ const checkedDialog = () => {
 }
 const openDialog = () => {
   createModal.value = true
-  fetchCategory()
 }
 const Documents = ref([])
 const CheckedPosts = ref([])
 onMounted(() => {
   fetchAllDpt()
 })
-
-
-const setImage = (file) => {
-  image.value = file
-  var storageRef = firebase.storage().ref('image/' + file.name)
+const showSuccess = (res) => {
+  toast.add({ severity: 'success', summary: 'Sucess!', detail: res || 'Thao tác thành công', life: 3000 });
+};
+const showError = (e) => {
+  toast.add({ severity: 'error', summary: 'Error!', detail: e || 'Có lỗi xảy ra', life: 3000 });
+};
+const openDeleteDialog = (id) => {
+  deleteModal.value = true
+  docId.value = id
+}
+const setDocument = (file) => {
+  docLink.value = file
+  var storageRef = firebase.storage().ref('documents/' + file.name)
   let uploadTask = storageRef.put(file)
   uploadTask.on('stage_changed', (snapshot) => {
     progressUpload.value = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -209,20 +287,17 @@ const setImage = (file) => {
     console.log(error)
   }, () => {
     uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-      image.value = downloadURL
+      docLink.value = downloadURL
       console.log(downloadURL)
     })
   })
 }
-const setContent = (value) => {
-  content.value = value
-}
+
 
 const fetchAllDocuments = async () => {
   try {
     await sendGetApi(`/document/public/get-all-active?keywords=${""}&subjectId=${selectedSbj.value}&userId=${""}&page=0`).then((res) => {
       Documents.value = res.data.content
-      console.log(res.data.content)
     })
   } catch (err) {
     console.log(err)
@@ -232,7 +307,6 @@ const fetchAllDpt = async () => {
   try {
     const res = await sendGetApi("/department/public/get-all-department").then((res) => {
       dptOpt.value = res.data
-      console.log(res.data)
     })
   } catch (err) {
     console.log(err)
@@ -258,27 +332,79 @@ const fetchAllSubject = async () => {
   }
 }
 const viewDetail = async (id) => {
-
+  docId.value = id
   try {
-    const res = await sendGetApi(`/blog/all/get-blog-by-id?id=${id}`).then((res) => {
-
+    const res = await sendGetApi(`/document/public/findbyid?id=${id}`).then((res) => {
+      titleView.value = res.data.name
+      descriptionView.value = res.data.description
+      selectedSbjView.value = res.data.nameSubject
+      linkFileView.value = res.data.linkFile
+      statusView.value = res.data.actived
     })
-    fetchCategory()
+
   } catch (err) {
     console.log(err)
   }
   viewModal.value = true
 }
-const removePost = async (id) => {
+const removeDoc = async () => {
+  try {
+    const res = await sendDeleteApi(`/document/all/delete?documentId=${docId.value}`).then((res) => {
+      showSuccess(`Xoá thành công tài liệu ${docId.value}`)
+      fetchAllDocuments()
+      deleteModal.value = false
+    })
+  } catch (err) {
 
+  }
 }
 const approvePost = async () => {
 }
 
 const createPost = async () => {
-
+  try {
+    if (title.value !== "" && description.value !== "") {
+      const res = await sendPostApi("/document/all/save-update", {
+        name: title.value,
+        image: "https://firebasestorage.googleapis.com/v0/b/vnua-forums-upload.appspot.com/o/image%2Fthumbnail.jpg?alt=media&token=f6ebcd08-56af-42a3-9ddf-1372f5e95218",
+        description: description.value,
+        linkFile: docLink.value,
+        subjectId: selectedSbj.value
+      }).then((res) => {
+        showSuccess(`Tạo thành công ${res.data.name}`)
+        console.log(res)
+        fetchAllDocuments()
+        createModal.value = false
+        title.value = ""
+        description.value = ""
+        docLink.value = ""
+        selectedSbj.value = ""
+        progressUpload.value = 0
+      })
+    } else {
+      showError("Trường nhập thiếu, vui lòng điền đủ!")
+    }
+  } catch (err) {
+    console.log(err)
+  }
 }
 const updatePost = async () => {
+  try {
+    const res = await sendPostApi("/document/all/save-update", {
+      id: docId.value,
+      name: titleView.value,
+      image: "https://firebasestorage.googleapis.com/v0/b/vnua-forums-upload.appspot.com/o/image%2Fthumbnail.jpg?alt=media&token=f6ebcd08-56af-42a3-9ddf-1372f5e95218",
+      description: descriptionView.value,
+      linkFile: linkFileView.value,
+      subjectId: selectedSbjIdView.value
+    }).then((res) => {
+      showSuccess(`Cập nhật ${res.data.name} thành công!`)
+      fetchAllDocuments()
+      viewModal.value = false
+    })
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 const formatStatus = (value) => {

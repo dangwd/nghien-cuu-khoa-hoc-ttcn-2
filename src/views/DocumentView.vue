@@ -53,9 +53,15 @@
       <div class="mt-2 bg-white rounded-xl border">
         <div class="p-2">
           <div class="grid grid-cols-2 gap-2 px-4 pt-4 pb-3">
-            <InputField @select-change="chooseDpt" type="select" title="Khoa" :options="departmentOpt"></InputField>
+
+            <Dropdown filter v-model="dptSelected" @change="chooseDpt" :options="departmentOpt"
+              optionLabel="nameDepartment" placeholder="Khoa" class="w-full md:w-[14rem] rounded-xl text-sm" />
+            <Dropdown filter v-model="mjSelected" @change="chooseMajor" :options="majorOpt" optionLabel="nameSpecialize"
+              placeholder="Ngành" class="w-full md:w-[14rem] rounded-xl text-sm" />
+
+            <!-- <InputField @select-change="chooseDpt" type="select" title="Khoa" :options="departmentOpt"></InputField>
             <InputField @select-change="chooseMajor" type="select" title="Ngành" :options="majorOpt">
-            </InputField>
+            </InputField> -->
           </div>
         </div>
       </div>
@@ -291,11 +297,11 @@ export default {
       })
     },
     chooseDpt(value) {
-      this.dptSelected = value
-      this.fetchAllMajor(value)
+      this.dptSelected = value.value.id
+      this.fetchAllMajor(this.dptSelected)
     },
     chooseMajor(value) {
-      this.mjSelected = value
+      this.mjSelected = value.value.id
       this.fetchAllSubject()
     },
     chooseSubject(value) {
@@ -316,16 +322,11 @@ export default {
         "dangerouslyHTMLString": true
       })
     },
+
     async fetchAllDpt() {
       try {
         await getAllDpt().then((res) => {
-          const data = res.data
-          data.forEach(item => {
-            item.text = item.nameDepartment
-            item.value = item.id
-          })
-          this.departmentOpt = data
-
+          this.departmentOpt = res.data
         })
       } catch (err) {
         console.log(err)
@@ -334,12 +335,12 @@ export default {
     async fetchAllMajor(idDpt) {
       try {
         await getAllMajor(idDpt).then((res) => {
-          const data = res.data
-          data.forEach(item => {
-            item.text = item.nameSpecialize
-            item.value = item.id
-          })
-          this.majorOpt = data
+          this.majorOpt = res.data
+          // data.forEach(item => {
+          //   item.text = item.nameSpecialize
+          //   item.value = item.id
+          // })
+          // this.majorOpt = data
         })
       } catch (err) {
         console.log(err)
@@ -376,7 +377,7 @@ export default {
     },
     async detailsView(sbjId) {
       try {
-        await getSbjById(sbjId).then((res) => {
+        await sendGetApi(`/document/public/get-all-active?keywords=${""}&subjectId=${sbjId}&userId=${""}&page=0`).then((res) => {
           this.docList = res.data.content
         })
       } catch (err) {

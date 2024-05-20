@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <div class="card py-2">
     <div class="flex justify-between mb-2">
       <div class="flex">
@@ -17,8 +18,9 @@
           label="Viết bài" @click="openDialog" />
       </div>
     </div>
-    <DataTable class="text-sm" size="small" showGridlines :value="Posts" paginator :rows="5"
-      :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem">
+    <DataTable class="text-sm" size="small" showGridlines :value="Posts" paginator lazy :rows="rows" :page="page"
+      @page="onPageChange($event)" :totalRecords="totalRecords" :rowsPerPageOptions="[5, 10, 20, 50]"
+      tableStyle="min-width: 50rem">
       <Column field="name" header="STT" style="width: 5rem">
         <template #body="{ index }">
           {{ index + 1 }}
@@ -186,9 +188,15 @@
 import { onMounted, ref, } from 'vue';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/storage';
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
 import Button from 'primevue/button';
 import { sendGetApi, sendPostApi, sendDeleteApi, sendPutApi } from '@/api/auth/api';
 
+const rows = ref(5)
+const page = ref(0)
+const totalRecords = ref()
+const toast = useToast()
 const createModal = ref(false)
 const viewModal = ref(false)
 const deleteModal = ref(false)
@@ -232,6 +240,11 @@ onMounted(() => {
   fetchAllPosts()
   fetchCheckedPosts()
 })
+const onPageChange = (event) => {
+  page.value = event.page
+  rows.value = event.rows
+  fetchAllPosts()
+}
 const chooseCategory = (data) => {
   categoryView.value = data.value.name
   categoryId.value = data.value.id
@@ -254,6 +267,12 @@ const setImage = (file) => {
     })
   })
 }
+const showSuccess = (res) => {
+  toast.add({ severity: 'success', summary: 'Sucess!', detail: res || 'Thao tác thành công', life: 3000 });
+};
+const showError = (e) => {
+  toast.add({ severity: 'error', summary: 'Error!', detail: e || 'Có lỗi xảy ra', life: 3000 });
+};
 const setContent = (value) => {
   content.value = value
 }
@@ -262,8 +281,9 @@ const setContentView = (value) => {
 }
 const fetchAllPosts = async () => {
   try {
-    await sendGetApi(`blog/public/get-all-active?&size=20&keywords=${searchQuery.value}`).then((res) => {
+    await sendGetApi(`blog/public/get-all-active?page=${page.value}&size=${rows.value}&keywords=${searchQuery.value}`).then((res) => {
       Posts.value = res.data.content
+      totalRecords.value = res.data.totalElements
     })
   } catch (err) {
     console.log(err)
@@ -317,6 +337,7 @@ const removePost = async (id) => {
 const approvePost = async () => {
   try {
     const res = await sendPostApi(`blog/blog-manager/active-or-unactive?blogId=${postId.value}`).then((res) => {
+      showSuccess("Duyệt thành công")
       fetchAllPosts()
       viewDetail.value = false
 
@@ -344,6 +365,12 @@ const createPost = async () => {
       listCategoryId: [categoryId.value]
     }).then((res) => {
       fetchAllPosts()
+      showSuccess("Tạo thành công bài viết " + res.data.title)
+      title.value = ""
+      description.value = ""
+      image.value = ""
+      content.value = ""
+      categoryId.value = ""
       createModal.value = false
     })
   } catch (err) {
@@ -361,6 +388,7 @@ const updatePost = async () => {
       listCategoryId: [categoryId.value]
     }).then((res) => {
       fetchAllPosts()
+      showSuccess("Cập nhật thành công!")
       viewModal.value = false
     })
   } catch (err) {
