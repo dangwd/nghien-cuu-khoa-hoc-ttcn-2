@@ -46,7 +46,7 @@
               <div class="flex flex-col">
                 <label class="text-sm font-semibold text-gray-900 mb-2" for="">Môn học</label>
                 <Dropdown filter v-model="sbjSelected" @change="chooseSubject" :options="subjectOpt"
-                  optionLabel="nameSubject" placeholder="Chọn ngành" class="w-full rounded-lg text-sm" />
+                  optionLabel="nameSubject" placeholder="Chọn môn học" class="w-full rounded-lg text-sm" />
               </div>
               <progress class="progress progress-success w-full" :value="progressUpload" max="100"></progress>
               <InputField @input-file="setFile" :value="createDoc.linkFile" type="file-input"></InputField>
