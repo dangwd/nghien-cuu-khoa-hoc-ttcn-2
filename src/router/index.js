@@ -67,6 +67,11 @@ const router = createRouter({
           path: '/noti',
           component: () => import('../views/dashboard/noti/index.vue')
         },
+        {
+          name: 'Department',
+          path: '/department',
+          component: () => import('../views/dashboard/dpt/index.vue')
+        },
 
       ]
     },
