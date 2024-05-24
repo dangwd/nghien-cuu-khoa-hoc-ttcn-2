@@ -105,6 +105,7 @@ const items = ref([
       {
         label: 'Đăng xuất',
         icon: 'pi pi-sign-out',
+        url: "login"
       }
     ]
   },

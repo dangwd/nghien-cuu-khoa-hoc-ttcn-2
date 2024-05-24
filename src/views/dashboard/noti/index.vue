@@ -105,7 +105,7 @@ import 'firebase/compat/storage';
 import Button from 'primevue/button';
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
-import { sendGetApi, sendPostApi, sendDeleteApi, sendPutApi } from '@/api/auth/api';
+import { sendGetApi, sendPostApi, sendDeleteApi,  } from '@/api/auth/api';
 
 const toast = useToast()
 const createModal = ref(false)
