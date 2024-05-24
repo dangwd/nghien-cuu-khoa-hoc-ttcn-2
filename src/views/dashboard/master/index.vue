@@ -81,6 +81,11 @@ const items = ref([
         icon: 'pi pi-list',
         url: 'category'
       },
+      {
+        label: 'Quản lý Khoa-Ngành',
+        icon: 'pi pi-sitemap',
+        url: 'department'
+      },
 
     ]
   },
@@ -100,6 +105,7 @@ const items = ref([
       {
         label: 'Đăng xuất',
         icon: 'pi pi-sign-out',
+        url: "login"
       }
     ]
   },

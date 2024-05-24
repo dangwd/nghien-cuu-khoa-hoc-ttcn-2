@@ -1,6 +1,11 @@
 <template>
   <Toast />
-  <div class="card py-2">
+  <div v-if="isLoading">
+    <div class="flex items-center justify-center  w-full h-[100vh]">
+      <div class="rounded-md h-12 w-12 border-4 border-t-4 border-green-500 animate-spin absolute"></div>
+    </div>
+  </div>
+  <div v-else class="card py-2">
     <div class="flex justify-between mb-2">
       <div class="flex">
         <InputText v-model="searchQuery" placeholder="Tìm kiếm" size="small" class="border-gray-300 rounded-none">
@@ -172,6 +177,7 @@ const rows = ref(5)
 const page = ref(0)
 const totalRecords = ref()
 const toast = useToast()
+const isLoading = ref(true)
 const selectedStatus = ref("")
 const createModal = ref(false)
 const filterModal = ref(false)
@@ -238,7 +244,9 @@ const openFilter = () => {
 const Users = ref([])
 
 onMounted(() => {
-  fetchAllUser()
+  fetchAllUser().then(() => {
+    isLoading.value = false
+  })
 })
 const onPageChange = (event) => {
   page.value = event.page

@@ -56,6 +56,8 @@ import Image from 'primevue/image';
 import Password from 'primevue/password';
 import Skeleton from 'primevue/skeleton';
 import ToastService from 'primevue/toastservice';
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
 import Tag from 'primevue/tag';
 const app = createApp(App)
 
@@ -77,6 +79,8 @@ app.use(PrimeVue, {
   ripple: true
 });
 app.use(router)
+app.component('TabView', TabView)
+app.component('TabPanel', TabPanel)
 app.component('Skeleton', Skeleton)
 app.component('Tag', Tag)
 app.component('Menu', Menu)
