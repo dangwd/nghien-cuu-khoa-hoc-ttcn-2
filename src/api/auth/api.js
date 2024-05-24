@@ -55,7 +55,7 @@ export const getAllPost = (pageNum) => api.get(`/blog/blog-manager/admin-find-al
 export const getPostUnactive = (pageNum) => api.get(`/blog/public/get-all-blog-unactived?page=${pageNum}&size=10`)
 
 // For User
-export const getAllPostPublic = (currentPage, query) => api.get(`/blog/public/get-all-blog`)
+export const getAllPostPublic = () => api.get(`/blog/public/get-all-blog`)
 
 export const getPostByCateId = (cateId) => api.get(`/blog/public/get-blog-by-category?categoryId=${cateId}`)
 // Get post by Id
@@ -79,21 +79,11 @@ export const removeCmtPost = (id) => api.delete(`/comment/all/delete?id=${id}`)
 export const getPostByUser = (userId) => api.get(`blog/all/get-blog-by-user?userId=${userId}`)
 
 //=======================DOCS API=======================
-export const getAllDpt = () => api.get("/department/public/get-all-department")
 
-export const getAllMajor = (id) => api.get(`/specialize/public/get-specialize-by-department?departmentId=${id}`)
-export const getAllSubject = (dptId, mjId, query) => api.get(`/subject/public/get-all-subject?keywords=${query}&departmentId=${dptId}&specializeId=${mjId}`)
 
 export const getSbjById = (sbjId) => api.get(`/document/public/get-document-by-subject?subjectId=${sbjId}`)
 
 export const getDocById = (id) => api.get(`/document/public/findbyid?id=${id}`)
-
-
-export const createDocument = (name, image, description, linkFile, subjectId) => api.post(`/document/all/save`, {
-  name, image, description, linkFile, subjectId
-})
-
-
 
 //create
 export const createNoti = (title, content, image, linkFiles) => api.post("/notification/admin/add-and-update-notification", { title, content, image, linkFiles })

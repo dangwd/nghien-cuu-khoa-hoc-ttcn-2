@@ -33,12 +33,21 @@
               </div>
               <InputField @input-change="setTitle" labelField="title" title="Tiêu đề tài liệu"></InputField>
               <InputField @input-change="setDesc" labelField="description" title="Mô tả tài liệu"></InputField>
-              <InputField @select-change="chooseDpt" type="select" title="Khoa" :options="departmentOpt"
-                labelField="dpt"></InputField>
-              <InputField @select-change="chooseMajor" type="select" title="Ngành" :options="majorOpt" labelField="mjr">
-              </InputField>
-              <InputField type="select" @select-change="chooseSubject" labelField="sbj" title="Bộ môn"
-                :options="subjectOpt"></InputField>
+              <div class="flex flex-col">
+                <label class="text-sm font-semibold text-gray-900 mb-2" for="">Khoa</label>
+                <Dropdown filter v-model="dptSelected" @change="chooseDpt" :options="departmentOpt"
+                  optionLabel="nameDepartment" placeholder="Chọn khoa" class="w-full rounded-lg text-sm" />
+              </div>
+              <div class="flex flex-col">
+                <label class="text-sm font-semibold text-gray-900 mb-2" for="">Ngành</label>
+                <Dropdown filter v-model="mjSelected" @change="chooseMajor" :options="majorOpt"
+                  optionLabel="nameSpecialize" placeholder="Chọn ngành" class="w-full rounded-lg text-sm" />
+              </div>
+              <div class="flex flex-col">
+                <label class="text-sm font-semibold text-gray-900 mb-2" for="">Môn học</label>
+                <Dropdown filter v-model="sbjSelected" @change="chooseSubject" :options="subjectOpt"
+                  optionLabel="nameSubject" placeholder="Chọn ngành" class="w-full rounded-lg text-sm" />
+              </div>
               <progress class="progress progress-success w-full" :value="progressUpload" max="100"></progress>
               <InputField @input-file="setFile" :value="createDoc.linkFile" type="file-input"></InputField>
             </template>
@@ -58,14 +67,10 @@
               optionLabel="nameDepartment" placeholder="Khoa" class="w-full md:w-[14rem] rounded-xl text-sm" />
             <Dropdown filter v-model="mjSelected" @change="chooseMajor" :options="majorOpt" optionLabel="nameSpecialize"
               placeholder="Ngành" class="w-full md:w-[14rem] rounded-xl text-sm" />
-
-            <!-- <InputField @select-change="chooseDpt" type="select" title="Khoa" :options="departmentOpt"></InputField>
-            <InputField @select-change="chooseMajor" type="select" title="Ngành" :options="majorOpt">
-            </InputField> -->
           </div>
         </div>
       </div>
-      <div v-if="subjectsList.length > 0">
+      <div v-if="subjectOpt.length > 0">
         <div class="pt-4 flex justify-between items-center">
           <h1 class="text-base font-semibold text-gray-700">Danh sách Bộ môn</h1>
           <div class="flex gap-2 items-center">
@@ -85,7 +90,7 @@
           </span>
         </div>
       </div>
-      <div v-for="(sbj, index) in subjectsList" :key="index">
+      <div v-for="(sbj, index) in subjectOpt" :key="index">
         <div
           class="flex max-w-full my-4 items-center bg-white border border-gray-200 rounded-2xl shadow hover:bg-gray-100"
           @click="detailsView(sbj.id)">
@@ -154,7 +159,7 @@
   </div>
 </template>
 <script>
-import { getAllDpt, getAllMajor, getAllSubject, getSbjById, createDocument, sendGetApi } from '@/api/auth/api';
+import { sendGetApi, sendPostApi } from '@/api/auth/api';
 import AsideView from '@/components/AsideView.vue';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { toast } from 'vue3-toastify';
@@ -187,80 +192,8 @@ export default {
       dptSelected: "",
       sbjSelected: "",
       mjSelected: "",
-      subjectsList: [],
-      docList: [
-        {
-          id: 1,
-          title: "Slide bài giảng ASP.NET ngày 8/5",
-          date: "8/5/2024",
-          author: "Nguyễn Minh Đăng"
-        },
-        {
-          id: 2,
-          title: "Slide bài giảng ASP.NET ngày 8/5",
-          date: "8/5/2024",
-          author: "Nguyễn Minh Đăng"
-        },
-        {
-          id: 3,
-          title: "Slide bài giảng ASP.NET ngày 8/5",
-          date: "8/5/2024",
-          author: "Nguyễn Minh Đăng"
-        },
-        {
-          id: 1,
-          title: "Slide bài giảng ASP.NET ngày 8/5",
-          date: "8/5/2024",
-          author: "Nguyễn Minh Đăng"
-        },
-        {
-          id: 1,
-          title: "Slide bài giảng ASP.NET ngày 8/5",
-          date: "8/5/2024",
-          author: "Nguyễn Minh Đăng"
-        },
-        {
-          id: 1,
-          title: "Slide bài giảng ASP.NET ngày 8/5",
-          date: "8/5/2024",
-          author: "Nguyễn Minh Đăng"
-        },
-        {
-          id: 1,
-          title: "Slide bài giảng ASP.NET ngày 8/5",
-          date: "8/5/2024",
-          author: "Nguyễn Minh Đăng"
-        },
-        {
-          id: 1,
-          title: "Slide bài giảng ASP.NET ngày 8/5",
-          date: "8/5/2024",
-          author: "Nguyễn Minh Đăng"
-        },
-        {
-          id: 1,
-          title: "Slide bài giảng ASP.NET ngày 8/5",
-          date: "8/5/2024",
-          author: "Nguyễn Minh Đăng"
-        },
-      ],
-      highDoc: [
-        {
-          title: "Slide bài giảng ASP.NET ngày 8/5",
-          date: "8/5/2024",
-          author: "Nguyễn Minh Đăng"
-        },
-        {
-          title: "Slide bài giảng ASP.NET ngày 8/5",
-          date: "8/5/2024",
-          author: "Nguyễn Minh Đăng"
-        },
-        {
-          title: "Slide bài giảng ASP.NET ngày 8/5",
-          date: "8/5/2024",
-          author: "Nguyễn Minh Đăng"
-        },
-      ],
+      docList: [],
+      highDoc: [],
       departmentOpt: [],
       majorOpt: [],
       subjectOpt: []
@@ -305,8 +238,8 @@ export default {
       this.fetchAllSubject()
     },
     chooseSubject(value) {
-      this.sbjSelected = value
-      this.createDoc.subjectId = value
+      this.sbjSelected = value.value.nameSubject
+      this.createDoc.subjectId = value.value.id
     },
     setSearch(value) {
       this.searchQuery = value
@@ -325,7 +258,7 @@ export default {
 
     async fetchAllDpt() {
       try {
-        await getAllDpt().then((res) => {
+        const res = await sendGetApi("/department/public/get-all-department").then((res) => {
           this.departmentOpt = res.data
         })
       } catch (err) {
@@ -334,7 +267,7 @@ export default {
     },
     async fetchAllMajor(idDpt) {
       try {
-        await getAllMajor(idDpt).then((res) => {
+        const res = await sendGetApi(`/specialize/public/get-specialize-by-department?departmentId=${idDpt}`).then((res) => {
           this.majorOpt = res.data
           // data.forEach(item => {
           //   item.text = item.nameSpecialize
@@ -349,15 +282,8 @@ export default {
     async fetchAllSubject() {
       try {
         if (this.dptSelected != "" && this.mjSelected != "") {
-          await getAllSubject(this.dptSelected, this.mjSelected, this.searchQuery).then((res) => {
-            this.subjectsList = res.data.content
-            const data = res.data.content
-            data.forEach(item => {
-              item.text = item.nameSubject
-              item.value = item.id
-            })
-            this.subjectOpt = data
-
+          const res = await sendGetApi(`/subject/public/get-all-subject?keywords=${this.searchQuery}&departmentId=${this.dptSelected}&specializeId=${this.mjSelected}`).then((res) => {
+            this.subjectOpt = res.data.content
           })
         } else {
           this.showError()
@@ -387,15 +313,16 @@ export default {
 
     },
     async createDocument() {
+      const data = {
+        name: this.createDoc.title,
+        image: this.createDoc.image,
+        description: this.createDoc.description,
+        linkFile: this.createDoc.linkFile,
+        subjectId: this.createDoc.subjectId
+      }
       try {
         if (this.createDoc.subjectId != "") {
-          await createDocument(
-            this.createDoc.title,
-            this.createDoc.image,
-            this.createDoc.description,
-            this.createDoc.linkFile,
-            this.createDoc.subjectId
-          ).then((res) => {
+          const res = await sendPostApi("/document/all/save-update", data).then((res) => {
             this.showMessage()
           })
         }
