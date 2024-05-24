@@ -1,6 +1,11 @@
 <template>
   <Toast />
-  <div class="card py-2">
+  <div v-if="isLoading">
+    <div class="flex items-center justify-center  w-full h-[100vh]">
+      <div class="rounded-md h-12 w-12 border-4 border-t-4 border-green-500 animate-spin absolute"></div>
+    </div>
+  </div>
+  <div v-else class="card py-2">
     <div class="flex justify-between mb-2">
       <div class="flex">
         <InputText v-model="searchQuery" placeholder="Tìm kiếm" size="small" class="border-gray-300 rounded-none">
@@ -105,12 +110,13 @@ import 'firebase/compat/storage';
 import Button from 'primevue/button';
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
-import { sendGetApi, sendPostApi, sendDeleteApi,  } from '@/api/auth/api';
+import { sendGetApi, sendPostApi, sendDeleteApi, } from '@/api/auth/api';
 
 const toast = useToast()
 const createModal = ref(false)
 const viewModal = ref(false)
 const deleteModal = ref(false)
+const isLoading = ref(true)
 const progressUpload = ref(0)
 const notiId = ref("")
 const title = ref("")
@@ -126,7 +132,9 @@ const openDialog = () => {
 const Notifications = ref([])
 
 onMounted(() => {
-  fetchAllNoti()
+  fetchAllNoti().then(() => {
+    isLoading.value = false
+  })
 })
 const openDeleteDialog = (id) => {
   deleteModal.value = true
