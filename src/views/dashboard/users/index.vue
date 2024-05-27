@@ -8,7 +8,7 @@
   <div v-else class="card py-2">
     <div class="flex justify-between mb-2">
       <div class="flex">
-        <InputText v-model="searchQuery" placeholder="Tìm kiếm" size="small" class="border-gray-300 rounded-none">
+        <InputText v-model="userNameFilter" placeholder="Tìm kiếm" size="small" class="border-gray-300 rounded-none">
         </InputText>
         <Button icon="pi pi-search"
           class="text-white bg-green-600 hover:bg-green-700 text-sm border-none rounded-none rounded-r-lg"
@@ -259,7 +259,7 @@ const chooseStatusFilter = (data) => {
 }
 const fetchAllUser = async () => {
   try {
-    await sendGetApi(`/admin/get-all-user?page=${page.value}&size=${rows.value}&active=${selectedStatusFilter.value}&userName=${userNameFilter.value ? userNameFilter.value : ""}`).then((res) => {
+    await sendGetApi(`/admin/get-all-user?page=${page.value}&size=${rows.value}&active=${selectedStatusFilter.value}&userName=${userNameFilter.value}`).then((res) => {
       Users.value = res.data.content
       totalRecords.value = res.data.totalElements
       filterModal.value = false

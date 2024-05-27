@@ -160,7 +160,7 @@
             </template>
           </Column>
           <Column class="text-sm" field="id" header="ID" style="width: 5rem"></Column>
-          <Column class="text-sm" field="title" header="Tiêu đề bài viết" style="width: 20rem">
+          <Column class="text-sm" field="name" header="Tiêu đề bài viết" style="width: 20rem">
           </Column>
           <Column class="text-sm" field="image" header="Ảnh" style="width: 10rem">
             <template #body="slotProps">
@@ -255,6 +255,7 @@ const chooserSbj = (data) => {
   selectedSbj.value = data.value.id
   selectedSbjIdView.value = data.value.id
   fetchAllDocuments()
+  fetchAllUncDoc()
 }
 const checkedDialog = () => {
   checkedModal.value = true
@@ -301,6 +302,16 @@ const fetchAllDocuments = async () => {
     })
   } catch (err) {
     console.log(err)
+  }
+}
+const fetchAllUncDoc = async () => {
+  try {
+    const res = await sendGetApi(`/document/public/get-all-unactive?keywords=${""}&subjectId=${selectedSbj.value}`).then((res) => {
+      CheckedPosts.value = res.data.content
+
+    })
+  } catch (err) {
+    showError(err)
   }
 }
 const fetchAllDpt = async () => {
