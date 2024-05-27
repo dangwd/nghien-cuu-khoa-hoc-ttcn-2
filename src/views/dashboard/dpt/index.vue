@@ -263,6 +263,7 @@ const chooseDpt = (data) => {
 }
 const chooseMjr = (data) => {
   mjrId.value = data.value.id
+  mjrNameChoose.value = data.value.nameSpecialize
   isDisable.value = false
   fetchAllSubject()
 }
