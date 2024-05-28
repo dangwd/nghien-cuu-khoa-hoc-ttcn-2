@@ -30,10 +30,6 @@ export const login = (username, password) => api.post('api/login', {
 export const signup = (username, password, fullName) => api.post('/regis', {
   username, password, fullName
 })
-//Edit user
-export const editUser = (id, username, fullName, avatar, password) => api.post('/update-infor', {
-  id, username, fullName, avatar, password
-})
 
 export const sendPostApi = (url, data) => api.post(url, data)
 

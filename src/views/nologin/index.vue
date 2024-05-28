@@ -173,7 +173,7 @@
   </div>
 </template>
 <script>
-import { getAllPostPublic } from '@/api/auth/api'
+import { getAllPostPublic, sendGetApi } from '@/api/auth/api'
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import AsideView from '@/components/AsideView.vue';
@@ -276,7 +276,7 @@ export default {
     },
     async fetchAllPostPub() {
       try {
-        await getAllPostPublic(this.currentPage).then((res) => {
+        await sendGetApi(`blog/public/get-all-active?keyword=${""}`).then((res) => {
           this.posts.push(...res.data.content)
         })
       } catch (err) {

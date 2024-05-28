@@ -34,7 +34,7 @@
     </div>
     <div class="w-full h-full md:w-9/12 mx-2">
       <div class="bg-white p-3 shadow-sm rounded-sm">
-        <div v-if="state == 'default'" class="flex items-center space-x-2 font-semibold text-gray-700 leading-8">
+        <div class="flex items-center space-x-2 font-semibold text-gray-700 leading-8">
           <span class="text-blue-500">
             <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -43,51 +43,12 @@
           </span>
           <span class="tracking-wide">Thông tin chi tiết</span>
         </div>
-        <div v-if="state == 'update'">
-          <div class="flex justify-between">
-            <div class="flex items-center space-x-2 font-semibold text-gray-700 leading-8">
-              <span class="text-blue-500">
-                <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </span>
-              <span class="tracking-wide">Chỉnh sửa tài khoản</span>
-            </div>
-            <div>
-              <Button btnIcon="icon" iconBtnClass="bx bx-chevron-left"
-                btnClass="bg-none text-base font-semibold text-blue-500"
-                :config="{ label: 'Trờ lại', click: () => back() }">Trở
-                lại</Button>
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <InputField @input-change="setName" :value="userParam.username" labelField="username" title="Tài khoản"
-              typeInput="email"></InputField>
-            <InputField @input-change="setFullName" :value="userParam.fullname" labelField="fullname" title="Họ tên"
-              typeInput="text"></InputField>
-            <InputField :value="userParam.role" labelField="role" title="Vai trò" typeInput="text" disabled>
-            </InputField>
-            <div>
-              <InputField @input-file="setAvatar" :value="userParam.avatar" type="file-input" title="Avatar">
-              </InputField>
-            </div>
-            <InputField @input-change="setPass" :value="userParam.password" labelField="pass" title="Mật khẩu"
-              typeInput="password">
-            </InputField>
-            <InputField @input-change="setPassConfirm" :value="userParam.passwordConfirm" labelField="confirmpass"
-              title="Nhập lại mật khẩu" typeInput="password">
-            </InputField>
-          </div>
-        </div>
-        <div v-if="state == 'default'" class="text-gray-700">
+        <div class="text-gray-700">
           <div class="grid md:grid-cols-2 text-sm">
             <div class="grid grid-cols-2">
               <div class="px-4 py-2 font-semibold">Họ và tên</div>
               <div class="px-4 py-2">{{ user.fullName }}</div>
             </div>
-
             <div class="grid grid-cols-2">
               <div class="px-4 py-2 font-semibold">Tài khoản</div>
               <div class="px-4 py-2">{{ user.username }}</div>
@@ -102,15 +63,9 @@
             </div>
           </div>
         </div>
-        <div v-if="state == 'default'">
-          <Button btnIcon="icon" iconBtnClass="bx bxs-edit-alt"
-            btnClass="w-full text-blue-800 text-sm font-semibold rounded-lg hover:bg-gray-100 focus:outline-none focus:shadow-outline focus:bg-gray-100 hover:shadow-xs p-3 my-4"
-            :config="{ label: 'Cấu hình tài khoản', click: () => update() }"></Button>
-        </div>
-        <div v-if="state == 'update'">
-          <Button btnIcon="icon" iconBtnClass="bx bxs-edit-alt"
-            btnClass="w-full text-blue-500 text-sm font-semibold rounded-lg bg-blue-100 hover:bg-blue-200 focus:outline-none focus:shadow-outline focus:bg-gray-100 hover:shadow-xs p-3 my-4"
-            :config="{ label: 'Cập nhật tài khoản', click: () => updateAccount() }"></Button>
+        <div class="py-4">
+          <Button @click="openUpdateAccount" label="Cập nhật thông tin" class="bg-green-700 w-full"
+            icon="pi pi-pencil"></Button>
         </div>
       </div>
       <div class="my-4"></div>
@@ -208,18 +163,63 @@
     </div>
   </div>
   <AsideRight />
+  <Dialog v-model:visible="updateAccModal" modal :header="'Cập nhật tài khoản ' + userParam.fullname"
+    :style="{ width: '700px' }">
+    <div class="grid gap-4">
+      <div class="flex items-center justify-center">
+        <img class="w-24 h-24 rounded-full"
+          :src="userParam.avatar ? userParam.avatar : 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" alt="">
+      </div>
+      <div class="flex gap-2">
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Tên người dùng</label>
+          <InputText v-model="userParam.fullname" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+            size="small" placeholder="Nguyen Van A" />
+        </div>
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Tài khoản</label>
+          <InputText v-model="userParam.username" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+            size="small" placeholder="abc@gmail.com" />
+        </div>
+      </div>
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-semibold" for="username">Mật khẩu</label>
+        <InputText v-model="userParam.password" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+          size="small" placeholder="**********" />
+      </div>
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-semibold" for="username">Nhập lại mật khẩu</label>
+        <InputText v-model="userParam.passwordConfirm" class="focus:ring-0 border-gray-300 rounded-xl text-sm"
+          type="text" size="small" placeholder="**********" />
+      </div>
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-semibold" for="username">Vai trò</label>
+        <InputText v-model="(userParam.role)" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+          size="small" :disabled="true"></InputText>
+      </div>
+    </div>
+    <div class="pt-4 flex justify-end">
+      <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Cập nhật"
+        @click="updateAccount()" />
+    </div>
+  </Dialog>
 </template>
 <script>
-import { editUser, getPostByUser, sendGetApi, likePost } from '@/api/auth/api'
+import { getPostByUser, sendGetApi, likePost, sendPostApi } from '@/api/auth/api'
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import Button from 'primevue/button';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/storage';
 export default {
+  components: {
+    Button
+  },
   data() {
     return {
       posts: [],
       userInfo: {},
+      updateAccModal: false,
       state: "default",
       userParam: {
         id: "",
@@ -243,21 +243,9 @@ export default {
   mounted() {
     this.fetchPost()
     this.fetchUserById()
-    // console.log(this.user)
   },
   methods: {
-    setName(value) {
-      this.userParam.username = value
-    },
-    setPass(value) {
-      this.userParam.password = value
-    },
-    setPassConfirm(value) {
-      this.userParam.passwordConfirm = value;
-    },
-    setFullName(value) {
-      this.userParam.fullname = value
-    },
+
     setAvatar(file) {
       this.userParam.avatar = file
       var storageRef = firebase.storage().ref('avatar/' + file.name)
@@ -273,8 +261,8 @@ export default {
         })
       })
     },
-    back() {
-      this.state = 'default'
+    openUpdateAccount() {
+      this.updateAccModal = true
     },
     showSuccess() {
       toast.success("Cập nhật thành công!");
@@ -308,20 +296,22 @@ export default {
         this.userInfo = res.data
         this.userParam.username = res.data.username
         this.userParam.fullname = res.data.fullName
+        this.userParam.avatar = res.data.avatar
         this.userParam.role = res.data.role
       })
     },
     async updateAccount() {
+      const data = {
+        id: this.user.id,
+        username: this.userParam.username,
+        fullName: this.userParam.fullname,
+        avatar: this.userParam.avatar,
+        password: this.userParam.passwordConfirm
+      }
       if (this.userParam.password === this.userParam.passwordConfirm) {
-        await editUser(
-          // id, username, fullName, avatar, password
-          this.user.id,
-          this.userParam.username,
-          this.userParam.fullname,
-          this.userParam.avatar,
-          this.userParam.passwordConfirm
-        ).then((res) => {
+        await sendPostApi("/update-infor", data).then((res) => {
           console.log(res)
+          this.updateAccModal = false
           this.fetchUserById()
           this.showSuccess()
         })

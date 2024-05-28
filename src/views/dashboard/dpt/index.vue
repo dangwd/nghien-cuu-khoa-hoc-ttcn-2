@@ -10,8 +10,7 @@
                 class="border-gray-300 rounded-l-lg rounded-r-none">
               </InputText>
               <Button icon="pi pi-search"
-                class="text-white bg-green-600 hover:bg-green-700 text-sm border-none rounded-none rounded-r-lg"
-                @click="fetchAllNoti()" />
+                class="text-white bg-green-600 hover:bg-green-700 text-sm border-none rounded-none rounded-r-lg" />
             </div>
             <Button icon="pi pi-plus" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
               label="Tạo khoa" @click="openDialog" />

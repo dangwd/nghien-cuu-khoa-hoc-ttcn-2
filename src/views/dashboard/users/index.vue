@@ -253,13 +253,10 @@ const onPageChange = (event) => {
   rows.value = event.rows
   fetchAllUser()
 }
-const chooseStatusFilter = (data) => {
-  selectedStatusFilter.value = data.value.value
-  console.log(selectedStatusFilter.value)
-}
+
 const fetchAllUser = async () => {
   try {
-    await sendGetApi(`/admin/get-all-user?page=${page.value}&size=${rows.value}&active=${selectedStatusFilter.value}&userName=${userNameFilter.value}`).then((res) => {
+    await sendGetApi(`/admin/get-all-user?page=${page.value}&size=${rows.value}&userName=${userNameFilter.value}`).then((res) => {
       Users.value = res.data.content
       totalRecords.value = res.data.totalElements
       filterModal.value = false
