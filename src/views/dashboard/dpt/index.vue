@@ -68,7 +68,7 @@
               <Column header="Thao tác">
                 <template #body="slotProps">
                   <div class="flex gap-2">
-                    <Button text rounded icon="pi pi-eye" @click="viewDetail(slotProps.data.id)"></Button>
+                    <Button text rounded icon="pi pi-eye" @click="viewMjrDetail(slotProps.data.id)"></Button>
                     <Button text rounded icon="pi pi-trash" severity="warning"
                       @click="deleteMjrDialog(slotProps.data.id)"></Button>
                   </div>
@@ -119,7 +119,7 @@
               <Column header="Thao tác">
                 <template #body="slotProps">
                   <div class="flex gap-2">
-                    <Button text rounded icon="pi pi-eye" @click="viewDetail(slotProps.data.id)"></Button>
+                    <Button text rounded icon="pi pi-eye" @click="viewSbjDetail(slotProps.data.id)"></Button>
                     <Button text rounded icon="pi pi-trash" severity="warning"
                       @click="deleteSbjDialog(slotProps.data.id)"></Button>
                   </div>
@@ -131,7 +131,7 @@
       </TabPanel>
     </TabView>
 
-    <!-- Create -->
+    <!-- Dpt -->
     <Dialog v-model:visible="createModal" modal header="Thêm khoa" :style="{ width: '700px' }">
       <div class="grid">
         <div class="flex flex-col">
@@ -148,8 +148,6 @@
           @click="createDpt()" />
       </div>
     </Dialog>
-
-    <!-- Delete -->
     <Dialog v-model:visible="deleteModal" modal header="Xóa khoa" :style="{ width: '700px' }">
       <h1 class="text-sm font-semibold text-red-600">Sau khi xóa sẽ không thể khôi phục ?</h1>
       <div class="pt-4 flex justify-end">
@@ -157,6 +155,23 @@
           @click="deleteDpt()" />
       </div>
     </Dialog>
+    <Dialog v-model:visible="detailModal" modal header="Chi tiết" :style="{ width: '700px' }">
+      <div class="grid">
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-900 font-medium" for="">Mã Khoa</label>
+          <InputText v-model="viewDptCode" class="w-full text-sm font-normal"></InputText>
+        </div>
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-900 font-medium" for="">Tên Khoa</label>
+          <InputText v-model="viewDptName" class="w-full text-sm font-normal"></InputText>
+        </div>
+      </div>
+      <div class="pt-4 flex justify-end">
+        <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Cập nhật"
+          @click="updateDpt()" />
+      </div>
+    </Dialog>
+
 
     <!-- Major -->
     <Dialog v-model:visible="createMajorModal" modal header="Thêm Ngành" :style="{ width: '700px' }">
@@ -180,6 +195,22 @@
           @click="createMjr()" />
       </div>
     </Dialog>
+    <Dialog v-model:visible="detailMjrModal" modal header="Chi tiết" :style="{ width: '700px' }">
+      <div class="grid">
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-900 font-medium" for="">Mã Ngành</label>
+          <InputText v-model="viewMjrCode" class="w-full text-sm font-normal"></InputText>
+        </div>
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-900 font-medium" for="">Tên Ngành</label>
+          <InputText v-model="viewMjrName" class="w-full text-sm font-normal"></InputText>
+        </div>
+      </div>
+      <div class="pt-4 flex justify-end">
+        <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Cập nhật"
+          @click="updateMjr()" />
+      </div>
+    </Dialog>
     <Dialog v-model:visible="deleteMjrModal" modal header="Xóa ngành" :style="{ width: '700px' }">
       <h1 class="text-sm font-semibold text-red-600">Sau khi xóa sẽ không thể khôi phục ?</h1>
       <div class="pt-4 flex justify-end">
@@ -188,6 +219,7 @@
       </div>
     </Dialog>
 
+    <!-- Subject -->
     <Dialog v-model:visible="createSbjModal" modal header="Thêm Môn học" :style="{ width: '700px' }">
       <div class="grid">
         <div class="flex flex-col  mb-4">
@@ -202,6 +234,22 @@
       <div class="pt-4 flex justify-end">
         <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Tạo mới"
           @click="createSbj()" />
+      </div>
+    </Dialog>
+    <Dialog v-model:visible="detailSbjModal" modal header="Chi tiết" :style="{ width: '700px' }">
+      <div class="grid">
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-900 font-medium" for="">Mã Môn học</label>
+          <InputText v-model="viewSbjCode" class="w-full text-sm font-normal"></InputText>
+        </div>
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-900 font-medium" for="">Tên Môn học</label>
+          <InputText v-model="viewSbjName" class="w-full text-sm font-normal"></InputText>
+        </div>
+      </div>
+      <div class="pt-4 flex justify-end">
+        <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Cập nhật"
+          @click="updateSbj()" />
       </div>
     </Dialog>
     <Dialog v-model:visible="deleteSbjModal" modal header="Xóa ngành" :style="{ width: '700px' }">
@@ -223,9 +271,19 @@ import { onMounted, ref } from 'vue';
 const toast = useToast()
 const page = ref(0)
 const rows = ref(10)
+
+const viewSbjCode = ref("")
+const viewSbjName = ref("")
+const viewMjrCode = ref("")
+const viewMjrName = ref("")
+const viewDptCode = ref("")
+const viewDptName = ref("")
 const totalRecords = ref()
 const createModal = ref(false)
 const createMajorModal = ref(false)
+const detailModal = ref(false)
+const detailMjrModal = ref(false)
+const detailSbjModal = ref(false)
 const createMjrCode = ref("")
 const createMjrName = ref("")
 const createSbjCode = ref("")
@@ -255,16 +313,106 @@ const onPageChange = (event) => {
   rows.value = event.rows
   fetchAllSubject()
 }
+const viewSbjDetail = async (id) => {
+  detailSbjModal.value = true
+  sbjId.value = id
+  try {
+    const res = await sendGetApi(`subject/public/find-by-id?subjectId=${id}`).then((res) => {
+      viewSbjCode.value = res.data.codeSubject
+      viewSbjName.value = res.data.nameSubject
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+const updateSbj = async () => {
+  const data = {
+    id: sbjId.value,
+    codeSubject: viewSbjCode.value,
+    nameSubject: viewSbjName.value,
+    specializeId: mjrId.value
+  }
+  try {
+    const res = await sendPostApi("/subject/document-manager/save-update", data).then((res) => {
+      showSuccess(`Cập nhật thành công ${res.data.nameSubject}`)
+      detailSbjModal.value = false
+      fetchAllSubject()
+    })
+  } catch (err) {
+    showError(err)
+    console.log(err)
+  }
+}
+const viewMjrDetail = async (id) => {
+  detailMjrModal.value = true
+  mjrId.value = id
+  try {
+    const res = await sendGetApi(`/specialize/public/find-by-id?specializeId=${id}`).then((res) => {
+      viewMjrCode.value = res.data.codeSpecialize
+      viewMjrName.value = res.data.nameSpecialize
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
 const chooseDpt = (data) => {
   dptId.value = data.value.id
   dptNameChoose.value = data.value.nameDepartment
   fetchAllMajor()
+}
+const viewDetail = async (id) => {
+  dptId.value = id
+  detailModal.value = true
+  try {
+    const res = await sendGetApi(`/department/public/find-by-id?departmentId=${id}`).then((res) => {
+      viewDptCode.value = res.data.codeDepartment
+      viewDptName.value = res.data.nameDepartment
+      console.log(res)
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+const updateDpt = async () => {
+  const data = {
+    id: dptId.value,
+    codeDepartment: viewDptCode.value,
+    nameDepartment: viewDptName.value
+  }
+  try {
+    const res = await sendPostApi("/department/document-manager/save-update", data).then((res) => {
+      showSuccess("Cập nhật thành công!")
+      detailModal.value = false
+      fetchAllDpt()
+    })
+  } catch (err) {
+    showError(err)
+    console.log(err)
+  }
 }
 const chooseMjr = (data) => {
   mjrId.value = data.value.id
   mjrNameChoose.value = data.value.nameSpecialize
   isDisable.value = false
   fetchAllSubject()
+}
+const updateMjr = async () => {
+  const data = {
+    id: mjrId.value,
+    codeSpecialize: viewMjrCode.value,
+    nameSpecialize: viewMjrName.value,
+    departmentId: dptId.value
+  }
+  try {
+    const res = await sendPostApi("specialize/document-manager/save-update", data).then((res) => {
+      showSuccess(`Cập nhật thành công ${res.data.nameSpecialize}`)
+      detailMjrModal.value = false
+      fetchAllMajor()
+    })
+  } catch (err) {
+    showError(err)
+    console.log(err)
+  }
 }
 const showSuccess = (res) => {
   toast.add({ severity: 'success', summary: 'Sucess!', detail: res || 'Thao tác thành công!', life: 3000 });
@@ -281,9 +429,10 @@ const createMajorDialog = () => {
 const createISbjDialog = () => {
   createSbjModal.value = true
 }
-const deleteDptDialog = (id) => {
+const deleteDptDialog = async (id) => {
   deleteModal.value = true
   dptId.value = id
+
 }
 const deleteSbjDialog = (id) => {
   deleteSbjModal.value = true
@@ -317,6 +466,7 @@ const createDpt = async () => {
     showError(err)
   })
 }
+
 const deleteDpt = async () => {
   try {
     const res = await sendDeleteApi(`department/document-manager/delete?departmentId=${dptId.value}`).then((res) => {

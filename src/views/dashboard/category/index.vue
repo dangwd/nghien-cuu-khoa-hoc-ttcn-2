@@ -10,12 +10,17 @@
       <div class="flex">
         <InputText v-model="searchQuery" placeholder="Tìm kiếm" size="small" class="border-gray-300 rounded-none">
         </InputText>
+
         <Button icon="pi pi-search"
           class="text-white bg-green-600 hover:bg-green-700 text-sm border-none rounded-none rounded-r-lg"
           @click="fetchAllCategory()" />
       </div>
-      <Button icon="pi pi-plus" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
-        label="Tạo danh mục" @click="openDialog" />
+      <div>
+        <Button icon="pi pi-filter" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
+          label="Bộ lọc" @click="openFilter" />
+        <Button icon="pi pi-plus" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none ml-2"
+          label="Tạo danh mục" @click="openDialog" />
+      </div>
     </div>
     <DataTable scrollable scrollHeight="80vh" class="text-sm" size="small" showGridlines :value="Categories" paginator
       :rows="rows" :page="page" @page="onPageChange($event)" lazy :totalRecords="totalRecords"
@@ -61,7 +66,28 @@
           @click="createCate()" />
       </div>
     </Dialog>
-
+    <Dialog v-model:visible="filterDialog" modal header="Tìm kiếm theo" :style="{ width: '1094px' }">
+      <Dropdown v-model="selectedTypeCate" @change="chooseTypeCate" :options="categoryOpt" optionLabel="name"
+        placeholder="Kiểu danh mục" class="w-full" />
+      <div v-if="CatesFilter.length > 0">
+        <DataTable class="text-sm mt-4" showGridlines size="small" :value="CatesFilter" tableStyle="min-width: 50rem">
+          <Column field="id" header="ID"></Column>
+          <Column field="name" header="Tên danh mục"></Column>
+          <Column field="numBlog" header="Bài viết liên quan"></Column>
+          <Column field="categoryType" header="Kiểu danh mục"></Column>
+          <Column header="Thao tác">
+            <template #body="slotProps">
+              <div class="flex gap-2">
+                <Button text rounded icon="pi pi-eye" @click="viewDetail(slotProps.data.id)"></Button>
+                <Button text rounded icon="pi pi-trash" severity="warning"
+                  @click="deleteModal(slotProps.data.id)"></Button>
+              </div>
+            </template>
+          </Column>
+        </DataTable>
+      </div>
+      <div v-else></div>
+    </Dialog>
     <!-- View -->
     <Dialog v-model:visible="viewModal" modal header="Chi tiết" :style="{ width: '700px' }">
       <div class="grid grid-cols-1 gap-2">
@@ -106,12 +132,16 @@ import { useToast } from 'primevue/usetoast';
 import Button from 'primevue/button';
 import { sendGetApi, sendPostApi, sendDeleteApi } from '@/api/auth/api';
 
+
+const CatesFilter = ref([])
 const rows = ref(5)
 const page = ref(0)
 const totalRecords = ref()
 const toast = useToast()
+const selectedTypeCate = ref("")
 const isLoading = ref(true)
 const createModal = ref(false)
+const filterDialog = ref(false)
 const deleteDialog = ref(false)
 const viewModal = ref(false)
 const searchQuery = ref("")
@@ -140,6 +170,11 @@ const onPageChange = (event) => {
 const openDialog = () => {
   createModal.value = true
 }
+const chooseTypeCate = (data) => {
+  selectedCate.value = data.value.value
+  fetchAllCateFilter()
+
+}
 const deleteModal = async (id) => {
   deleteDialog.value = true
   cateId.value = id
@@ -153,6 +188,9 @@ const deleteModal = async (id) => {
   } catch (err) {
     showError(err)
   }
+}
+const openFilter = () => {
+  filterDialog.value = true
 }
 const Categories = ref([])
 const showError = (e) => {
@@ -242,6 +280,19 @@ const deleteCate = async (id) => {
       showSuccess(res.data)
       fetchAllCategory()
 
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+const fetchAllCateFilter = async () => {
+  try {
+    const res = await sendGetApi(`/category/public/find-by-type?type=${selectedCate.value}`).then((res) => {
+      if (res.data.content.length > 0) {
+        CatesFilter.value = res.data.content
+      } else {
+        console.log("eee")
+      }
     })
   } catch (err) {
     console.log(err)

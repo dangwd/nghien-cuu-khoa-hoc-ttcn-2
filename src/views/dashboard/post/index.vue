@@ -16,7 +16,7 @@
       </div>
       <div class="flex gap-2">
         <Button icon="pi pi-filter" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
-          label="Bộ lọc" @click="openDialog" />
+          label="Bộ lọc" @click="openFilter" />
         <Button icon="pi pi-clock" class="text-white bg-blue-600 hover:bg-blue-700 text-sm border-none"
           label="Bài viết chờ duyệt" :badge="CheckedPosts.length + ''" @click="checkedDialog" />
         <Button icon="pi pi-plus" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
@@ -168,7 +168,7 @@
               <div class="flex gap-2">
                 <Button text rounded icon="pi pi-eye" @click="viewDetail(slotProps.data.id)"></Button>
                 <Button text rounded icon="pi pi-trash" severity="warning"
-                  @click="removePost(slotProps.data.id)"></Button>
+                  @click="deletePost(slotProps.data.id)"></Button>
               </div>
             </template>
           </Column>
@@ -186,6 +186,70 @@
           @click="removePost(postId)" />
       </div>
     </Dialog>
+    <Dialog v-model:visible="filterModal" modal header="Tìm kiếm theo" :style="{ width: '1094px' }">
+      <div class="grid grid-cols-2 gap-4">
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-semibold" for="username">Tiêu đề bài viết</label>
+          <InputText v-model="titleFilter" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+            size="small" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-semibold" for="username">Mô tả</label>
+          <InputText v-model="descriptionFilter" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+            size="small" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-semibold" for="username">Nội dung</label>
+          <InputText v-model="contentFilter" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+            size="small" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-semibold" for="username">Người đăng</label>
+          <InputText v-model="userCreatedFilter" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+            size="small" />
+        </div>
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Danh mục</label>
+          <Dropdown v-model="categoryId" @change="chooseCategoryFilter" :options="categoryOpt" optionLabel="name"
+            :placeholder="categoryView" class="w-full md:w-[14rem] rounded-xl text-sm" />
+        </div>
+      </div>
+      <div class="pt-4 flex justify-end">
+        <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Lọc"
+          @click="fetchPostsFilter()" />
+      </div>
+      <div v-if="PostsFilter.length > 0">
+        <DataTable class="text-sm mt-4" showGridlines size="small" :value="PostsFilter" tableStyle="min-width: 50rem">
+          <Column field="id" header="ID"></Column>
+          <Column field="title" header="Tiêu đề"></Column>
+          <Column field="image" header="Ảnh">
+            <template #body="slotProps">
+              <img class="w-24 h-auto rounded-lg" :src="slotProps.data.image" alt="">
+            </template>
+          </Column>
+          <Column field="description" header="Mô tả"></Column>
+          <Column class="text-sm" field="user.fullName" header="Người đăng" style="width: 10rem">
+          </Column>
+          <Column class="text-sm" field="createdDate" header="Ngày tạo" style="width: 10rem"></Column>
+
+          <Column field="actived" header="Trạng thái">
+            <template #body="slotProps">
+              {{ formatStatus(slotProps.data.actived) }}
+            </template>
+          </Column>
+          <Column header="Thao tác">
+            <template #body="slotProps">
+              <div class="flex gap-2">
+                <Button text rounded icon="pi pi-eye" @click="viewDetail(slotProps.data.id)"></Button>
+                <Button text rounded icon="pi pi-trash" severity="warning"
+                  @click="deletePost(slotProps.data.id)"></Button>
+              </div>
+            </template>
+          </Column>
+        </DataTable>
+      </div>
+      <div v-else></div>
+    </Dialog>
   </div>
 </template>
 
@@ -196,8 +260,14 @@ import 'firebase/compat/storage';
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 import Button from 'primevue/button';
-import { sendGetApi, sendPostApi, sendDeleteApi, sendPutApi } from '@/api/auth/api';
+import { sendGetApi, sendPostApi, sendDeleteApi } from '@/api/auth/api';
 
+const PostsFilter = ref([])
+const titleFilter = ref("")
+const descriptionFilter = ref("")
+const contentFilter = ref("")
+const userCreatedFilter = ref("")
+const selectedCateFilter = ref("")
 const rows = ref(5)
 const page = ref(0)
 const totalRecords = ref()
@@ -214,6 +284,7 @@ const content = ref("")
 const image = ref("")
 const description = ref("")
 const imageView = ref("")
+const filterModal = ref(false)
 const titleView = ref("")
 const descriptionView = ref("")
 const statusView = ref(null)
@@ -232,13 +303,18 @@ const statusOpt = ref([
     value: false
   }])
 const categoryOpt = ref([])
+
+const chooseCategoryFilter = (data) => {
+  selectedCateFilter.value = data.value.name
+}
+
 const checkedDialog = () => {
 
   checkedModal.value = true
 }
 const openDialog = () => {
   createModal.value = true
-  fetchCategory()
+
 }
 const Posts = ref([])
 const CheckedPosts = ref([])
@@ -247,11 +323,15 @@ onMounted(() => {
     isLoading.value = false
   })
   fetchCheckedPosts()
+  fetchCategory()
 })
 const onPageChange = (event) => {
   page.value = event.page
   rows.value = event.rows
   fetchAllPosts()
+}
+const openFilter = () => {
+  filterModal.value = true
 }
 const chooseCategory = (data) => {
   categoryView.value = data.value.name
@@ -292,6 +372,20 @@ const fetchAllPosts = async () => {
     await sendGetApi(`blog/public/get-all-active?page=${page.value}&size=${rows.value}&keywords=${searchQuery.value}`).then((res) => {
       Posts.value = res.data.content
       totalRecords.value = res.data.totalElements
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+const fetchPostsFilter = async () => {
+  try {
+    const res = await sendGetApi(`/blog/blog-manager/filter?title=${titleFilter.value}&description=${descriptionFilter.value}&content=${contentFilter.value}&createdDate=${""}&actived=true&userName=${userCreatedFilter.value}&cateName=${selectedCateFilter.value}`).then((res) => {
+      if (res.data.content.length > 0) {
+        PostsFilter.value = res.data.content
+      } else {
+        PostsFilter.value = []
+        showError("Không có bài viết liên quan!")
+      }
     })
   } catch (err) {
     console.log(err)

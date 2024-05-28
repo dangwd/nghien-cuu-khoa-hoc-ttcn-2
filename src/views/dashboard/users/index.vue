@@ -144,23 +144,62 @@
           @click="updateAccount()" />
       </div>
     </Dialog>
-    <Dialog v-model:visible="filterModal" modal header="Tìm kiếm theo" :style="{ width: '700px' }">
-      <div>
-        <div>
+
+    <!-- Filter -->
+    <Dialog v-model:visible="filterModal" modal header="Tìm kiếm theo" :style="{ width: '1094px' }">
+      <div class="grid grid-cols-2 gap-4">
+        <div class="flex flex-col gap-2 w-full">
           <label class="text-sm font-semibold" for="username">Trạng thái tài khoản</label>
           <Dropdown v-model="selectedStatusFilter" @change="chooseStatusFilter" :options="statusOptFilter"
             optionLabel="name" placeholder="Trạng thái" class="w-full md:w-[14rem] rounded-xl text-sm" />
+        </div>
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Vai trò</label>
+          <Dropdown v-model="selectedRoleFilter" @change="chooseRoleFilter" :options="roleOptFilter" optionLabel="name"
+            class="w-full md:w-[14rem] rounded-xl text-sm" />
         </div>
         <div class="flex flex-col gap-2 w-full">
           <label class="text-sm font-semibold" for="username">Tài khoản</label>
           <InputText v-model="userNameFilter" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
             size="small" />
         </div>
-        <div class="pt-4 flex justify-end">
-          <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Lọc"
-            @click="fetchAllUser()" />
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Tên người dùng</label>
+          <InputText v-model="fullNameFilter" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+            size="small" />
         </div>
       </div>
+      <div class="pt-4 flex justify-end">
+        <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Lọc"
+          @click="fetchUserFilter()" />
+      </div>
+      <div v-if="UsersFilter.length > 0">
+        <DataTable class="text-sm mt-4" showGridlines size="small" :value="UsersFilter" tableStyle="min-width: 50rem">
+          <Column field="id" header="ID"></Column>
+          <Column field="username" header="Tài khoản"></Column>
+          <Column field="fullName" header="Chủ sở hữu"></Column>
+          <Column field="role" header="Vai trò">
+            <template #body="slotProps">
+              {{ formatRole(slotProps.data.role) }}
+            </template>
+          </Column>
+          <Column field="actived" header="Trạng thái">
+            <template #body="slotProps">
+              {{ formatStatus(slotProps.data.actived) }}
+            </template>
+          </Column>
+          <Column header="Thao tác">
+            <template #body="slotProps">
+              <div class="flex gap-2">
+                <Button text rounded icon="pi pi-eye" @click="viewDetail(slotProps.data.id)"></Button>
+                <Button text rounded :icon="slotProps.data.actived ? 'pi pi-lock-open' : 'pi pi-lock'"
+                  severity="warning" @click="lockUser(slotProps.data.id)"></Button>
+              </div>
+            </template>
+          </Column>
+        </DataTable>
+      </div>
+      <div v-else></div>
     </Dialog>
   </div>
 </template>
@@ -182,7 +221,8 @@ const selectedStatus = ref("")
 const createModal = ref(false)
 const filterModal = ref(false)
 const viewModal = ref(false)
-const searchQuery = ref("")
+const fullNameFilter = ref("")
+const selectedRoleFilter = ref("")
 const userId = ref("")
 const username = ref("")
 const password = ref("")
@@ -197,6 +237,7 @@ const roleView = ref("")
 const statusView = ref(false)
 const selectedStatusFilter = ref("")
 const userNameFilter = ref("")
+const UsersFilter = ref([])
 const statusOptFilter = ref([
 
   {
@@ -212,8 +253,26 @@ const statusOptFilter = ref([
     value: false,
   },
 ])
+const roleOptFilter = ref([
+  {
+    name: "Tất cả",
+    value: ""
+  },
+  {
+    name: "Quản trị viên",
+    value: "ROLE_ADMIN"
+  },
+  {
+    name: "Người dùng",
+    value: "ROLE_USER"
+  }
+])
+
 const showSuccess = (res) => {
   toast.add({ severity: 'success', summary: 'Success!', detail: res || 'Thao tác thành công', life: 3000 });
+};
+const showError = (e) => {
+  toast.add({ severity: 'error', summary: 'Error!', detail: e || 'Có lỗi xảy ra!', life: 3000 });
 };
 const statusOpt = ref([
   {
@@ -253,13 +312,32 @@ const onPageChange = (event) => {
   rows.value = event.rows
   fetchAllUser()
 }
-
+const chooseStatusFilter = (data) => {
+  selectedStatusFilter.value = data.value.value
+}
+const chooseRoleFilter = (data) => {
+  selectedRoleFilter.value = data.value.value
+}
 const fetchAllUser = async () => {
   try {
     await sendGetApi(`/admin/get-all-user?page=${page.value}&size=${rows.value}&userName=${userNameFilter.value}`).then((res) => {
       Users.value = res.data.content
       totalRecords.value = res.data.totalElements
       filterModal.value = false
+    })
+  } catch (err) {
+    showError(err)
+  }
+}
+const fetchUserFilter = async () => {
+  try {
+    const res = await sendGetApi(`admin/filter?username=${userNameFilter.value}&fullName=${fullNameFilter.value}&actived=${selectedStatusFilter.value}&createdDate=${""}&role=${selectedRoleFilter.value}`).then((res) => {
+      if (res.data.content.length > 0) {
+        UsersFilter.value = res.data.content
+      } else {
+        UsersFilter.value = []
+        showError("Không tìm thấy tài khoản liên quan!")
+      }
     })
   } catch (err) {
     console.log(err)
