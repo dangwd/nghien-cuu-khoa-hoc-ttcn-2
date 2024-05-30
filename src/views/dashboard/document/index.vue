@@ -21,7 +21,7 @@
       <div class="flex gap-2 items-center bg-white p-2 border">
         <div class="w-1/3">
           <Button icon="pi pi-filter" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
-            label="Bộ lọc" @click="openDialog" />
+            label="Bộ lọc" @click="openFilter" />
         </div>
         <Dropdown filter v-model="selectedDpt" @change="chooseDpt" :options="dptOpt" optionLabel="nameDepartment"
           placeholder="Khoa" class="w-1/4 rounded-xl text-sm" />
@@ -192,12 +192,75 @@
         <h1 class="text-base font-semibold text-center">Hiện không có bài viết cần duyệt!</h1>
       </div>
     </Dialog>
+    <!-- Xóa -->
     <Dialog v-model:visible="deleteModal" modal :header="'Xóa '" :style="{ width: '500px' }">
       <h1 class="text-sm font-semibold text-red-600">Sau khi xóa sẽ không thể khôi phục ?</h1>
       <div class="flex justify-end">
         <Button class="text-white bg-red-600 hover:bg-red-700 text-sm border-none" label="Xóa"
           @click="removeDoc(docId)" />
       </div>
+    </Dialog>
+    <!-- Filter -->
+    <Dialog v-model:visible="filterModal" modal :header="'Tìm tài liệu theo'" :style="{ width: '1094px' }">
+      <div class="grid grid-cols-2 gap-4">
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Tên tài liệu</label>
+          <InputText v-model="title" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text" size="small" />
+        </div>
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Mô tả tài liệu</label>
+          <InputText v-model="description" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+            size="small" />
+        </div>
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Người đăng</label>
+          <InputText v-model="userName" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+            size="small" />
+        </div>
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Tên môn học</label>
+          <InputText v-model="nameSubject" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+            size="small" />
+        </div>
+      </div>
+      <div class="mt-2">
+        <div class="flex flex-col gap-2 w-full">
+          <label class="text-sm font-semibold" for="username">Trạng thái</label>
+          <Dropdown v-model="selectedStatus" @change="chooseStatus" :options="statusOpt" optionLabel="name"
+            class=" rounded-xl text-sm" />
+        </div>
+      </div>
+      <div class="flex justify-end items-center mt-4">
+        <Button label="Xác nhận" class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none"
+          @click="fetchAllFilterDoc()"></Button>
+      </div>
+      <DataTable class="text-sm mt-4" showGridlines size="small" :value="DocsFilter" tableStyle="min-width: 50rem">
+        <Column field="id" header="ID"></Column>
+        <Column field="name" header="Tên tài liệu" style="width: 15rem;"></Column>
+        <Column field="description" header="Mô tả"></Column>
+        <Column field="user.fullName" header="Người đăng"></Column>
+        <Column field="actived" header="Trạng thái">
+          <template #body="slotProps">
+            {{ formatStatus(slotProps.data.actived) }}
+          </template>
+        </Column>
+        <Column field="createdDate" header="Ngày tạo"></Column>
+        <Column field="linkFile" header="Tài liệu">
+          <template #body="slotProps">
+            <a class="text-sm font-normal text-blue-500 underline" :href="slotProps.data.linkFile">Tải xuống</a>
+          </template>
+        </Column>
+        <Column header="Thao tác">
+          <template #body="slotProps">
+            <div class="flex gap-2">
+              <Button text rounded icon="pi pi-eye" @click="viewDetail(slotProps.data.id)"></Button>
+              <Button text rounded icon="pi pi-trash" severity="warning"
+                @click="openDeleteDialog(slotProps.data.id)"></Button>
+            </div>
+          </template>
+        </Column>
+      </DataTable>
+
     </Dialog>
   </div>
 </template>
@@ -215,6 +278,7 @@ const createModal = ref(false)
 const viewModal = ref(false)
 const deleteModal = ref(false)
 const checkedModal = ref(false)
+const filterModal = ref(false)
 const searchQuery = ref("")
 const progressUpload = ref(0)
 const title = ref("")
@@ -226,7 +290,9 @@ const selectedSbjView = ref("")
 const selectedSbjIdView = ref("")
 const linkFileView = ref("")
 const docId = ref("")
+const userName = ref("")
 const statusView = ref("")
+const selectedStatus = ref("")
 const statusOpt = ref([
   {
     name: 'Đã duyệt',
@@ -236,11 +302,12 @@ const statusOpt = ref([
     name: 'Chờ duyệt',
     value: false
   }])
-
+const DocsFilter = ref([])
 const selectedDpt = ref("")
 const dptOpt = ref([])
 const selectedMjr = ref("")
 const mjrOpt = ref([])
+const nameSubject = ref("")
 const selectedSbj = ref("")
 const sbjOpt = ref([])
 const chooseDpt = (data) => {
@@ -257,11 +324,17 @@ const chooserSbj = (data) => {
   fetchAllDocuments()
   fetchAllUncDoc()
 }
+const chooseStatus = (data) => {
+  selectedStatus.value = data.value.value
+}
 const checkedDialog = () => {
   checkedModal.value = true
 }
 const openDialog = () => {
   createModal.value = true
+}
+const openFilter = () => {
+  filterModal.value = true
 }
 const Documents = ref([])
 const CheckedPosts = ref([])
@@ -297,7 +370,7 @@ const setDocument = (file) => {
 
 const fetchAllDocuments = async () => {
   try {
-    await sendGetApi(`/document/public/get-all-active?keywords=${""}&subjectId=${selectedSbj.value}&userId=${""}&page=0`).then((res) => {
+    await sendGetApi(`/document/public/get-all-active?keywords=${searchQuery.value}&subjectId=${selectedSbj.value}&userId=${""}&page=0`).then((res) => {
       Documents.value = res.data.content
     })
   } catch (err) {
@@ -370,8 +443,18 @@ const removeDoc = async () => {
   }
 }
 const approvePost = async () => {
-}
+  try {
+    const res = await sendPostApi(`document/document-manager/active-or-unacative?documentId=${docId.value}`).then((res) => {
+      showSuccess(`Duyệt thành công`)
+      viewModal.value = false
+    }).catch((e) => {
+      showError(e)
+    })
+  } catch (err) {
+    console.log(err)
+  }
 
+}
 const createPost = async () => {
   try {
     if (title.value !== "" && description.value !== "") {
@@ -417,7 +500,15 @@ const updatePost = async () => {
     console.log(err)
   }
 }
-
+const fetchAllFilterDoc = async () => {
+  try {
+    const res = await sendGetApi(`document/document-manager/filter?name=${title.value}&description=${description.value}&createdDate=&actived=${selectedStatus.value}&userName=${userName.value}&nameSubject=${nameSubject.value}`).then((res) => {
+      DocsFilter.value = res.data.content
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
 const formatStatus = (value) => {
   switch (value) {
     case true:
