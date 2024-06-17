@@ -276,7 +276,7 @@ export default {
     },
     async fetchAllPostPub() {
       try {
-        await sendGetApi(`blog/public/get-all-active?keyword=${""}`).then((res) => {
+        await sendGetApi(`blog/public/get-all-active?keywords=${""}`).then((res) => {
           this.posts.push(...res.data.content)
         })
       } catch (err) {

@@ -6,8 +6,9 @@
       <div class="p-3 ">
         <div class="flex gap-3 flex-wrap mx-auto">
           <div v-for="(item, index) in listCategory" :key="index">
-            <button @click="fetchPostByCateId(item.id)"
-              class="p-2 text-sm text-green-700 bg-white rounded-full border-2 border-green-700 hover:text-white hover:bg-green-600 hover:border-green-600">
+            <button
+              :class="[{ 'bg-green-600': item.id === categoryId }, 'p-2', 'text-sm', 'text-green-700', 'bg-white', 'rounded-full', 'border-2', 'border-green-700', 'hover:text-white', 'hover:bg-green-600', 'hover:border-green-600']"
+              @click="fetchPostByCateId(item.id)">
               #{{ item.name }}
             </button>
           </div>
@@ -84,7 +85,7 @@
 import { sendGetApi } from '@/api/auth/api';
 import { onMounted, ref } from 'vue';
 
-
+const categoryId = ref()
 const statusLike = ref("")
 const pageNum = ref(0)
 const searchQuery = ref("")
@@ -112,6 +113,8 @@ const fetchPostByCateId = async (cateId) => {
   try {
     const res = await sendGetApi(`blog/public/get-blog-by-category?categoryId=${cateId}`).then((res) => {
       Posts.value = res.data.content
+      categoryId.value = cateId
+
     })
   } catch (err) {
     console.log(err)

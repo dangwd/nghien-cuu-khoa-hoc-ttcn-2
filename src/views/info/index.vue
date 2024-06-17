@@ -23,7 +23,7 @@
             <span class="text-sm font-semibold">Trạng thái tài khoản</span>
             <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm font-semibold">{{
               formatStatus(userInfo.actived)
-            }}</span></span>
+                }}</span></span>
           </li>
           <li class="flex items-center py-3">
             <span class="text-sm font-semibold">Vai trò</span>
@@ -127,7 +127,7 @@
                 <div class="flex gap-5">
                   <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span class="text-gray-700 text-base">{{
                     post.numLike
-                  }}</span>
+                      }}</span>
                   </h1>
                   <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
                       class="text-gray-700 text-base">{{
@@ -235,8 +235,8 @@
       </div>
       <div class="flex flex-col gap-2 w-full">
         <label class="text-sm font-semibold" for="status">Danh mục</label>
-        <Dropdown v-model="categoryView" @change="chooseCategory" :options="categoryOpt" optionLabel="name"
-          :placeholder="categoryView" class="w-full md:w-[14rem] rounded-xl text-sm" />
+        <Dropdown v-model="categoryView" optionLabel="name" :placeholder="categoryView"
+          class="w-full md:w-[14rem] rounded-xl text-sm" />
       </div>
       <div class="flex flex-col gap-2 w-full">
         <label class="text-sm font-semibold" for="status">Trạng thái</label>
