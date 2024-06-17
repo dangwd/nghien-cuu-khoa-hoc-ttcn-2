@@ -27,7 +27,7 @@ import 'vue3-toastify/dist/index.css';
 import CKEditor from '@ckeditor/ckeditor5-vue';
 import store from './store'
 import PrimeVue from 'primevue/config';
-import Lara from '@/presets/lara';
+import Aura from '@/presets/lara';
 
 //Components
 import 'aos/dist/aos.css';
@@ -40,6 +40,7 @@ import InputField from './components/Input/InputField.vue'
 import Pagination from './components/Pagination/Pagination.vue'
 import AsideView from './components/AsideView.vue'
 import AsideRight from './components/AsideRight.vue'
+import OverlayPanel from 'primevue/overlaypanel'
 import Ripple from 'primevue/ripple';
 import Tooltip from 'primevue/tooltip';
 import StyleClass from 'primevue/styleclass';
@@ -75,11 +76,12 @@ app.use(ToastService);
 app.use(Antd)
 app.use(PrimeVue, {
   unstyled: true,
-  pt: Lara,
+  pt: Aura,
   ripple: true
 });
 app.use(router)
 app.component('TabView', TabView)
+app.component('OverlayPanel', OverlayPanel)
 app.component('TabPanel', TabPanel)
 app.component('Skeleton', Skeleton)
 app.component('Tag', Tag)

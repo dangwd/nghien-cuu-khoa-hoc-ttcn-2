@@ -23,7 +23,7 @@
             <span class="text-sm font-semibold">Trạng thái tài khoản</span>
             <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm font-semibold">{{
               formatStatus(userInfo.actived)
-            }}</span></span>
+                }}</span></span>
           </li>
           <li class="flex items-center py-3">
             <span class="text-sm font-semibold">Vai trò</span>
@@ -105,7 +105,16 @@
                     <span v-if="post.actived == false"
                       class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">{{
                         checkPost(post.actived) }}</span>
+
                   </div>
+                </div>
+                <div v-if="post.actived == false">
+                  <div class="flex gap-2">
+                    <Button size="small" class="bg-green-600" icon="pi pi-pencil" text></Button>
+                    <Button @click="removePost(post)" size="small" class="text-red-600" text
+                      icon="pi pi-trash"></Button>
+                  </div>
+
                 </div>
               </div>
               <div class="pt-5">
@@ -120,7 +129,7 @@
                 <div class="flex gap-5">
                   <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span class="text-gray-700 text-base">{{
                     post.numLike
-                  }}</span>
+                      }}</span>
                   </h1>
                   <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
                       class="text-gray-700 text-base">{{
@@ -183,6 +192,10 @@
         </div>
       </div>
       <div class="flex flex-col gap-2">
+        <InputField v-model="userParam.avatar" @input-file="setAvatar" title="Avatar" type="file-input">
+        </InputField>
+      </div>
+      <div class="flex flex-col gap-2">
         <label class="text-sm font-semibold" for="username">Mật khẩu</label>
         <InputText v-model="userParam.password" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
           size="small" placeholder="**********" />
@@ -203,6 +216,9 @@
         @click="updateAccount()" />
     </div>
   </Dialog>
+  <OverlayPanel ref="op">
+
+  </OverlayPanel>
 </template>
 <script>
 import { getPostByUser, sendGetApi, likePost, sendPostApi } from '@/api/auth/api'
@@ -245,7 +261,6 @@ export default {
     this.fetchUserById()
   },
   methods: {
-
     setAvatar(file) {
       this.userParam.avatar = file
       var storageRef = firebase.storage().ref('avatar/' + file.name)
@@ -321,6 +336,10 @@ export default {
     },
     update() {
       this.state = 'update'
+    },
+    toggle(event) {
+      console.log(event)
+      this.$refs.op.toggle(event);
     },
     checkPost(status) {
       switch (status) {
