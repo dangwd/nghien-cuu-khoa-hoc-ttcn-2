@@ -223,8 +223,8 @@ export default {
           return 'Đã duyệt'
       }
     },
-    showMessage() {
-      toast("Chức năng đang được xây dựng", {
+    showMessage(e) {
+      toast(e || "Chức năng đang được xây dựng", {
         "theme": "colored",
         "type": "info",
         "limit": 3,
@@ -271,17 +271,27 @@ export default {
         if (this.createPost.title !== "" && this.createPost.description !== "" && this.createPost.content !== "") {
           await sendPostApi("/blog/all/save-update", data).then(() => {
             this.showSuccess()
+            // this.resetData()
           })
           const res = await sendGetApi(`blog/public/get-all-active?page=${this.currentPage}&size=5&keywords=${""}`);
           this.posts = []
           res.data.content.forEach(post => {
             this.posts.push(post);
           });
+        } else {
+          this.showMessage("Trường nhập thiếu")
         }
       } catch (err) {
         console.log(err)
       }
     },
+    // resetData() {
+    //   this.createPost.title = ""
+    //   this.createPost.description = ""
+    //   this.createPost.content = ""
+    //   this.createPost.image = ""
+    //   this.createPost.listCategoryId = []
+    // }
   }
 }
 </script>

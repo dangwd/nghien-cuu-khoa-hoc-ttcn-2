@@ -23,7 +23,7 @@
             <span class="text-sm font-semibold">Trạng thái tài khoản</span>
             <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm font-semibold">{{
               formatStatus(userInfo.actived)
-                }}</span></span>
+            }}</span></span>
           </li>
           <li class="flex items-center py-3">
             <span class="text-sm font-semibold">Vai trò</span>
@@ -108,13 +108,11 @@
 
                   </div>
                 </div>
-                <div v-if="post.actived == false">
-                  <div class="flex gap-2">
-                    <Button size="small" class="bg-green-600" icon="pi pi-pencil" text></Button>
-                    <Button @click="removePost(post)" size="small" class="text-red-600" text
-                      icon="pi pi-trash"></Button>
-                  </div>
-
+                <div class="flex gap-2">
+                  <Button @click="updatePost(post)" v-if="post.actived == false" size="small"
+                    class="bg-green-600 ring-none" rounded icon="pi pi-pencil" text></Button>
+                  <Button @click="removePost(post)" size="small" class="text-red-600" text rounded
+                    icon="pi pi-trash"></Button>
                 </div>
               </div>
               <div class="pt-5">
@@ -129,7 +127,7 @@
                 <div class="flex gap-5">
                   <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span class="text-gray-700 text-base">{{
                     post.numLike
-                      }}</span>
+                  }}</span>
                   </h1>
                   <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
                       class="text-gray-700 text-base">{{
@@ -139,7 +137,6 @@
                 </div>
               </div>
             </div>
-
             <div v-if="post.actived == true" class="bg-white p-1 shadow flex flex-row flex-wrap rounded-b-xl">
               <button @click="increaseLike(post.id)"
                 class="w-1/3 text-center text-base rounded-xl text-gray-700 hover:text-green-600 font-semibold">
@@ -216,12 +213,49 @@
         @click="updateAccount()" />
     </div>
   </Dialog>
-  <OverlayPanel ref="op">
-
-  </OverlayPanel>
+  <Dialog v-model:visible="removeModal" modal header="Xóa ?" :style="{ width: '700px' }">
+    <h1 class="text-lg font-semibold text-red-600 text-center">Sau khi xóa sẽ không thể phục hồi...</h1>
+    <div class="flex justify-end items-end">
+      <Button class="bg-red-600 border-none text-white hover:bg-red-700 ring-0 outline-none" label="Xóa"
+        @click="deletePost(postId)"></Button>
+    </div>
+  </Dialog>
+  <Dialog v-model:visible="viewModal" modal :header="'Chi tiết bài viết ' + titleView" :style="{ width: '1094px' }">
+    <div class="w-full">
+      <Image class="mb-2 rounded-lg" :src="imageView" alt="Image" preview />
+      <div class="flex flex-col gap-2 w-full">
+        <label class="text-sm font-semibold" for="username">Tiêu đề bài viết</label>
+        <InputText v-model="titleView" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+          size="small" />
+      </div>
+      <div class="flex flex-col gap-2 w-full">
+        <label class="text-sm font-semibold" for="username">Mô tả</label>
+        <InputText v-model="descriptionView" class="focus:ring-0 border-gray-300 rounded-xl text-sm" type="text"
+          size="small" />
+      </div>
+      <div class="flex flex-col gap-2 w-full">
+        <label class="text-sm font-semibold" for="status">Danh mục</label>
+        <Dropdown v-model="categoryView" @change="chooseCategory" :options="categoryOpt" optionLabel="name"
+          :placeholder="categoryView" class="w-full md:w-[14rem] rounded-xl text-sm" />
+      </div>
+      <div class="flex flex-col gap-2 w-full">
+        <label class="text-sm font-semibold" for="status">Trạng thái</label>
+        <Dropdown v-model="statusView" optionLabel="name" :placeholder="formatStatusPost(statusView)"
+          class="w-full md:w-[14rem] rounded-xl text-sm" disabled />
+      </div>
+      <div class="w-full">
+        <label class="text-sm font-semibold" for="contentView">Nội dung</label>
+        <InputField @input-change="setContentView" :value="contentView" type="ckeditor"></InputField>
+      </div>
+    </div>
+    <div class="pt-4 flex justify-end">
+      <Button class="text-white bg-green-600 hover:bg-green-700 p-1 text-sm border-none" label="Cập nhật"
+        @click="confirmUpdatePost()" />
+    </div>
+  </Dialog>
 </template>
 <script>
-import { getPostByUser, sendGetApi, likePost, sendPostApi } from '@/api/auth/api'
+import { getPostByUser, sendGetApi, likePost, sendPostApi, sendDeleteApi } from '@/api/auth/api'
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import Button from 'primevue/button';
@@ -233,9 +267,18 @@ export default {
   },
   data() {
     return {
+      imageView: "",
+      titleView: "",
+      descriptionView: "",
+      categoryView: "",
+      statusView: "",
+      contentView: "",
       posts: [],
+      postId: "",
       userInfo: {},
       updateAccModal: false,
+      viewModal: false,
+      removeModal: false,
       state: "default",
       userParam: {
         id: "",
@@ -276,14 +319,50 @@ export default {
         })
       })
     },
+    setContentView(value) {
+      this.contentView = value
+    },
     openUpdateAccount() {
       this.updateAccModal = true
     },
-    showSuccess() {
-      toast.success("Cập nhật thành công!");
+    showSuccess(res) {
+      toast.success(res || "Cập nhật thành công!");
     },
     showError() {
       toast.error("Có lỗi xảy ra, vui lòng kiểm tra lại!");
+    },
+    updatePost(post) {
+      this.postId = post.id
+      this.viewModal = true
+      this.imageView = post.image
+      this.titleView = post.title
+      this.statusView = post.actived
+      this.contentView = post.content
+      this.categoryView = post.blogCategories[0].category.name
+      this.descriptionView = post.description
+    },
+    async confirmUpdatePost() {
+      const data = {
+        id: this.postId,
+        image: this.imageView,
+        title: this.titleView,
+        actived: this.statusView,
+        content: this.contentView,
+        description: this.descriptionView
+      }
+      try {
+        const res = await sendPostApi(`blog/all/save-update`, data).then((res) => {
+          console.log(res)
+          this.viewModal = false
+          this.fetchPost()
+        })
+      } catch (e) {
+        this.showError(e)
+      }
+    },
+    removePost(data) {
+      this.postId = data.id;
+      this.removeModal = true
     },
     async increaseLike(id) {
       try {
@@ -334,12 +413,16 @@ export default {
         toast.error("Mật khẩu không khớp!")
       }
     },
-    update() {
-      this.state = 'update'
-    },
-    toggle(event) {
-      console.log(event)
-      this.$refs.op.toggle(event);
+    async deletePost(id) {
+      try {
+        const res = await sendDeleteApi(`/blog/all/delete?blogId=${id}`).then((res) => {
+          this.showSuccess(res.data)
+          this.removeModal = false
+          this.fetchPost()
+        })
+      } catch (e) {
+        console.log(e)
+      }
     },
     checkPost(status) {
       switch (status) {
@@ -363,6 +446,14 @@ export default {
           return 'Đã kích hoạt'
       }
     },
+    formatStatusPost(s) {
+      switch (s) {
+        case true:
+          return 'Đã duyệt'
+        case false:
+          return 'Chờ duyệt'
+      }
+    }
 
   }
 }
