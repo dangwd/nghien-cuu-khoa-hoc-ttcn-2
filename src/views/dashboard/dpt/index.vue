@@ -9,7 +9,7 @@
               <InputText v-model="searchQuery" placeholder="Tìm kiếm" size="small"
                 class="border-gray-300 rounded-l-lg rounded-r-none">
               </InputText>
-              <Button icon="pi pi-search"
+              <Button @click="searchDpt()" icon="pi pi-search"
                 class="text-white bg-green-600 hover:bg-green-700 text-sm border-none rounded-none rounded-r-lg" />
             </div>
             <Button icon="pi pi-plus" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
@@ -272,6 +272,7 @@ const toast = useToast()
 const page = ref(0)
 const rows = ref(10)
 
+
 const viewSbjCode = ref("")
 const viewSbjName = ref("")
 const viewMjrCode = ref("")
@@ -444,7 +445,7 @@ const deleteMjrDialog = (id) => {
 }
 const fetchAllDpt = async () => {
   try {
-    const res = await sendGetApi("/department/public/get-all-department").then((res) => {
+    const res = await sendGetApi(`/department/public/get-all-department`).then((res) => {
       Department.value = res.data
     })
   } catch (err) {
@@ -553,6 +554,17 @@ const deleteSbj = async () => {
     })
   } catch (err) {
     console.log(err)
+  }
+}
+const searchDpt = async () => {
+  if (!searchQuery.value) {
+    fetchAllDpt()
+  }
+  try {
+    const res = await sendGetApi(`department/document-manager/get-all?keywords=${searchQuery.value}`)
+    Department.value = res.data.content
+  } catch (e) {
+    console.log(e)
   }
 }
 </script>
