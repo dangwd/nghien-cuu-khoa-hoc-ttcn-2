@@ -8,11 +8,11 @@
   <div v-else class="card py-2">
     <div class="flex justify-between mb-2">
       <div class="flex">
-        <InputText v-model="searchQuery" placeholder="Tìm kiếm" size="small" class="border-gray-300 rounded-none">
-        </InputText>
-        <Button icon="pi pi-search"
+        <!-- <InputText v-model="searchQuery" placeholder="Tìm kiếm" size="small" class="border-gray-300 rounded-none">
+        </InputText> -->
+        <!-- <Button icon="pi pi-search"
           class="text-white bg-green-600 hover:bg-green-700 text-sm border-none rounded-none rounded-r-lg"
-          @click="fetchAllNoti()" />
+          @click="fetchAllNoti()" /> -->
       </div>
       <Button icon="pi pi-plus" class="text-white bg-green-600 hover:bg-green-700 text-sm border-none"
         label="Viết thông báo" @click="openDialog" />

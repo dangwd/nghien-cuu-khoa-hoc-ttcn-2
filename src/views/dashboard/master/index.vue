@@ -8,8 +8,7 @@
         <template #start>
           <span class="inline-flex items-center gap-1 px-2 py-2 w-full sm:w-[15rem]">
             <div class="w-10 h-10">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/0/06/13015673_10153943477900239_794210601335532414_nsdfsf.jpg"
+              <img src="https://cdn.haitrieu.com/wp-content/uploads/2021/10/Logo-Hoc-Vien-Nong-Nghiep-Viet-Nam-VNUA.png"
                 alt="">
             </div>
             <span class="text-green-700 font-bold text-xl">VNUA Dashboard</span>

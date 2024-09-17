@@ -116,7 +116,7 @@
         <div class="flex flex-col gap-2 w-full">
           <label class="text-sm font-semibold" for="status">Trạng thái</label>
           <Dropdown v-model="statusView" @change="chooseStatus" :options="statusOpt" optionLabel="name"
-            :placeholder="formatStatus(statusView)" class="w-full md:w-[14rem] rounded-xl text-sm" disabled />
+            :placeholder="formatStatus(statusView)" class="w-full md:w-[14rem] rounded-xl text-sm" />
         </div>
         <div class="w-full">
           <label class="text-sm font-semibold" for="contentView">Nội dung</label>

@@ -49,7 +49,7 @@
         </div>
       </div>
 
-      <div class="mt-2 bg-white rounded-xl border">
+      <!-- <div class="mt-2 bg-white rounded-xl border">
         <h1 class="text-base font-semibold mx-4 mt-4">Bộ lọc</h1>
         <div class="p-2">
           <div class="grid grid-cols-3 gap-2 px-4 pt-4 pb-3">
@@ -63,7 +63,7 @@
               :config="{ label: 'Xác nhận', click: () => fetchAllSubject() }"></Button>
           </div>
         </div>
-      </div>
+      </div> -->
       <div v-if="postData.data.content.length > 0">
         <div class="p-2">
           <h1 class="text-base font-semibold">Danh mục bạn chọn có: {{ postData.data.content.length }} bài viết</h1>
@@ -96,7 +96,7 @@
                 <div class="flex gap-5">
                   <h1><i class='bx bxs-heart text-green-600 font-semibold'></i> <span class="text-gray-700 text-base">{{
                     post.numLike
-                      }}</span>
+                  }}</span>
                   </h1>
                   <h1><i class='bx bxs-message-square-dots text-blue-600 font-semibold'></i> <span
                       class="text-gray-700 text-base">{{

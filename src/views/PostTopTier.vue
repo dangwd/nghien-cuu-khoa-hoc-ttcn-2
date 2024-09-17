@@ -6,7 +6,7 @@
   </div>
   <div v-else>
     <AsideView></AsideView>
-    <div class="max-w-3xl mx-auto">
+    <div v-if="postTopTier.data" class="max-w-3xl mx-auto">
       <div class="py-5">
         <div class="bg-white mt-3">
           <img class="border rounded-t-xl shadow-xl w-full" :src="postTopTier.data.image">
